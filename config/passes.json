@@ -1,0 +1,204 @@
+{
+ "ready": [
+  {
+   "slug": "snoqualmie-pass",
+   "name": "Snoqualmie Pass (I-90)",
+   "state": "WA",
+   "source": "wsdot-arcgis",
+   "cams": [
+    {
+     "title": "I-90 at MP 52: Snoqualmie Summit",
+     "image": "https://images.wsdot.wa.gov/sc/090VC05200.jpg"
+    },
+    {
+     "title": "I-90 at MP 53.4: East Snoqualmie Summit",
+     "image": "https://images.wsdot.wa.gov/sc/090VC05347.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "stevens-pass",
+   "name": "Stevens Pass (US 2)",
+   "state": "WA",
+   "source": "wsdot-arcgis",
+   "cams": [
+    {
+     "title": "US 2 at MP 64.6: East Stevens Pass Summit",
+     "image": "https://images.wsdot.wa.gov/nc/002vc06458.jpg"
+    },
+    {
+     "title": "US 2 at MP 64.3: West Stevens Pass - Ski Lodge",
+     "image": "https://images.wsdot.wa.gov/nc/002vc06430.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "white-pass",
+   "name": "White Pass (US 12)",
+   "state": "WA",
+   "source": "wsdot-arcgis",
+   "cams": [
+    {
+     "title": "US 12 at MP 150.9: White Pass Summit",
+     "image": "https://images.wsdot.wa.gov/sc/012vc15095.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "blewett-pass",
+   "name": "Blewett Pass (US 97)",
+   "state": "WA",
+   "source": "wsdot-arcgis",
+   "cams": [
+    {
+     "title": "US 97 at MP 163.8: Blewett Pass Summit",
+     "image": "https://images.wsdot.wa.gov/nc/097vc16375.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "donner-pass",
+   "name": "Donner Pass (I-80)",
+   "state": "CA",
+   "source": "caltrans-cwwp2-d3",
+   "cams": [
+    {
+     "title": "Hwy 80 at Kingvale WB",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atkingvalewb/hwy80atkingvalewb.jpg"
+    },
+    {
+     "title": "Hwy 80 at Soda Springs EB",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atsodaspringseb/hwy80atsodaspringseb.jpg"
+    },
+    {
+     "title": "Hwy 80 at Donner Summit",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atdonnersummit/hwy80atdonnersummit.jpg"
+    },
+    {
+     "title": "Hwy 80 at Donner Lake",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atdonnerlake/hwy80atdonnerlake.jpg"
+    },
+    {
+     "title": "Hwy 80 at Castle Peak",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atcastlepeak/hwy80atcastlepeak.jpg"
+    },
+    {
+     "title": "Hwy 80 at Kingvale EB 2",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atkingvaleeb2/hwy80atkingvaleeb2.jpg"
+    },
+    {
+     "title": "Hwy 80 at Kingvale EB 1",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atkingvaleeb1/hwy80atkingvaleeb1.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "echo-summit",
+   "name": "Echo Summit (US 50)",
+   "state": "CA",
+   "source": "caltrans-cwwp2-d3",
+   "cams": [
+    {
+     "title": "Hwy 50 at Echo Summit",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atechosummit/hwy50atechosummit.jpg"
+    },
+    {
+     "title": "Hwy 50 at Twin Bridges",
+     "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50attwinbridges/hwy50attwinbridges.jpg"
+    }
+   ]
+  }
+ ],
+ "pending": [
+  {
+   "slug": "highway-395-mammoth",
+   "state": "CA",
+   "source": "caltrans-cwwp2-d9"
+  },
+  {
+   "slug": "big-bear",
+   "state": "CA",
+   "source": "caltrans-cwwp2-d8"
+  },
+  {
+   "slug": "i-70-eisenhower",
+   "state": "CO",
+   "source": "cotrip-api (key)"
+  },
+  {
+   "slug": "vail-pass",
+   "state": "CO",
+   "source": "cotrip-api (key)"
+  },
+  {
+   "slug": "wolf-creek-pass",
+   "state": "CO",
+   "source": "cotrip-api (key)"
+  },
+  {
+   "slug": "monarch-pass",
+   "state": "CO",
+   "source": "cotrip-api (key)"
+  },
+  {
+   "slug": "berthoud-pass",
+   "state": "CO",
+   "source": "cotrip-api (key)"
+  },
+  {
+   "slug": "loveland-pass",
+   "state": "CO",
+   "source": "cotrip-api (key)"
+  },
+  {
+   "slug": "parleys-canyon",
+   "state": "UT",
+   "source": "udot-api (key)"
+  },
+  {
+   "slug": "big-cottonwood-canyon",
+   "state": "UT",
+   "source": "udot-api (key)"
+  },
+  {
+   "slug": "little-cottonwood-canyon",
+   "state": "UT",
+   "source": "udot-api (key)"
+  },
+  {
+   "slug": "lookout-pass",
+   "state": "ID/MT",
+   "source": "mdt-rwis (public) + idaho-511 (key)"
+  },
+  {
+   "slug": "lolo-pass",
+   "state": "MT",
+   "source": "mdt-rwis (public)"
+  },
+  {
+   "slug": "bozeman-pass",
+   "state": "MT",
+   "source": "mdt-rwis (public)"
+  },
+  {
+   "slug": "santiam-pass",
+   "state": "OR",
+   "source": "tripcheck-api (key)"
+  },
+  {
+   "slug": "mount-hood",
+   "state": "OR",
+   "source": "tripcheck-api (key)"
+  },
+  {
+   "slug": "siskiyou-pass",
+   "state": "OR",
+   "source": "tripcheck-api (key)"
+  },
+  {
+   "slug": "teton-pass",
+   "state": "WY",
+   "source": "wyoroad.info pages (no API)"
+  }
+ ]
+}
