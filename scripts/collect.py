@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""Fetch the current camera image for every ready pass, plus official pass reports.
+
+Writes to out/<UTC date>/<UTC time>/:
+  <pass-slug>/<cam-index>.jpg   camera images (skipped if the camera is down)
+  manifest.json                 what was fetched, sizes, hashes, HTTP status
+  wsdot_pass_reports.json       WSDOT's official road/weather/restriction text
+
+Standard library only, so it runs on a bare GitHub Actions runner.
+"""
+import hashlib
+import json
+import os
+import sys
+import time
+import urllib.request
+from datetime import datetime, timezone
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UA = "ConditionsNow/0.1 (+https://conditionsnow.com; hello@conditionsnow.com)"
+WSDOT_REPORTS = (
+    "https://data.wsdot.wa.gov/arcgis/rest/services/TravelInformation/"
+    "TravelInfoMtPassReports/FeatureServer/0/query?where=1%3D1&outFields=*&f=json"
+)
+
+
+def fetch(url, timeout=20):
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.status, r.read(), r.headers.get("Content-Type", "")
+
+
+def main():
+    now = datetime.now(timezone.utc)
+    out = os.path.join(ROOT, "out", now.strftime("%Y-%m-%d"), now.strftime("%H%M"))
+    os.makedirs(out, exist_ok=True)
+    with open(os.path.join(ROOT, "config", "passes.json")) as f:
+        passes = json.load(f)["ready"]
+
+    manifest = {"fetched_at": now.isoformat(), "cams": []}
+    for p in passes:
+        os.makedirs(os.path.join(out, p["slug"]), exist_ok=True)
+        for i, cam in enumerate(p["cams"]):
+            rec = {"pass": p["slug"], "cam": i, "title": cam["title"], "url": cam["image"]}
+            try:
+                status, body, ctype = fetch(cam["image"])
+                rec.update(status=status, bytes=len(body), sha1=hashlib.sha1(body).hexdigest())
+                if status == 200 and ctype.startswith("image") and len(body) > 2000:
+                    with open(os.path.join(out, p["slug"], f"{i}.jpg"), "wb") as f:
+                        f.write(body)
+                    rec["saved"] = True
+                else:
+                    rec["saved"] = False
+            except Exception as e:  # camera offline, timeout, DNS
+                rec.update(saved=False, error=str(e)[:200])
+            manifest["cams"].append(rec)
+            time.sleep(0.5)  # be polite to DOT servers
+
+    try:
+        _, body, _ = fetch(WSDOT_REPORTS, timeout=30)
+        rows = [f["attributes"] for f in json.loads(body).get("features", [])]
+        with open(os.path.join(out, "wsdot_pass_reports.json"), "w") as f:
+            json.dump(rows, f, indent=1)
+    except Exception as e:
+        manifest["wsdot_reports_error"] = str(e)[:200]
+
+    with open(os.path.join(out, "manifest.json"), "w") as f:
+        json.dump(manifest, f, indent=1)
+    ok = sum(c.get("saved", False) for c in manifest["cams"])
+    print(f"saved {ok}/{len(manifest['cams'])} images to {out}")
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
