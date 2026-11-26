@@ -1,4 +1,4 @@
-name: Collect camera images
+name: Collect camera images and publish site
 
 on:
   schedule:
@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: collect
@@ -19,6 +21,9 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - name: Fetch images and pass reports
@@ -26,15 +31,16 @@ jobs:
           WSDOT_ACCESS_CODE: ${{ secrets.WSDOT_ACCESS_CODE }}
         run: python3 scripts/collect.py
       - name: Upload to Hugging Face dataset
+        continue-on-error: true
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           pip install --quiet huggingface_hub
           python3 scripts/upload_hf.py
-      # Short-lived backup copy in case the upload fails.
-      - uses: actions/upload-artifact@v4
-        if: always()
+      - name: Build site
+        run: python3 scripts/build_site.py
+      - uses: actions/upload-pages-artifact@v3
         with:
-          name: cams-${{ github.run_id }}
-          path: out/
-          retention-days: 3
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

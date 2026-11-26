@@ -14,7 +14,13 @@
      "title": "I-90 at MP 53.4: East Snoqualmie Summit",
      "image": "https://images.wsdot.wa.gov/sc/090VC05347.jpg"
     }
-   ]
+   ],
+   "lat": 47.4245,
+   "lon": -121.4134,
+   "elev_ft": 3022,
+   "route": "I-90",
+   "wsdot_name": "Snoqualmie Pass I-90",
+   "between": "Seattle and Ellensburg"
   },
   {
    "slug": "stevens-pass",
@@ -30,7 +36,13 @@
      "title": "US 2 at MP 64.3: West Stevens Pass - Ski Lodge",
      "image": "https://images.wsdot.wa.gov/nc/002vc06430.jpg"
     }
-   ]
+   ],
+   "lat": 47.7465,
+   "lon": -121.089,
+   "elev_ft": 4061,
+   "route": "US 2",
+   "wsdot_name": "Stevens Pass US 2",
+   "between": "Everett and Leavenworth"
   },
   {
    "slug": "white-pass",
@@ -42,7 +54,13 @@
      "title": "US 12 at MP 150.9: White Pass Summit",
      "image": "https://images.wsdot.wa.gov/sc/012vc15095.jpg"
     }
-   ]
+   ],
+   "lat": 46.6383,
+   "lon": -121.392,
+   "elev_ft": 4500,
+   "route": "US 12",
+   "wsdot_name": "White Pass US 12",
+   "between": "Packwood and Yakima"
   },
   {
    "slug": "blewett-pass",
@@ -54,7 +72,13 @@
      "title": "US 97 at MP 163.8: Blewett Pass Summit",
      "image": "https://images.wsdot.wa.gov/nc/097vc16375.jpg"
     }
-   ]
+   ],
+   "lat": 47.335,
+   "lon": -120.5786,
+   "elev_ft": 4102,
+   "route": "US 97",
+   "wsdot_name": "Blewett Pass US 97",
+   "between": "Cle Elum and Wenatchee"
   },
   {
    "slug": "donner-pass",
@@ -90,7 +114,13 @@
      "title": "Hwy 80 at Kingvale EB 1",
      "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atkingvaleeb1/hwy80atkingvaleeb1.jpg"
     }
-   ]
+   ],
+   "lat": 39.339,
+   "lon": -120.3477,
+   "elev_ft": 7221,
+   "route": "I-80",
+   "cc_route": "I-80",
+   "between": "Sacramento and Reno"
   },
   {
    "slug": "echo-summit",
@@ -106,7 +136,13 @@
      "title": "Hwy 50 at Twin Bridges",
      "image": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50attwinbridges/hwy50attwinbridges.jpg"
     }
-   ]
+   ],
+   "lat": 38.8125,
+   "lon": -120.03,
+   "elev_ft": 7382,
+   "route": "US 50",
+   "cc_route": "US-50",
+   "between": "Placerville and South Lake Tahoe"
   }
  ],
  "pending": [
