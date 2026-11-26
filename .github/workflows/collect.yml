@@ -19,10 +19,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Fetch images and pass reports
+        env:
+          WSDOT_ACCESS_CODE: ${{ secrets.WSDOT_ACCESS_CODE }}
         run: python3 scripts/collect.py
-      # Temporary home for images until the Hugging Face dataset is set up.
+      - name: Upload to Hugging Face dataset
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install --quiet huggingface_hub
+          python3 scripts/upload_hf.py
+      # Short-lived backup copy in case the upload fails.
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: cams-${{ github.run_id }}
           path: out/
-          retention-days: 14
+          retention-days: 3

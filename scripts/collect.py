@@ -18,10 +18,24 @@ from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UA = "ConditionsNow/0.1 (+https://conditionsnow.com; hello@conditionsnow.com)"
-WSDOT_REPORTS = (
+WSDOT_REPORTS_PUBLIC = (
     "https://data.wsdot.wa.gov/arcgis/rest/services/TravelInformation/"
     "TravelInfoMtPassReports/FeatureServer/0/query?where=1%3D1&outFields=*&f=json"
 )
+WSDOT_REPORTS_API = (
+    "https://wsdot.wa.gov/Traffic/api/MountainPassConditions/"
+    "MountainPassConditionsREST.svc/GetMountainPassConditionsAsJson?AccessCode={code}"
+)
+
+
+def wsdot_reports():
+    """Official pass reports: Traveler API when we have an access code, public layer otherwise."""
+    code = os.environ.get("WSDOT_ACCESS_CODE")
+    if code:
+        _, body, _ = fetch(WSDOT_REPORTS_API.format(code=code), timeout=30)
+        return "traveler-api", json.loads(body)
+    _, body, _ = fetch(WSDOT_REPORTS_PUBLIC, timeout=30)
+    return "arcgis", [f["attributes"] for f in json.loads(body).get("features", [])]
 
 
 def fetch(url, timeout=20):
@@ -57,8 +71,8 @@ def main():
             time.sleep(0.5)  # be polite to DOT servers
 
     try:
-        _, body, _ = fetch(WSDOT_REPORTS, timeout=30)
-        rows = [f["attributes"] for f in json.loads(body).get("features", [])]
+        source, rows = wsdot_reports()
+        manifest["wsdot_reports_source"] = source
         with open(os.path.join(out, "wsdot_pass_reports.json"), "w") as f:
             json.dump(rows, f, indent=1)
     except Exception as e:
