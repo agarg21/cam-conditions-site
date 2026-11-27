@@ -260,7 +260,7 @@ def nws_forecast(lat, lon):
     try:
         pt = get_json(f"https://api.weather.gov/points/{lat:.4f},{lon:.4f}")
         fc = get_json(pt["properties"]["forecast"])
-        return fc["properties"]["periods"][:4]
+        return fc["properties"]["periods"][:14]
     except Exception:
         return []
 
@@ -350,29 +350,134 @@ Conditions change fast: always check official closures and chain rules before yo
 """
 
 
+CHAIN_KEYS = {"", "Chains and tires", "Restrictions", "Special conditions", "Eastbound", "Westbound",
+              "Northbound", "Southbound", "Both directions"}
+
+
+def same_dirs(items):
+    """[(direction, text)] -> one quoted line; directions collapse when the wording is the same."""
+    texts = list(dict.fromkeys(t.strip().rstrip(".") for _, t in items if t))
+    if len(texts) == 1:
+        dirs = [d for d, _ in items if d and d not in ("Chains and tires", "Special conditions", "Restrictions")]
+        suffix = " (both directions)" if len(dirs) == 2 else ""
+        return f"\u201c{texts[0]}\u201d{suffix}"
+    return "; ".join(f"{d}: \u201c{t.strip().rstrip('.')}\u201d" for d, t in items if t)
+
+
+def answers(st, level, state):
+    """Plain answers to what drivers search for: open? chains? snow on the road?
+
+    Built only from the official wording; anything the feed does not say is "Not reported", never a guess.
+    Returns (rows, remaining_restrictions) where rows = [(question, answer, detail)].
+    """
+    dot = DOT_NAMES[state][0]
+    if not st:
+        return [("Open?", "Unknown", "No current official report."),
+                ("Chains?", "Unknown", "No current official report."),
+                ("Snow on the road?", "Unknown", "Check the cameras below.")], []
+    chain_feed = state == "CA"  # Caltrans chain controls: says nothing about closures or the road surface
+    restr = st.get("restrictions", [])
+    chains = [(d, t) for d, t in restr if d in CHAIN_KEYS and (d != "Special conditions" or re.search(r"chain|traction", t, re.I))]
+    other = [(d, t) for d, t in restr if (d, t) not in chains]
+
+    road = (st.get("road") or "").strip()
+    if level == "closed":
+        opened = ("Closed", f"{dot}: \u201c{road.rstrip('.')}\u201d" if road else f"{dot} reports a closure.")
+    elif chain_feed:
+        opened = ("Not in this feed", "Caltrans chain controls don't report closures. Check QuickMap.")
+    else:
+        opened = ("No closure reported", f"{dot}'s report doesn't mention a closure.")
+
+    ctext = " ".join(t for _, t in chains) + (" " + road if chain_feed else "")
+    none_said = re.search(r"no restrictions?|no chain controls?|\br-0\b", ctext, re.I)
+    ctext = re.sub(r"no chain controls?[^.;]*", "", ctext, flags=re.I)
+    if chain_feed and not st.get("chain_points"):
+        ans = "None reported"
+    elif re.search(r"chains?[^.;]{0,40}\brequired|\br-[123]\b|chain controls? (are )?in effect", ctext, re.I):
+        some = (re.search(r"towing|10,000|gvw|commercial|truck|oversize|semi|vehicles over", ctext, re.I)
+                and not re.search(r"all vehicles", ctext, re.I))
+        ans = "Required for some vehicles" if some else "Required"
+    elif re.search(r"traction tires? (are )?required", ctext, re.I):
+        ans = "Traction tires required"
+    elif re.search(r"advised|carry chains|recommended", ctext, re.I):
+        ans = "Advised"
+    elif none_said:
+        ans = "None reported"
+    else:
+        ans = "Not reported"
+    if chains:
+        detail = same_dirs(chains)
+    elif chain_feed:
+        detail = f"Caltrans: \u201c{road.rstrip('.')}\u201d" if road else "Caltrans chain-control points on this highway."
+    else:
+        detail = f"{dot}'s report doesn't list chain rules here."
+    chain_row = ("Chains?", ans, detail)
+
+    if chain_feed or not road:
+        snow = ("Not reported", "This feed doesn't describe the road surface. Check the cameras below.")
+    else:
+        q = f"{dot}: \u201c{road.rstrip('.')}\u201d"
+        if re.search(r"snow|slush|\bice\b|icy|frost|compact", road, re.I) and not re.search(r"\bno (snow|ice)\b", road, re.I):
+            snow = ("In places" if re.search(r"in places|spots|areas of|patch", road, re.I) else "Yes", q)
+        elif re.search(r"bare|dry|wet", road, re.I):
+            snow = ("None reported", q)
+        else:
+            snow = ("Not reported", q)
+    rows = [("Open?",) + opened, chain_row, ("Snow on the road?",) + snow]
+    return rows, other
+
+
 def verdict(st, level, state, tz=TZ):
     cls, label = LEVELS[level]
     label = (st or {}).get("label") or label
     dot, link = DOT_NAMES[state]
+    rows, other = answers(st, level, state)
+    qa = "".join(f'<dt>{q}</dt><dd><strong>{e(a)}</strong> <span class="verdict__quote">{e(d)}</span></dd>'
+                 for q, a, d in rows)
     if not st:
         return (f'<section class="verdict {cls}" aria-label="Current road status"><p class="verdict__label">{label}</p>'
+                f'<dl class="answers">{qa}</dl>'
                 f'<p class="verdict__meta">We have no current official road report for this spot. Check the cameras below '
                 f'and <a href="{link}">{dot}</a>.</p></section>')
-    rows = []
+    extra = []
     if st.get("weather"):
-        rows.append(f"<dt>Weather</dt><dd>{e(st['weather'])}</dd>")
+        extra.append(f"<dt>Weather</dt><dd>{e(st['weather'])}</dd>")
     if st.get("temp"):
-        rows.append(f"<dt>Temperature</dt><dd>{e(st['temp'])}</dd>")
-    for d, t in st.get("restrictions", []):
-        rows.append(f"<dt>{e(d or 'Restrictions')}</dt><dd>{e(t)}</dd>")
-    when = f"updated {local(st['updated'], tz)}" if st.get("updated") else "latest report"
+        extra.append(f"<dt>Temperature</dt><dd>{e(st['temp'])}</dd>")
+    for d, t in other:
+        extra.append(f"<dt>{e(d or 'Restrictions')}</dt><dd>{e(t)}</dd>")
+    when = f", updated {local(st['updated'], tz)}" if st.get("updated") else ""
     where = f" for {e(st['where'])}" if st.get("where") else ""
     return (f'<section class="verdict {cls}" aria-label="Current road status">'
             f'<p class="verdict__label">{label}</p>'
-            f'<p class="verdict__official">{e(st.get("road") or "")}</p>'
-            f'{"<dl>" + "".join(rows) + "</dl>" if rows else ""}'
-            f'<p class="verdict__meta">Official {dot} report{where}, {when}.'
+            f'<dl class="answers">{qa}{"".join(extra)}</dl>'
+            f'<p class="verdict__meta">From the latest official {dot} report{where}{when}. Answers repeat its wording; '
+            f'anything it doesn\'t cover says \u201cnot reported\u201d.'
             f'{" ODOT marks this report as past its expiry time, so trust the cameras more." if st.get("expired") else ""}</p></section>')
+
+
+def pick_periods(periods, tz):
+    """Now, tonight, tomorrow and the weekend (Sat/Sun daytime), at most 6 NWS periods, in order."""
+    if not periods:
+        return []
+    keep = list(range(min(3, len(periods))))  # now, then the next two periods (covers tonight)
+    days = [i for i, x in enumerate(periods) if i >= 3 and x.get("isDaytime")]
+    keep += days[:1]  # tomorrow
+    for i in days:
+        name = periods[i].get("name", "")
+        if name.startswith(("Saturday", "Sunday")) and "Night" not in name and len(keep) < 6:
+            keep.append(i)
+    return [periods[i] for i in sorted(set(keep))][:6]
+
+
+def fc_temp(x):
+    t = x.get("temperature")
+    return "" if t is None else f'<div class="forecast__temp">{t}°{e(x.get("temperatureUnit") or "")}</div>'
+
+
+def snow_note(x):
+    m = re.search(r"New snow accumulation[^.]*\.", x.get("detailedForecast") or "")
+    return f'<div class="forecast__snow">{e(m.group(0))}</div>' if m else ""
 
 
 # ---------------------------------------------------------------- build
@@ -431,9 +536,10 @@ def build():
         checked = fetched.astimezone(tz).strftime("%-I:%M %p %Z")
         fc = nws_forecast(p["lat"], p["lon"])
         name = p["name"].split(" (")[0]
-        title = f"{name} conditions and live cameras ({p['route']}) | Conditions Now"
-        desc = (f"Is {name} snowy right now? Live {STATE_NAMES[p['state']]} DOT cameras, the official road report, "
-                f"chain rules and the forecast for {p['route']} between {p['between']}.")
+        title = f"{name} road conditions, cameras and weather | Conditions Now"
+        desc = (f"Is {name} open, are chains required, is there snow on the road? The official "
+                f"{DOT_NAMES[p['state']][0]} report, live cameras and the forecast for {p['route']} between "
+                f"{p['between']}, checked every 15 minutes.")
         cam_html = "".join(
             f'<figure class="cam"><img src="{c["site_url"]}" alt="Live camera: {e(c["title"])}" '
             f'width="640" height="480" {LAZY if i else ""}decoding="async">'
@@ -442,8 +548,10 @@ def build():
         credit = CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0])
         fc_html = "".join(
             f'<div class="forecast__period"><div class="forecast__name">{e(x["name"])}</div>'
-            f'<div class="forecast__temp">{x["temperature"]}°{e(x["temperatureUnit"])}</div>'
-            f'<div class="forecast__text">{e(x["shortForecast"])}</div></div>' for x in fc)
+            f'{fc_temp(x)}'
+            f'<div class="forecast__text">{e(x["shortForecast"])}</div>'
+            f'{snow_note(x)}</div>'
+            for x in pick_periods(fc, tz))
         summit = p.get("summit", True)
         sign = (f'<div class="summit-sign"><div class="summit-sign__face"><h1>{e(name)}</h1>'
                 f'<p class="summit-sign__sub">{"<span>Summit</span>" if summit else ""}<span>Elev {p["elev_ft"]:,} ft</span></p></div></div>')
@@ -461,6 +569,11 @@ def build():
 <p class="note">Camera images from {e(credit)}. Soon each camera will get its own reading: snow on the road, visibility and traffic.</p>
 <h2>{"Summit forecast" if summit else "Forecast"}</h2>
 {f'<div class="forecast">{fc_html}</div><p class="note">From the National Weather Service.</p>' if fc_html else '<p class="note">The forecast did not load. Try again in a few minutes.</p>'}
+<h2>About {e(name)}</h2>
+<dl class="facts"><dt>{"Summit elevation" if summit else "Elevation"}</dt><dd>{p["elev_ft"]:,} ft</dd>
+<dt>Highway</dt><dd>{e(p["route"])}, {STATE_NAMES[p["state"]]}</dd>
+<dt>Between</dt><dd>{e(p["between"])}</dd>
+<dt>Official reports</dt><dd><a href="{dot_link}">{dot_name}</a></dd></dl>
 <h2>Before you go</h2>
 <ul class="checklist"><li>Check the official report on <a href="{dot_link}">{dot_name}</a> right before you leave.</li>
 <li>Carry chains from November to April. Rules can change within the hour.</li>

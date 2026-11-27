@@ -109,6 +109,14 @@ p, li { max-width: var(--w-read); }
 .verdict dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--s-1) var(--s-4); margin: var(--s-3) 0 0; }
 .verdict dt { font-weight: 600; }
 .verdict dd { margin: 0; }
+.answers dd strong { font-family: var(--f-display); font-weight: 800; }
+.verdict__quote { display: block; color: var(--c-asphalt-muted); font-size: var(--t-sm); overflow-wrap: anywhere; }
+@media (max-width: 639px) {
+  .verdict dl.answers { grid-template-columns: 1fr; gap: 0; }
+  .answers dt { margin-top: var(--s-3); font-size: var(--t-sm); color: var(--c-asphalt-muted); }
+  .answers dt:first-child { margin-top: 0; }
+  .answers dd strong { font-size: var(--t-lg); }
+}
 
 .is-clear   { --status: var(--c-clear);   --status-tint: var(--c-clear-tint);   --status-ink: #fff; }
 .is-caution { --status: var(--c-caution); --status-tint: var(--c-caution-tint); --status-ink: var(--c-caution-ink); }
@@ -140,8 +148,15 @@ p, li { max-width: var(--w-read); }
 .forecast__name { font: 700 var(--t-sm)/1.2 var(--f-display); }
 .forecast__temp { font: 800 var(--t-xl)/1 var(--f-display); margin: var(--s-2) 0; }
 .forecast__text { font-size: var(--t-sm); color: var(--c-asphalt-muted); }
+.forecast__snow { font-size: var(--t-sm); margin-top: var(--s-1); }
 
-@media (min-width: 640px) { .forecast { grid-template-columns: repeat(4, 1fr); } }
+/* Pass facts */
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--s-1) var(--s-4); max-width: var(--w-read); margin: 0; }
+.facts dt { font-weight: 600; }
+.facts dd { margin: 0; }
+
+@media (max-width: 639px) { .forecast__period:last-child:nth-child(odd) { grid-column: span 2; } }
+@media (min-width: 640px) { .forecast { grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); } }
 
 /* Home: pass board */
 .board-intro { margin: var(--s-6) 0 var(--s-4); }
