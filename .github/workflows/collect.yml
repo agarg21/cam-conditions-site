@@ -30,6 +30,8 @@ jobs:
       - name: Fetch images and pass reports
         env:
           WSDOT_ACCESS_CODE: ${{ secrets.WSDOT_ACCESS_CODE }}
+          IDAHO511_KEY: ${{ secrets.IDAHO511_KEY }}
+          ODOT_KEY: ${{ secrets.ODOT_KEY }}
         run: python3 scripts/collect.py
       - name: Upload to Hugging Face dataset
         continue-on-error: true
