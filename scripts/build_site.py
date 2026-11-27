@@ -329,8 +329,9 @@ def shield(route):
     """Inline SVG route marker: interstate shield for I-xx, US shield for US xx, plain oval for state routes."""
     num = route.split()[-1].replace("I-", "")
     prefix = route.split()[0]
-    if prefix in STATE_ROUTE:
-        return (f'<svg class="shield" viewBox="0 0 36 36" role="img" aria-label="{STATE_ROUTE[prefix]} Route {e(num)}">'
+    if prefix in STATE_ROUTE or prefix == "SR":
+        label = f"{STATE_ROUTE[prefix]} Route" if prefix in STATE_ROUTE else "State Route"
+        return (f'<svg class="shield" viewBox="0 0 36 36" role="img" aria-label="{label} {e(num)}">'
                 '<ellipse cx="18" cy="18" rx="16" ry="13" fill="#fff" stroke="#1e2328" stroke-width="2"/>'
                 f'<text x="18" y="23" text-anchor="middle" font-family="Overpass,Arial" font-weight="800" '
                 f'font-size="{13 if len(num) < 3 else 11}" fill="#1e2328">{e(num)}</text></svg>')

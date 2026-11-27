@@ -81,6 +81,68 @@
    "between": "Cle Elum and Wenatchee"
   },
   {
+   "slug": "sherman-pass",
+   "name": "Sherman Pass (SR 20)",
+   "state": "WA",
+   "source": "wsdot-arcgis",
+   "cams": [
+    {
+     "title": "SR 20 at MP 319.5: Sherman Pass",
+     "image": "https://images.wsdot.wa.gov/rweather/ShermanPass-1.jpg"
+    },
+    {
+     "title": "SR 20 at MP 319.5: Sherman Pass, second view",
+     "image": "https://images.wsdot.wa.gov/rweather/ShermanPass-2.jpg"
+    }
+   ],
+   "lat": 48.6072,
+   "lon": -118.4787,
+   "elev_ft": 5575,
+   "route": "SR 20",
+   "wsdot_name": "Sherman Pass SR 20",
+   "between": "Republic and Kettle Falls"
+  },
+  {
+   "slug": "loup-loup-pass",
+   "name": "Loup Loup Pass (SR 20)",
+   "state": "WA",
+   "source": "wsdot-arcgis",
+   "cams": [
+    {
+     "title": "SR 20 at MP 214.5: Loup Loup Summit (looking east)",
+     "image": "https://images.wsdot.wa.gov/nc/020vc21450.jpg"
+    }
+   ],
+   "lat": 48.3904,
+   "lon": -119.8792,
+   "elev_ft": 4020,
+   "route": "SR 20",
+   "wsdot_name": "Loup Loup Pass SR 20",
+   "between": "Twisp and Okanogan"
+  },
+  {
+   "slug": "satus-pass",
+   "name": "Satus Pass (US 97)",
+   "state": "WA",
+   "source": "wsdot-arcgis",
+   "cams": [
+    {
+     "title": "US 97 at MP 27.1: Satus Pass",
+     "image": "https://images.wsdot.wa.gov/sw/097vc02711.jpg"
+    },
+    {
+     "title": "US 97 at MP 34.5: Yakima County Line",
+     "image": "https://images.wsdot.wa.gov/rweather/Medium_Us97@YakimaCountyLine.jpg"
+    }
+   ],
+   "lat": 45.9838,
+   "lon": -120.6538,
+   "elev_ft": 3107,
+   "route": "US 97",
+   "wsdot_name": "Satus Pass US 97",
+   "between": "Goldendale and Toppenish"
+  },
+  {
    "slug": "donner-pass",
    "name": "Donner Pass (I-80)",
    "state": "CA",

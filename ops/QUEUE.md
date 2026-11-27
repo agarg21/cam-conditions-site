@@ -12,8 +12,8 @@
 3. **Q4 History.** Shipped 2026-11-27: per-run official status rows in HF `status/<UTC date>.jsonl` (baa1f9a); pass pages show
    "Last 24 hours" (verified accruing 18:18Z: 108 rows loaded, section live on all pages); home board notes each pass whose report
    changed in 24 h plus an "N passes changed" line (7422dcc). Left: none; reopen only for a defect.
-4. **Q5 More passes and states by demand.** First read docs/research/state-cameras-2026-11-27.md: northern-tier states (ND, MN, IA, MT, WY, WI, SD) lead state demand with weak results, and IA/NE/SD/MT feeds are keyless; propose which new states to add, with each feed's terms, as a yes/no question in OWNER.md (D3 covers only WSDOT, Caltrans, ODOT, Idaho 511). Add WA passes from WSDOT reports that have cameras (Sherman, Loup Loup, Satus, Chinook and
-   Cayuse when open), Oregon (Sexton Summit, OR 35 near Bennett Pass), Idaho (Malad, Sweetzer, Galena if a camera appears),
+4. **Q5 More passes and states by demand.** First read docs/research/state-cameras-2026-11-27.md: northern-tier states (ND, MN, IA, MT, WY, WI, SD) lead state demand with weak results, and IA/NE/SD/MT feeds are keyless; propose which new states to add, with each feed's terms, as a yes/no question in OWNER.md (D3 covers only WSDOT, Caltrans, ODOT, Idaho 511). WA Sherman, Loup Loup, Satus shipped 2026-11-27 22:30Z (Chinook, Cayuse when they reopen; Mt. Baker Hwy, Wauconda,
+   Disautel have reports too). Left: Oregon (Sexton Summit, OR 35 near Bennett Pass), Idaho (Malad, Sweetzer, Galena if a camera appears),
    California (US 395 Conway Summit, Big Bear via CWWP2 D8, Mount Rose via NDOT if keyless). Use `discover.yml` and
    CWWP2 JSON; 2 cameras per pass; verify images fetch.
 4b. **Q10 New states (D5): Iowa, Montana, South Dakota, Nebraska.** blocked (D7 in OWNER.md). Terms read 2026-11-27
