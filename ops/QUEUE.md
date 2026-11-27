@@ -9,7 +9,7 @@
    where an official source answers it. Design tokens only.
 3. **Q4 History.** Store each run's official status per pass (compact JSONL in the HF dataset, `status/<date>.jsonl`), and
    show the last 24 h on pass pages (closures, chain changes). No per-image labels in the public repo.
-4. **Q5 More passes and states by demand.** First read docs/research/state-cameras-2026-11-27.md: northern-tier states (ND, MN, IA, MT, WY, WI, SD) lead state demand with weak results, and IA/NE/SD/MT feeds are keyless; consider state road-conditions pages there (new state = check terms; no approval needed for public feeds without terms that forbid it, else ask in OWNER.md). Add WA passes from WSDOT reports that have cameras (Sherman, Loup Loup, Satus, Chinook and
+4. **Q5 More passes and states by demand.** First read docs/research/state-cameras-2026-11-27.md: northern-tier states (ND, MN, IA, MT, WY, WI, SD) lead state demand with weak results, and IA/NE/SD/MT feeds are keyless; propose which new states to add, with each feed's terms, as a yes/no question in OWNER.md (D3 covers only WSDOT, Caltrans, ODOT, Idaho 511). Add WA passes from WSDOT reports that have cameras (Sherman, Loup Loup, Satus, Chinook and
    Cayuse when open), Oregon (Sexton Summit, OR 35 near Bennett Pass), Idaho (Malad, Sweetzer, Galena if a camera appears),
    California (US 395 Conway Summit, Big Bear via CWWP2 D8, Mount Rose via NDOT if keyless). Use `discover.yml` and
    CWWP2 JSON; 2 cameras per pass; verify images fetch.
