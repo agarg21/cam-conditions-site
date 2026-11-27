@@ -63,7 +63,11 @@ p, li { max-width: var(--w-read); }
   display: inline-flex; align-items: center; gap: var(--s-2);
   font: 800 1.125rem/1 var(--f-display); color: var(--c-sign-dark); text-decoration: none;
 }
-.wordmark svg { width: 26px; height: 20px; }
+.wordmark svg { width: 26px; height: 20px; margin-right: var(--s-2); }
+/* "ConditionsNow" set as one word with the weight change on "Now", so it never reads as "condition snow" */
+.wordmark { gap: 0; }
+.wordmark__a { font-weight: 700; color: var(--c-asphalt); }
+.wordmark__b { font-weight: 800; color: var(--c-sign); }
 .site-header nav a { font: 600 var(--t-sm)/1 var(--f-display); text-decoration: none; padding: var(--s-2); }
 
 /* Summit sign: the one bold element on a pass page */
@@ -168,3 +172,8 @@ p, li { max-width: var(--w-read); }
 .site-footer { margin-top: var(--s-7); padding: var(--s-5) 0 var(--s-6); border-top: 1px solid var(--c-line); font-size: var(--t-xs); color: var(--c-asphalt-muted); }
 
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* ODOT requires its disclaimer wherever its data appears; keep it quiet and collapsible */
+.disclaimer { margin-top: var(--s-6); font-size: var(--t-sm); color: var(--c-asphalt-muted); }
+.disclaimer summary { cursor: pointer; font-weight: 600; }
+.disclaimer p { max-width: var(--w-read); }

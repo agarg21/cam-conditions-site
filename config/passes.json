@@ -143,6 +143,272 @@
    "route": "US 50",
    "cc_route": "US-50",
    "between": "Placerville and South Lake Tahoe"
+  },
+  {
+   "slug": "santiam-pass",
+   "name": "Santiam Pass (US 20)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "US 20",
+   "odot_route": "US20",
+   "lat": 44.4246,
+   "lon": -121.8556,
+   "elev_ft": 4817,
+   "between": "Salem and Sisters",
+   "cams": [
+    {
+     "title": "US 20 at Santiam Pass, eastbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/Santiam%20Pass_pid2728.JPG"
+    },
+    {
+     "title": "US 20 at Santiam Pass, westbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/Santiam%20Pass%20WB_pid5258.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "willamette-pass",
+   "name": "Willamette Pass (OR 58)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "OR 58",
+   "odot_route": "OR58",
+   "lat": 43.599,
+   "lon": -122.0367,
+   "elev_ft": 5128,
+   "between": "Eugene and Chemult",
+   "cams": [
+    {
+     "title": "OR 58 at Willamette Pass",
+     "image": "https://www.tripcheck.com/roadcams/cams/WillamettePass_pid658.jpg"
+    },
+    {
+     "title": "OR 58 at Willamette Pass, west",
+     "image": "https://www.tripcheck.com/roadcams/cams/Willamette%20Pass_pid3351.JPG"
+    }
+   ]
+  },
+  {
+   "slug": "government-camp",
+   "name": "Government Camp (US 26, Mt Hood)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "US 26",
+   "odot_route": "US26",
+   "lat": 45.3029,
+   "lon": -121.7535,
+   "elev_ft": 3880,
+   "summit": false,
+   "between": "Portland and Madras",
+   "cams": [
+    {
+     "title": "US 26 at Government Camp",
+     "image": "https://www.tripcheck.com/roadcams/cams/GovernmentCamp_pid624.jpg"
+    },
+    {
+     "title": "US 26 at Government Camp maintenance yard",
+     "image": "https://www.tripcheck.com/roadcams/cams/US26%20at%20Govn%20Camp%20Maint_pid1899.JPG"
+    }
+   ]
+  },
+  {
+   "slug": "siskiyou-summit",
+   "name": "Siskiyou Summit (I-5)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "I-5",
+   "odot_route": "I5",
+   "lat": 42.07,
+   "lon": -122.605,
+   "elev_ft": 4310,
+   "between": "Ashland, Oregon and Yreka, California",
+   "cams": [
+    {
+     "title": "I-5 at Siskiyou Summit, south",
+     "image": "https://www.tripcheck.com/roadcams/cams/I-5%20at%20Siskiyou%20Summit%20S_pid4690.jpg"
+    },
+    {
+     "title": "I-5 at Siskiyou, milepost 6.9 southbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/I-5%20at%20Siskiyou%20MP6.87%20SB_pid4696.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "deadman-pass",
+   "name": "Deadman Pass (I-84, Cabbage Hill)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "I-84",
+   "odot_route": "I84",
+   "lat": 45.603,
+   "lon": -118.505,
+   "elev_ft": 3520,
+   "between": "Pendleton and La Grande",
+   "cams": [
+    {
+     "title": "I-84 at Cabbage Hill / Deadman Pass",
+     "image": "https://www.tripcheck.com/roadcams/cams/DeadmanP-CabbageHill_pid623.jpg"
+    },
+    {
+     "title": "I-84 at Deadman Pass, west",
+     "image": "https://www.tripcheck.com/roadcams/cams/I-84%20at%20DeadmanPassW_pid4467.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "tollgate",
+   "name": "Tollgate (OR 204)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "OR 204",
+   "odot_route": "OR204",
+   "lat": 45.781,
+   "lon": -118.09,
+   "elev_ft": 4930,
+   "summit": false,
+   "between": "Weston and Elgin",
+   "cams": [
+    {
+     "title": "OR 204 at Tollgate",
+     "image": "https://www.tripcheck.com/roadcams/cams/ORE204%20at%20Tollgate_pid4411.jpg"
+    },
+    {
+     "title": "OR 204 at Spout Springs, eastbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/ORE204%20at%20Spout%20Springs_pid4503.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "lookout-pass",
+   "name": "Lookout Pass (I-90)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "I-90",
+   "tz": "America/Los_Angeles",
+   "lat": 47.46116,
+   "lon": -115.69425,
+   "elev_ft": 4725,
+   "between": "Wallace, Idaho and Superior, Montana",
+   "cams": [
+    {
+     "title": "I-90 at Lookout Pass",
+     "image": "https://511.idaho.gov/map/Cctv/518"
+    },
+    {
+     "title": "I-90 at Lookout Pass, second view",
+     "image": "https://511.idaho.gov/map/Cctv/519"
+    }
+   ]
+  },
+  {
+   "slug": "fourth-of-july-pass",
+   "name": "Fourth of July Pass (I-90)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "I-90",
+   "tz": "America/Los_Angeles",
+   "lat": 47.619315,
+   "lon": -116.520554,
+   "elev_ft": 3173,
+   "between": "Coeur d'Alene and Kellogg",
+   "cams": [
+    {
+     "title": "I-90 at Fourth of July summit",
+     "image": "https://511.idaho.gov/map/Cctv/532"
+    },
+    {
+     "title": "I-90 at Fourth of July summit, second view",
+     "image": "https://511.idaho.gov/map/Cctv/533"
+    }
+   ]
+  },
+  {
+   "slug": "lolo-pass",
+   "name": "Lolo Pass (US 12)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "US 12",
+   "tz": "America/Los_Angeles",
+   "lat": 46.63496,
+   "lon": -114.57963,
+   "elev_ft": 5230,
+   "between": "Kooskia, Idaho and Missoula, Montana",
+   "cams": [
+    {
+     "title": "US 12 at Lolo Pass",
+     "image": "https://511.idaho.gov/map/Cctv/477"
+    },
+    {
+     "title": "US 12 at Lolo Pass, second view",
+     "image": "https://511.idaho.gov/map/Cctv/478"
+    }
+   ]
+  },
+  {
+   "slug": "lost-trail-pass",
+   "name": "Lost Trail Pass (US 93)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "US 93",
+   "tz": "America/Denver",
+   "lat": 45.6888,
+   "lon": -113.9476,
+   "elev_ft": 7008,
+   "between": "Salmon, Idaho and Darby, Montana",
+   "cams": [
+    {
+     "title": "US 93 at Lost Trail Pass",
+     "image": "https://511.idaho.gov/map/Cctv/429"
+    },
+    {
+     "title": "US 93 at Lost Trail Pass, second view",
+     "image": "https://511.idaho.gov/map/Cctv/430"
+    }
+   ]
+  },
+  {
+   "slug": "monida-pass",
+   "name": "Monida Pass (I-15)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "I-15",
+   "tz": "America/Denver",
+   "lat": 44.5325,
+   "lon": -112.2699698,
+   "elev_ft": 6823,
+   "between": "Idaho Falls and Dillon, Montana",
+   "cams": [
+    {
+     "title": "I-15 at Monida",
+     "image": "https://511.idaho.gov/map/Cctv/397"
+    },
+    {
+     "title": "I-15 at Monida, second view",
+     "image": "https://511.idaho.gov/map/Cctv/398"
+    }
+   ]
+  },
+  {
+   "slug": "teton-pass",
+   "name": "Teton Pass (WY 22)",
+   "state": "WY",
+   "source": "idaho-511",
+   "route": "WY 22",
+   "tz": "America/Denver",
+   "lat": 43.49734,
+   "lon": -110.95492,
+   "elev_ft": 8429,
+   "between": "Victor, Idaho and Jackson, Wyoming",
+   "cams": [
+    {
+     "title": "WY 22 at Teton Pass",
+     "image": "https://511.idaho.gov/map/Cctv/941"
+    },
+    {
+     "title": "WY 22 at Teton Pass, second view",
+     "image": "https://511.idaho.gov/map/Cctv/942"
+    }
+   ]
   }
  ],
  "pending": [
@@ -202,39 +468,9 @@
    "source": "udot-api (key)"
   },
   {
-   "slug": "lookout-pass",
-   "state": "ID/MT",
-   "source": "mdt-rwis (public) + idaho-511 (key)"
-  },
-  {
-   "slug": "lolo-pass",
-   "state": "MT",
-   "source": "mdt-rwis (public)"
-  },
-  {
    "slug": "bozeman-pass",
    "state": "MT",
    "source": "mdt-rwis (public)"
-  },
-  {
-   "slug": "santiam-pass",
-   "state": "OR",
-   "source": "tripcheck-api (key)"
-  },
-  {
-   "slug": "mount-hood",
-   "state": "OR",
-   "source": "tripcheck-api (key)"
-  },
-  {
-   "slug": "siskiyou-pass",
-   "state": "OR",
-   "source": "tripcheck-api (key)"
-  },
-  {
-   "slug": "teton-pass",
-   "state": "WY",
-   "source": "wyoroad.info pages (no API)"
   }
  ]
 }

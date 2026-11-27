@@ -5,6 +5,9 @@ Writes to out/<UTC date>/<UTC time>/:
   <pass-slug>/<cam-index>.jpg   camera images (skipped if the camera is down)
   manifest.json                 what was fetched, sizes, hashes, HTTP status
   wsdot_pass_reports.json       WSDOT's official road/weather/restriction text
+  idaho_winterroads.json        Idaho 511 road-condition segments (needs IDAHO511_KEY)
+  odot_rw_reports.json          ODOT TripCheck road & weather reports (needs ODOT_KEY)
+  odot_rw_metadata.json         ODOT code lists for those reports
 
 Standard library only, so it runs on a bare GitHub Actions runner.
 """
@@ -38,8 +41,24 @@ def wsdot_reports():
     return "arcgis", [f["attributes"] for f in json.loads(body).get("features", [])]
 
 
-def fetch(url, timeout=20):
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
+IDAHO_ROADS = "https://511.idaho.gov/api/v3/get/winterroads?key={key}&format=json"
+ODOT_API = "https://api.odot.state.or.us/tripcheck/{path}"
+
+
+def keyed_feeds():
+    """Official condition feeds that need a developer key. Keys come from env and are never saved."""
+    feeds = {}
+    if os.environ.get("IDAHO511_KEY"):
+        feeds["idaho_winterroads.json"] = (IDAHO_ROADS.format(key=os.environ["IDAHO511_KEY"]), {})
+    if os.environ.get("ODOT_KEY"):
+        hdr = {"Ocp-Apim-Subscription-Key": os.environ["ODOT_KEY"]}
+        feeds["odot_rw_reports.json"] = (ODOT_API.format(path="RW/Reports"), hdr)
+        feeds["odot_rw_metadata.json"] = (ODOT_API.format(path="RW/Metadata"), hdr)
+    return feeds
+
+
+def fetch(url, timeout=20, headers=None):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, **(headers or {})})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.status, r.read(), r.headers.get("Content-Type", "")
 
@@ -77,6 +96,17 @@ def main():
             json.dump(rows, f, indent=1)
     except Exception as e:
         manifest["wsdot_reports_error"] = str(e)[:200]
+
+    manifest["feeds"] = {}
+    for fname, (url, hdr) in keyed_feeds().items():
+        try:
+            status, body, _ = fetch(url, timeout=40, headers=hdr)
+            json.loads(body)  # only keep valid JSON
+            with open(os.path.join(out, fname), "wb") as f:
+                f.write(body)
+            manifest["feeds"][fname] = {"status": status, "bytes": len(body)}
+        except Exception as e:  # keep going; the page falls back to "no current report"
+            manifest["feeds"][fname] = {"error": type(e).__name__}
 
     with open(os.path.join(out, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=1)

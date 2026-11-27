@@ -51,7 +51,7 @@ Type
 Space `--s-1`…`--s-7`: 4, 8, 12, 16, 24, 32, 48 px. Radius: `--r-photo` 4px (camera frames, forecast), `--r-sign` 12px (summit sign only). Widths: `--w-page` 64rem, `--w-read` 60ch; sign and verdict cap at 40rem.
 
 ## Components
-1. **Site header**: white bar, one row: mountain wordmark "Conditions Now" + "All passes".
+1. **Site header**: white bar, one row: mountain mark + wordmark "Conditions**Now**" + "All passes". The wordmark is one word: "Conditions" in asphalt at 700, "Now" in sign green at 800, so it reads as "Conditions Now" and never as "condition snow". Screen readers get "Conditions Now".
 2. **Summit sign** (`.summit-sign`): green panel with an inset white border, uppercase pass name, "Summit" and "Elev N ft". One per pass page, it is the h1.
 3. **Route line** (`.route-line`): route shield SVG + "US 2 between Everett and Leavenworth, Washington".
 4. **Route shield** (`shield()` in build_site.py): interstate (red cap, blue body, white number) for I-xx; US shield (white, black outline) for US xx. State routes get a plain circle when added.
