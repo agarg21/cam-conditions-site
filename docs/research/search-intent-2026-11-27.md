@@ -47,3 +47,14 @@ Earlier batch (2026-11-26) for comparison: "<pass> road conditions" is much smal
 4. Fixed facts block: elevation, highway, between which towns, typical closures.
 5. Snow report / ski questions: link out to the resort; don't compete.
 6. Summer (Jun–Sep): air quality and fire lines on the same pages (AirNow), so traffic doesn't drop to zero.
+
+## Market size we plan around (owner, 2026-11-27)
+Weather, elevation and snow-report searches are **out** of the addressable count (Google's widget or knowledge panel answers
+weather and elevation; snow report is ski-resort intent). For the 12 passes above, the core is about **140K searches/month
+on average**: webcam/cameras ~98K, "<pass> road conditions" ~21K (2026-11-26 batch), open/closed/closure ~14K,
+chains + conditions today + accidents + traffic ~5K. The bare pass name (e.g. snoqualmie pass 90K) is mixed with ski intent;
+count at most a third, and only as upside.
+Realistic share for a new site once ranking: 5–20% of those clicks (the DOT itself ranks first for many camera queries), so
+a few thousand to ~25K visits/month at the winter peak from these passes. Growth comes from breadth: more passes and
+corridors, and state "road conditions" / "traffic cameras" searches where the DOT does not own the results.
+When choosing passes to add (QUEUE Q5), rank by core demand only (cameras + road conditions + open/closed), never by weather.
