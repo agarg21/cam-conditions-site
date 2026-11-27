@@ -61,7 +61,7 @@ Space `--s-1`…`--s-7`: 4, 8, 12, 16, 24, 32, 48 px. Radius: `--r-photo` 4px (c
 8. **Forecast** (`.forecast`): up to 6 NWS periods (now, the next two, tomorrow, Saturday and Sunday daytime) as cells: name, big temperature, short text, and NWS's "New snow accumulation…" sentence when present. 2 columns on phones (an odd last cell spans both), one row of auto-fit cells from 640px.
 8a. **Last 24 hours** (`.history`, 2026-11-27): after the forecast. A lead line ("N changes in the official report"), a 14px strip of status colours across our checks (blank = no check for 50+ min; decorative, `aria-hidden`), then the changes newest first: time span, status mark with the label, and the chains and snow answers. Built only from the stored official answers (history.py); hidden until there are two checks.
 8b. **Facts** (`dl.facts`, "About {pass}"): elevation, highway, between, official reports link.
-9. **Pass board** (home): grouped by state; each row = shield, pass name, status mark + official wording, camera thumbnail.
+9. **Pass board** (home): grouped by state; each row = shield, pass name, status mark + official wording, camera thumbnail. A row whose official report changed in the last 24 hours adds "Changed {time}, was “{old label}”" (or "Chains changed…" when only an answer changed; `.pass-row__changed`), from the same history rows as the pass page's "Last 24 hours"; the intro adds "N passes changed their official report in the last 24 hours" (`.board-intro__changed`).
 10. **Checklist** ("Before you go"): plain bullets, official link first.
 11. **Footer**: DOT credit, "always check official closures", contact.
 

@@ -515,7 +515,7 @@ def history_html(rows, tz, dot):
         return ""
     spans = []  # [key, first row, last row]
     for r in rows:
-        key = (r["lv"], r["lb"], r.get("op"), r.get("ch"), r.get("sn"))
+        key = hist_key(r)
         if spans and spans[-1][0] == key and (r["_t"] - spans[-1][2]["_t"]).total_seconds() <= GAP:
             spans[-1][2] = r
         else:
@@ -555,6 +555,39 @@ def history_html(rows, tz, dot):
               f'Blank stretches are times we have no check.{start_note}</p></section>')
 
 
+def hist_key(r):
+    return (r["lv"], r["lb"], r.get("op"), r.get("ch"), r.get("sn"))
+
+
+def last_change(rows):
+    """The newest change in the official report among this pass's last 24 hours of rows (oldest first).
+
+    Returns (time, what changed, what it was) or None when nothing changed. Same key as history_html,
+    so the board and the pass page always agree.
+    """
+    for i in range(len(rows) - 1, 0, -1):
+        a, b = rows[i - 1], rows[i]
+        if hist_key(a) != hist_key(b):
+            if a["lb"] != b["lb"]:
+                return b["_t"], None, a["lb"]
+            for q, k in (("Open", "op"), ("Chains", "ch"), ("Snow on the road", "sn")):
+                if a.get(k) != b.get(k):
+                    return b["_t"], q, a.get(k) or "Not reported"
+            return b["_t"], None, a["lb"]
+    return None
+
+
+def changed_tag(ch, now, tz):
+    """Board-row note for a change in the official report in the last 24 hours; empty when none."""
+    if not ch:
+        return ""
+    t, what, was = ch
+    lt = t.astimezone(tz)
+    when = (lt.strftime("%a ") if lt.date() != now.astimezone(tz).date() else "") + lt.strftime("%-I:%M %p")
+    head = f"{what} changed" if what else "Changed"
+    return f'<span class="pass-row__changed">{head} {when}, was \u201c{e(was)}\u201d</span>'
+
+
 LAZY = 'loading="lazy" '
 
 
@@ -572,7 +605,7 @@ def build():
     os.makedirs(SITE, exist_ok=True)
     shutil.copy(os.path.join(ROOT, "site", "styles.css"), os.path.join(SITE, "styles.css"))
     urls, summary = ["/"], []
-    past, new_rows = {}, []
+    past, new_rows, changes = {}, [], {}
     for r in hist.load(fetched):
         past.setdefault(r["p"], []).append(r)
     stamp = int(fetched.timestamp())
@@ -674,6 +707,7 @@ def build():
             f.write(head(title, desc, path) + body + FOOT)
         urls.append(path)
         summary.append((p, st, level))
+        changes[p["slug"]] = changed_tag(last_change(hist_rows), fetched, tz)
 
     if run_dir:
         print(f"history: {hist.append(fetched, new_rows)} rows added, {sum(map(len, past.values()))} loaded")
@@ -689,6 +723,9 @@ def build():
                    "clear": "clear or no chain controls", "unknown": "without a report"}
     tally = "".join(f'<li class="{LEVELS[k][0]}"><span class="status-mark">{n} {tally_words[k]}</span></li>'
                     for k, n in counts.items() if n)
+    n_changed = sum(1 for v in changes.values() if v)
+    changed_line = (f'<p class="board-intro__changed">{n_changed} pass{"es" if n_changed > 1 else ""} changed their official '
+                    f'report in the last 24 hours.</p>' if n_changed else "")
     groups = ""
     for state in sorted(dict.fromkeys(p["state"] for p, *_ in summary), key=STATE_ORDER.index):
         rows = "".join(
@@ -696,14 +733,14 @@ def build():
             f'<span class="pass-row__name">{e(p["name"].split(" (")[0])}</span>'
             f'<span class="pass-row__status {LEVELS[lv][0]}"><span class="status-mark">{(st or {}).get("label") or LEVELS[lv][1]}</span>'
             f'<span class="pass-row__road">{"" if (st or {}).get("label") else e((st or {}).get("road") or "")}</span>'
-            f'{stale_tag(st)}</span>'
+            f'{stale_tag(st)}{changes.get(p["slug"], "")}</span>'
             f'{thumb(p["slug"])}</a></li>'
             for p, st, lv in summary if p["state"] == state)
         groups += f"<h2>{STATE_NAMES[state]}</h2><ul>{rows}</ul>"
     home = f"""
 <div class="board-intro"><h1>Mountain passes right now</h1>
 <p>Live DOT cameras and official road reports, checked every 15 minutes. Last check {checked}.</p>
-<ul class="tally">{tally}</ul></div>
+<ul class="tally">{tally}</ul>{changed_line}</div>
 <section class="board" id="passes">{groups}</section>
 """
     with open(os.path.join(SITE, "index.html"), "w") as f:
