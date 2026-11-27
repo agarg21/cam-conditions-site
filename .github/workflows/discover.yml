@@ -1,0 +1,22 @@
+name: Discover keyed feeds (Idaho, Oregon)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/discover.py', '.github/workflows/discover.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: List passes, nearby cameras and condition feeds
+        env:
+          IDAHO511_KEY: ${{ secrets.IDAHO511_KEY }}
+          ODOT_KEY: ${{ secrets.ODOT_KEY }}
+        run: python3 scripts/discover.py
