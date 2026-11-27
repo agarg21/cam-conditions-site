@@ -168,6 +168,13 @@ def caltrans_status(route, cc_rows):
             "label": None if active else "No chain controls now"}
 
 
+def txt(v):
+    """Feed fields are sometimes a string, sometimes a list of strings."""
+    if isinstance(v, list):
+        return ", ".join(str(x).strip() for x in v if x)
+    return str(v or "").strip()
+
+
 def idaho_status(run_dir, p):
     """Nearest Idaho 511 road-condition segment on the pass's highway, within 3 km of the summit."""
     rows = load_run_json(run_dir, "idaho_winterroads.json")
@@ -186,11 +193,12 @@ def idaho_status(run_dir, p):
     if not best or best[0] > 3:
         return None
     r = best[1]
-    road = (r.get("Overall Status") or "").strip()
+    road = txt(r.get("Overall Status"))
     if road.lower() in ("", "no report"):
         return None
-    restr = [("Special conditions", r["Special Conditions"])] if r.get("Special Conditions") else []
-    return {"road": road, "weather": (r.get("Weather Conditions") or "").strip(), "temp": "",
+    special = txt(r.get("Special Conditions"))
+    restr = [("Special conditions", special)] if special else []
+    return {"road": road, "weather": txt(r.get("Weather Conditions")), "temp": "",
             "restrictions": restr, "where": r.get("LocationDescription", ""),
             "updated": datetime.fromtimestamp(r["LastUpdated"], timezone.utc) if r.get("LastUpdated") else None}
 
@@ -228,8 +236,8 @@ def odot_status(run_dir, p):
     cv = r.get("commercial-vehicle-restriction", {}).get("restriction-type") or ""
     if cv and not re.search(r"no restriction", cv, re.I):
         restr.append(("Trucks", cv))
-    if r.get("comments"):
-        restr.append(("Notes", r["comments"].strip()))
+    if txt(r.get("comments")):
+        restr.append(("Notes", txt(r.get("comments"))))
     if isinstance(r.get("adjacent-snow-depth"), (int, float)) and r["adjacent-snow-depth"] > 0:
         restr.append(("Snow beside the road", f'{r["adjacent-snow-depth"]:g} in'))
     try:
@@ -400,8 +408,10 @@ def build():
         tz = ZoneInfo(p.get("tz", "America/Los_Angeles"))
         src = p.get("source", "")
         st = None
-        if run_dir:
-            if p["state"] == "WA":
+        try:
+            if not run_dir:
+                pass
+            elif p["state"] == "WA":
                 st = wsdot_status(run_dir, p["wsdot_name"])
             elif p["state"] == "CA":
                 st = caltrans_status(p["cc_route"], cc_rows)
@@ -409,6 +419,8 @@ def build():
                 st = odot_status(run_dir, p)
             elif src == "idaho-511" and p["state"] == "ID":
                 st = idaho_status(run_dir, p)
+        except Exception as ex:  # a feed changing shape must never stop the deploy
+            print(f"status failed for {p['slug']}: {type(ex).__name__}: {ex}")
         level = classify(st)
         cams = [c for c in manifest.get("cams", []) if c["pass"] == p["slug"] and c.get("saved")]
         for c in cams:
