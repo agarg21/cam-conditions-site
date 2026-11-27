@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """One-off discovery for keyed feeds (Idaho 511, ODOT TripCheck).
 
-Prints, to the job log only, what each feed returns near the passes we plan to
+Writes to docs/discovery/feeds.txt (committed by the workflow), what each feed returns near the passes we plan to
 add: pass records, nearby cameras with their image URLs, and the shape of the
 road-condition records. Keys come from env vars and are never printed (GitHub
 also masks secrets in logs). Run by .github/workflows/discover.yml.
@@ -11,6 +11,8 @@ import math
 import os
 import urllib.error
 import urllib.request
+import builtins
+import sys
 
 UA = "ConditionsNow/0.1 (+https://conditionsnow.com; hello@conditionsnow.com)"
 
@@ -126,6 +128,13 @@ def oregon():
                 print("  ", json.dumps(it)[:1200])
         else:
             print("  ", body[:200])
+
+
+OUT = open(sys.argv[1], "w") if len(sys.argv) > 1 else sys.stdout
+
+
+def print(*a, **k):  # noqa: A001 - route all output to the discovery file
+    builtins.print(*a, **k, file=OUT)
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ on:
     paths: ['scripts/discover.py', '.github/workflows/discover.yml']
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   discover:
@@ -19,4 +19,16 @@ jobs:
         env:
           IDAHO511_KEY: ${{ secrets.IDAHO511_KEY }}
           ODOT_KEY: ${{ secrets.ODOT_KEY }}
-        run: python3 scripts/discover.py
+        run: |
+          mkdir -p docs/discovery
+          python3 scripts/discover.py docs/discovery/feeds.txt
+          # safety: never commit a key
+          if grep -qF "$IDAHO511_KEY" docs/discovery/feeds.txt || grep -qF "$ODOT_KEY" docs/discovery/feeds.txt; then
+            echo "key found in output; not committing"; exit 1; fi
+      - name: Commit the listing
+        run: |
+          git config user.name "conditionsnow-bot"
+          git config user.email "hello@conditionsnow.com"
+          git add docs/discovery/feeds.txt
+          git commit -m "Discovery listing for keyed feeds" || exit 0
+          git push
