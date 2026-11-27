@@ -1,0 +1,46 @@
+name: Labeling bake-off (Haiku vs Sonnet vs Opus)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "count = list collected images; run = label a sample with all three models"
+        default: count
+        type: choice
+        options: [count, run]
+      n:
+        description: "Images to sample in run mode"
+        default: "300"
+  push:
+    branches: [main]
+    paths: ['ops/bakeoff-request.json']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bakeoff
+  cancel-in-progress: false
+
+jobs:
+  bakeoff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet huggingface_hub pillow
+      - name: Bake-off
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          MODE="${{ github.event.inputs.mode }}"; N="${{ github.event.inputs.n }}"
+          if [ -z "$MODE" ]; then MODE=$(python3 -c "import json;print(json.load(open('ops/bakeoff-request.json'))['mode'])");
+            N=$(python3 -c "import json;print(json.load(open('ops/bakeoff-request.json')).get('n',300))"); fi
+          python3 scripts/bakeoff.py "$MODE" "$N"
+      - name: Commit the summary (aggregates only)
+        run: |
+          git config user.name "conditionsnow-bot"; git config user.email "hello@conditionsnow.com"
+          git add docs/bakeoff/
+          git commit -m "Bake-off summary" || exit 0
+          git pull --rebase -q && git push
