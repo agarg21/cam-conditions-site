@@ -482,7 +482,7 @@ def build():
                 f'width="112" height="84" loading="lazy" decoding="async">') if c else ""
 
     counts = {k: sum(1 for *_, lv in summary if lv == k) for k in LEVELS}
-    tally_words = {"closed": "closed", "snowice": "with snow or ice", "caution": "wet",
+    tally_words = {"closed": "closed", "snowice": "with snow or ice", "caution": "wet or chains advised",
                    "clear": "clear or no chain controls", "unknown": "without a report"}
     tally = "".join(f'<li class="{LEVELS[k][0]}"><span class="status-mark">{n} {tally_words[k]}</span></li>'
                     for k, n in counts.items() if n)
