@@ -4,9 +4,11 @@
    `run` n=300 (D2 budget). Read `docs/bakeoff/<date>-run.md`; write `docs/bakeoff/decision.md`: which model labels
    training data (agreement with Opus per field, day vs night, cost per 1,000), which fields are reliable, which to drop or
    reword (prompt v2). Gate: daylight images (first full US day 2026-11-27 15:00–01:00 UTC).
-2. **Q3 Pass page answers.** From docs/research/search-intent-2026-11-27.md (read the correction: Google's weather widget answers most "<pass> weather" searches). Titles "<Pass> road conditions, cameras and weather"; lead with what Google doesn't show; keep a compact forecast (tonight, tomorrow, weekend); add plain answers at the top of each pass page: "Open?", "Chains?", "Snow on the
-   road?", plus a tomorrow/weekend outlook from NWS periods, and a facts block (elevation, between, route). FAQ content only
-   where an official source answers it. Design tokens only.
+2. **Q3 Pass page answers.** Shipped 2026-11-27 (a1a832a): answers block (Open? / Chains? / Snow on the road?) from official
+   wording only, tonight/tomorrow/weekend NWS periods with snow totals, facts block, new titles. Live on all 18 pages
+   12:30Z (OR/ID verified). Left: (a) stale reports: Lookout Pass showed an Idaho 511 report from 6:11 AM Nov 26 (~30 h)
+   as current; flag reports older than ~12 h ("old report") on the verdict and board; (b) FAQ only where an official source
+   answers; (c) "typical closures" fact only with a source per pass.
 3. **Q4 History.** Store each run's official status per pass (compact JSONL in the HF dataset, `status/<date>.jsonl`), and
    show the last 24 h on pass pages (closures, chain changes). No per-image labels in the public repo.
 4. **Q5 More passes and states by demand.** First read docs/research/state-cameras-2026-11-27.md: northern-tier states (ND, MN, IA, MT, WY, WI, SD) lead state demand with weak results, and IA/NE/SD/MT feeds are keyless; propose which new states to add, with each feed's terms, as a yes/no question in OWNER.md (D3 covers only WSDOT, Caltrans, ODOT, Idaho 511). Add WA passes from WSDOT reports that have cameras (Sherman, Loup Loup, Satus, Chinook and
