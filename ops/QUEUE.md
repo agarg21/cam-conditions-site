@@ -9,10 +9,9 @@
    wording only, tonight/tomorrow/weekend NWS periods with snow totals, facts block, new titles. Live on all 18 pages
    12:30Z (OR/ID verified). (a) stale reports shipped 2026-11-27 14:35Z: reports ≥12 h old flagged on verdict and board.
    Left: (b) FAQ only where an official source answers; (c) "typical closures" fact only with a source per pass.
-3. **Q4 History.** Shipped 2026-11-27 (baa1f9a): each collector run stores one row per pass (official level, label, open/chains/
-   snow answers, wording, report time) in HF `status/<UTC date>.jsonl` (history.py pull/push; push only after a clean pull);
-   pass pages show "Last 24 hours" (colour strip + changes, newest first) once a pass has 2 checks. Left: verify rows accrue
-   (HF file grows, pages show the section) next run; then a "changed in the last 24 h" note on the home board.
+3. **Q4 History.** Shipped 2026-11-27: per-run official status rows in HF `status/<UTC date>.jsonl` (baa1f9a); pass pages show
+   "Last 24 hours" (verified accruing 18:18Z: 108 rows loaded, section live on all pages); home board notes each pass whose report
+   changed in 24 h plus an "N passes changed" line (7422dcc). Left: none; reopen only for a defect.
 4. **Q5 More passes and states by demand.** First read docs/research/state-cameras-2026-11-27.md: northern-tier states (ND, MN, IA, MT, WY, WI, SD) lead state demand with weak results, and IA/NE/SD/MT feeds are keyless; propose which new states to add, with each feed's terms, as a yes/no question in OWNER.md (D3 covers only WSDOT, Caltrans, ODOT, Idaho 511). Add WA passes from WSDOT reports that have cameras (Sherman, Loup Loup, Satus, Chinook and
    Cayuse when open), Oregon (Sexton Summit, OR 35 near Bennett Pass), Idaho (Malad, Sweetzer, Galena if a camera appears),
    California (US 395 Conway Summit, Big Bear via CWWP2 D8, Mount Rose via NDOT if keyless). Use `discover.yml` and

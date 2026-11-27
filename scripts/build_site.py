@@ -724,7 +724,7 @@ def build():
     tally = "".join(f'<li class="{LEVELS[k][0]}"><span class="status-mark">{n} {tally_words[k]}</span></li>'
                     for k, n in counts.items() if n)
     n_changed = sum(1 for v in changes.values() if v)
-    changed_line = (f'<p class="board-intro__changed">{n_changed} pass{"es" if n_changed > 1 else ""} changed their official '
+    changed_line = (f'<p class="board-intro__changed">{n_changed} pass{"es" if n_changed > 1 else ""} changed {"their" if n_changed > 1 else "its"} official '
                     f'report in the last 24 hours.</p>' if n_changed else "")
     groups = ""
     for state in sorted(dict.fromkeys(p["state"] for p, *_ in summary), key=STATE_ORDER.index):
