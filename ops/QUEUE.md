@@ -16,11 +16,12 @@
    Cayuse when open), Oregon (Sexton Summit, OR 35 near Bennett Pass), Idaho (Malad, Sweetzer, Galena if a camera appears),
    California (US 395 Conway Summit, Big Bear via CWWP2 D8, Mount Rose via NDOT if keyless). Use `discover.yml` and
    CWWP2 JSON; 2 cameras per pass; verify images fetch.
-4b. **Q10 New states (D5): Iowa, Montana, South Dakota, Nebraska.** Terms first (record them in config/SOURCES.md). Feeds:
-   IA/NE CARS `/api/graphql` (listCameraViewsQuery; road conditions layer), SD/MT Iteris `*.cdn.iteris-atis.com/geojson/icons/metadata/icons.<layer>.geojson`
-   (cameras + road conditions/events layers). One state per run: a `/states/<state>/` page (statewide condition summary from the
-   official layer, key corridors with 2–4 cameras each, credits) linked from the home page; Montana also gets Bozeman, Homestake and
-   MacDonald pass pages. Search targets: "<state> road conditions" (IA 40.5K, MT 27.1K, SD 6.6K, NE ~6K/mo) and "<state> traffic cameras".
+4b. **Q10 New states (D5): Iowa, Montana, South Dakota, Nebraska.** blocked (D7 in OWNER.md). Terms read 2026-11-27
+   (docs/research/state-terms-2026-11-27.md, config/SOURCES.md): IA needs written consent; NE cameras need NDOT approval; SD has no
+   terms; MT grants copying for "personal or informational use", unmodified, commercial use not addressed. When D7 answers: one state
+   per run, `/states/<state>/` page (official condition layer summary, key corridors with 2–4 cameras, credits) linked from home;
+   MT also Bozeman, Homestake, MacDonald pass pages. Feeds: IA/NE CARS `/api/graphql`; SD/MT Iteris
+   `*.cdn.iteris-atis.com/geojson/icons/metadata/icons.<layer>.geojson`. Targets: IA 40.5K, MT 27.1K, SD 6.6K, NE ~6K/mo.
 5. **Q6 Student model plan.** After Q1, write the training plan in cam-conditions-engine (CLIP/SigLIP embeddings + heads vs
    small CNN; unseen-camera eval; 81.5% NYSDOT bar, target ≥90% daylight) and a labeling job for ~5,000 images.
 6. **Q7 Montana.** Folded into Q10.

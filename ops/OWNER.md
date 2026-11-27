@@ -18,4 +18,7 @@
 - Any email or outreach (CDOT reply handling, B2B pitches), new sign-ups, Search Console changes, paid spend beyond D2.
 
 ## Open questions
-- (none)
+- D7 (2026-11-27) New-state terms (docs/research/state-terms-2026-11-27.md). (a) Montana: MDT terms allow copying for
+  "personal or informational use", unmodified; ads/affiliate not addressed. Build the Montana page with unmodified, credited
+  MDT images? Recommend **yes**. (b) Iowa (written consent), Nebraska (NDOT approval for cameras), South Dakota (no terms):
+  will you send the drafted permission request (in that doc) to each DOT? Recommend **yes**; until a reply, those stay off.
