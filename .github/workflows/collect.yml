@@ -12,6 +12,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: write
 
 concurrency:
   group: collect
@@ -44,3 +45,19 @@ jobs:
           path: _site
       - id: deploy
         uses: actions/deploy-pages@v4
+
+  # GitHub's cron is unreliable on this repo (1 run in 8 h), so each run
+  # schedules the next one ~15 min later. The cron above restarts the chain
+  # if it ever breaks; the concurrency group keeps it to one run at a time.
+  next:
+    needs: collect
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait, then start the next run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 780
+          gh workflow run collect.yml --repo "$GITHUB_REPOSITORY" --ref main
