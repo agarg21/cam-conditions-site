@@ -422,6 +422,9 @@ def build():
         except Exception as ex:  # a feed changing shape must never stop the deploy
             print(f"status failed for {p['slug']}: {type(ex).__name__}: {ex}")
         level = classify(st)
+        if st and level == "caution" and not st.get("label") and any(
+                re.search(r"carry chains|traction tires", t, re.I) for _, t in st.get("restrictions", [])):
+            st["label"] = "Carry chains or traction tires"
         cams = [c for c in manifest.get("cams", []) if c["pass"] == p["slug"] and c.get("saved")]
         for c in cams:
             c["site_url"] = mirror(c)
