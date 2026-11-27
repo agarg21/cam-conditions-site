@@ -40,8 +40,20 @@ jobs:
         run: |
           pip install --quiet huggingface_hub
           python3 scripts/upload_hf.py
+      - name: Load the last day of official status history
+        continue-on-error: true
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install --quiet huggingface_hub
+          python3 scripts/history.py pull
       - name: Build site
         run: python3 scripts/build_site.py
+      - name: Save official status history
+        continue-on-error: true
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python3 scripts/history.py push
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

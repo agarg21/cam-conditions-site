@@ -17,6 +17,8 @@ import urllib.request
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
+import history as hist
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = os.path.join(ROOT, "_site")
 BASE = "https://conditionsnow.com"
@@ -500,6 +502,59 @@ def snow_note(x):
 
 # ---------------------------------------------------------------- build
 
+GAP = 50 * 60  # seconds between checks before we call it a gap in our history
+
+
+def history_html(rows, tz, dot):
+    """Last 24 hours of the official report for one pass: a colour strip plus the changes, newest first.
+
+    rows: this pass's history rows, oldest first, ending with the current run. Each span is a run of checks
+    where the status, label and the three answers stayed the same. Gaps (no check for 50+ min) are left blank.
+    """
+    if len(rows) < 2:
+        return ""
+    spans = []  # [key, first row, last row]
+    for r in rows:
+        key = (r["lv"], r["lb"], r.get("op"), r.get("ch"), r.get("sn"))
+        if spans and spans[-1][0] == key and (r["_t"] - spans[-1][2]["_t"]).total_seconds() <= GAP:
+            spans[-1][2] = r
+        else:
+            spans.append([key, r, r])
+    t0, t1 = rows[0]["_t"], rows[-1]["_t"]
+    total = max((t1 - t0).total_seconds(), 1)
+    segs, prev_end = [], t0
+    for i, (key, a, b) in enumerate(spans):
+        end = spans[i + 1][1]["_t"] if i + 1 < len(spans) and (spans[i + 1][1]["_t"] - b["_t"]).total_seconds() <= GAP else b["_t"]
+        if (a["_t"] - prev_end).total_seconds() > 0:
+            segs.append(f'<span class="history__gap" style="flex-grow:{(a["_t"] - prev_end).total_seconds() / total:.4f}"></span>')
+        segs.append(f'<span class="{LEVELS[key[0]][0]}" style="flex-grow:{max((end - a["_t"]).total_seconds(), 60) / total:.4f}"></span>')
+        prev_end = end
+    hm = lambda t: t.astimezone(tz).strftime("%-I:%M %p")
+    day = lambda t: t.astimezone(tz).strftime("%a ")
+    items = []
+    for i, (key, a, b) in enumerate(reversed(spans)):
+        lv, lb, op, ch, sn = key
+        start = (day(a["_t"]) if a["_t"].astimezone(tz).date() != t1.astimezone(tz).date() else "") + hm(a["_t"])
+        when = f"Since {start}" if i == 0 else f"{start} to {hm(b['_t'])}"
+        bits = [f"{q}: {x}" for q, x in (("Chains", ch), ("Snow on the road", sn))
+                if x and x not in ("Not reported", "Not in this feed", "Unknown")]  # the label already says closed
+        items.append(f'<li><span class="history__when">{when}</span>'
+                     f'<span class="status-mark {LEVELS[lv][0]}">{e(lb)}</span>'
+                     f'<span class="history__answers">{e(" · ".join(bits))}</span></li>')
+    shown, more = items[:8], len(items) - 8
+    start_note = (f" Our history for this pass starts {day(t0)}{hm(t0)}." if (t1 - t0).total_seconds() < 23 * 3600 else "")
+    changes = sum(spans[i][0] != spans[i - 1][0] for i in range(1, len(spans)))
+    lead = "No change in the official report." if changes == 0 else f"{changes} change{'s' if changes > 1 else ''} in the official report."
+    return (f'<h2>Last 24 hours</h2><section class="history" aria-label="Official report, last 24 hours">'
+            f'<p class="history__lead">{lead}</p>'
+            f'<div class="history__strip" aria-hidden="true">{"".join(segs)}</div>'
+            f'<p class="history__axis" aria-hidden="true"><span>{day(t0)}{hm(t0)}</span><span>Now</span></p>'
+            f'<ol class="history__list">{"".join(shown)}</ol>'
+            + (f'<p class="note">{more} earlier change{"s" if more > 1 else ""} not shown.</p>' if more > 0 else "")
+            + f'<p class="note">What {e(dot)}\'s report said at each of our checks (about every 15 minutes). '
+              f'Blank stretches are times we have no check.{start_note}</p></section>')
+
+
 LAZY = 'loading="lazy" '
 
 
@@ -517,6 +572,9 @@ def build():
     os.makedirs(SITE, exist_ok=True)
     shutil.copy(os.path.join(ROOT, "site", "styles.css"), os.path.join(SITE, "styles.css"))
     urls, summary = ["/"], []
+    past, new_rows = {}, []
+    for r in hist.load(fetched):
+        past.setdefault(r["p"], []).append(r)
     stamp = int(fetched.timestamp())
 
     def mirror(c):
@@ -552,6 +610,13 @@ def build():
         if st and level == "caution" and not st.get("label") and any(
                 re.search(r"carry chains|traction tires", t, re.I) for _, t in st.get("restrictions", [])):
             st["label"] = "Carry chains or traction tires"
+        ans = {q: a for q, a, _ in answers(st, level, p["state"])[0]}
+        row = {"t": fetched.isoformat(), "p": p["slug"], "lv": level,
+               "lb": (st or {}).get("label") or LEVELS[level][1], "op": ans.get("Open?"), "ch": ans.get("Chains?"),
+               "sn": ans.get("Snow on the road?"), "road": ((st or {}).get("road") or "")[:200],
+               "up": st["updated"].isoformat() if st and st.get("updated") else None}
+        new_rows.append(row)
+        hist_rows = [r for r in past.get(p["slug"], []) if r["t"] != row["t"]] + [dict(row, _t=fetched)]
         cams = [c for c in manifest.get("cams", []) if c["pass"] == p["slug"] and c.get("saved")]
         for c in cams:
             c["site_url"] = mirror(c)
@@ -591,6 +656,7 @@ def build():
 <p class="note">Camera images from {e(credit)}. Soon each camera will get its own reading: snow on the road, visibility and traffic.</p>
 <h2>{"Summit forecast" if summit else "Forecast"}</h2>
 {f'<div class="forecast">{fc_html}</div><p class="note">From the National Weather Service.</p>' if fc_html else '<p class="note">The forecast did not load. Try again in a few minutes.</p>'}
+{history_html(hist_rows, tz, DOT_NAMES[p['state']][0])}
 <h2>About {e(name)}</h2>
 <dl class="facts"><dt>{"Summit elevation" if summit else "Elevation"}</dt><dd>{p["elev_ft"]:,} ft</dd>
 <dt>Highway</dt><dd>{e(p["route"])}, {STATE_NAMES[p["state"]]}</dd>
@@ -609,6 +675,8 @@ def build():
         urls.append(path)
         summary.append((p, st, level))
 
+    if run_dir:
+        print(f"history: {hist.append(fetched, new_rows)} rows added, {sum(map(len, past.values()))} loaded")
     checked = fetched.astimezone(TZ).strftime("%-I:%M %p %Z")
 
     def thumb(slug):
