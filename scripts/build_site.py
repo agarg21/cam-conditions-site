@@ -10,6 +10,7 @@ import html
 import json
 import os
 import re
+import shutil
 import urllib.request
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
@@ -85,7 +86,8 @@ def caltrans_status(route, cc_rows):
     pick = active or pts[:1]
     lines = sorted({p["statusData"]["statusDescription"] for p in pick})
     return {"road": " ".join(lines), "weather": "", "temp": "", "restrictions": [],
-            "updated": None, "chain_points": len(active)}
+            "updated": None, "chain_points": len(active),
+            "label": None if active else "No chain controls now"}
 
 
 def nws_forecast(lat, lon):
@@ -97,50 +99,102 @@ def nws_forecast(lat, lon):
         return []
 
 
-CSS = """
-:root{color-scheme:light dark;--fg:#111;--muted:#666;--card:#f5f6f8;--line:#e3e5e8;--accent:#0b5cad}
-@media (prefers-color-scheme:dark){:root{--fg:#eee;--muted:#aaa;--card:#1c1f24;--line:#2c3038;--accent:#6aa8ff}}
-*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--fg)}
-header,main,footer{max-width:60rem;margin:0 auto;padding:1rem}
-header a{color:inherit;text-decoration:none;font-weight:700}
-h1{font-size:1.6rem;line-height:1.25;margin:.5rem 0}h2{font-size:1.15rem;margin:1.5rem 0 .5rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem;margin:.75rem 0}
-.status{font-size:1.1rem;font-weight:600}.muted{color:var(--muted);font-size:.9rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));gap:.75rem}
-.cam img{width:100%;height:auto;border-radius:8px;display:block;background:#000}
-.cam p{margin:.35rem 0 0;font-size:.9rem}
-ul.passes{list-style:none;padding:0}ul.passes li{margin:.5rem 0}
-a{color:var(--accent)}table{border-collapse:collapse}td{padding:.2rem .6rem .2rem 0;vertical-align:top}
-"""
+
+# ---------------------------------------------------------------- status
+
+LEVELS = {
+    "closed":  ("is-closed",  "Closed"),
+    "snowice": ("is-snowice", "Snow or ice on the road"),
+    "caution": ("is-caution", "Wet road, take care"),
+    "clear":   ("is-clear",   "Clear road"),
+    "unknown": ("is-unknown", "No current report"),
+}
 
 
-def page(title, desc, path, body):
+def classify(st):
+    """Map official DOT wording to one of the five road-status levels."""
+    if not st:
+        return "unknown"
+    text = " ".join([st.get("road", "")] + [t for _, t in st.get("restrictions", [])]).lower()
+    text = text.replace("no chain controls", "").replace("no restrictions", "")
+    if re.search(r"\b(closed|closure)\b", text) and "not closed" not in text:
+        return "closed"
+    if re.search(r"snow|ice|icy|slush|chains? (are )?required|\br-[123]\b|chain control", text):
+        return "snowice"
+    if re.search(r"wet|standing water|traction tires|fog|caution", text):
+        return "caution"
+    if re.search(r"bare|dry|no chain|open", text) or st.get("road"):
+        return "clear"
+    return "unknown"
+
+
+# ---------------------------------------------------------------- pieces
+
+WORDMARK = ('<svg viewBox="0 0 26 20" aria-hidden="true"><path d="M1 19 9 5l4 6 4-7 8 15z" fill="#0f5c45"/>'
+            '<path d="m9 5 2.2 3.8-1.5-.6-1 1.2-.9-1.4-1.4.6z" fill="#fff"/></svg>')
+
+
+def shield(route):
+    """Inline SVG route marker: interstate shield for I-xx, US shield for US xx."""
+    num = route.split()[-1].replace("I-", "")
+    if route.startswith("I-"):
+        return (f'<svg class="shield" viewBox="0 0 36 36" role="img" aria-label="Interstate {e(num)}">'
+                '<path d="M3 4c5 1.5 10 1 15-1.5C23 5 28 5.5 33 4c1.5 12-1 23-15 30C4 27 1.5 16 3 4z" fill="#fff"/>'
+                '<path d="M5 6c4.3 1.2 8.7.8 13-1.3 4.3 2.1 8.7 2.5 13 1.3l.3 5H4.7z" fill="#b42318"/>'
+                '<path d="M4.8 12h26.4c-.4 9.6-3.4 16.4-13.2 20.4C8.2 28.4 5.2 21.6 4.8 12z" fill="#1d4f91"/>'
+                f'<text x="18" y="26" text-anchor="middle" font-family="Overpass,Arial" font-weight="800" font-size="11" fill="#fff">{e(num)}</text></svg>')
+    return (f'<svg class="shield" viewBox="0 0 36 36" role="img" aria-label="US Route {e(num)}">'
+            '<path d="M5 3h26c.5 4 2 6 2 10 0 9-6 15-15 20C9 28 3 22 3 13c0-4 1.5-6 2-10z" fill="#fff" stroke="#1e2328" stroke-width="2"/>'
+            f'<text x="18" y="23" text-anchor="middle" font-family="Overpass,Arial" font-weight="800" font-size="13" fill="#1e2328">{e(num)}</text></svg>')
+
+
+def head(title, desc, path):
     return f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc)}">
-<link rel="canonical" href="{BASE}{path}"><style>{CSS}</style></head>
-<body><header><a href="/">Conditions Now</a></header><main>{body}</main>
-<footer class="muted">Camera images and official reports belong to the state transportation departments that publish them.
-Always check official closures and chain requirements before you drive. Contact: hello@conditionsnow.com</footer></body></html>
+<link rel="canonical" href="{BASE}{path}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@700;800&family=Public+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<meta name="theme-color" content="#0f5c45"></head>
+<body><header class="site-header"><div class="wrap"><a class="wordmark" href="/">{WORDMARK}Conditions Now</a>
+<nav><a href="/#passes">All passes</a></nav></div></header>
+<main class="wrap">"""
+
+
+FOOT = """</main><footer class="site-footer"><div class="wrap">
+<p>Camera images and official reports belong to the state transportation departments that publish them.
+Conditions change fast: always check official closures and chain rules before you drive.</p>
+<p>Questions or corrections: <a href="mailto:hello@conditionsnow.com">hello@conditionsnow.com</a></p>
+</div></footer></body></html>
 """
 
 
-def status_block(st, state):
+def verdict(st, level, state):
+    cls, label = LEVELS[level]
+    label = (st or {}).get("label") or label
     dot, link = DOT_NAMES[state]
     if not st:
-        return f'<div class="card"><p class="status">Official report unavailable right now</p><p class="muted">Check <a href="{link}">{dot}</a>.</p></div>'
+        return (f'<section class="verdict {cls}" aria-label="Current road status"><p class="verdict__label">{label}</p>'
+                f'<p class="verdict__meta">The official report did not load. Check <a href="{link}">{dot}</a>.</p></section>')
     rows = []
-    if st["road"]:
-        rows.append(f"<tr><td>Road</td><td><b>{e(st['road'])}</b></td></tr>")
-    if st["weather"]:
-        rows.append(f"<tr><td>Weather</td><td>{e(st['weather'])}</td></tr>")
-    if st["temp"]:
-        rows.append(f"<tr><td>Temperature</td><td>{e(st['temp'])}</td></tr>")
-    for d, t in st["restrictions"]:
-        rows.append(f"<tr><td>{e(d or 'Restrictions')}</td><td>{e(t)}</td></tr>")
+    if st.get("weather"):
+        rows.append(f"<dt>Weather</dt><dd>{e(st['weather'])}</dd>")
+    if st.get("temp"):
+        rows.append(f"<dt>Temperature</dt><dd>{e(st['temp'])}</dd>")
+    for d, t in st.get("restrictions", []):
+        rows.append(f"<dt>{e(d or 'Restrictions')}</dt><dd>{e(t)}</dd>")
     when = f"updated {local(st['updated'])}" if st.get("updated") else "latest report"
-    return (f'<div class="card"><p class="muted">Official {dot} report, {when}</p>'
-            f'<table>{"".join(rows)}</table></div>')
+    return (f'<section class="verdict {cls}" aria-label="Current road status">'
+            f'<p class="verdict__label">{label}</p>'
+            f'<p class="verdict__official">{e(st.get("road") or "")}</p>'
+            f'{"<dl>" + "".join(rows) + "</dl>" if rows else ""}'
+            f'<p class="verdict__meta">Official {dot} report, {when}.</p></section>')
+
+
+# ---------------------------------------------------------------- build
+
+LAZY = 'loading="lazy" '
 
 
 def build():
@@ -148,56 +202,87 @@ def build():
         passes = json.load(f)["ready"]
     run_dir, manifest = latest_run()
     fetched = datetime.fromisoformat(manifest["fetched_at"]) if manifest else datetime.now(timezone.utc)
+    checked = fetched.astimezone(TZ).strftime("%-I:%M %p %Z")
     try:
         cc_rows = get_json(CC_URL, timeout=30)["data"]
     except Exception:
         cc_rows = []
 
     os.makedirs(SITE, exist_ok=True)
+    shutil.copy(os.path.join(ROOT, "site", "styles.css"), os.path.join(SITE, "styles.css"))
     urls, summary = ["/"], []
     for p in passes:
         st = wsdot_status(run_dir, p["wsdot_name"]) if p["state"] == "WA" and run_dir else (
             caltrans_status(p["cc_route"], cc_rows) if p["state"] == "CA" else None)
+        level = classify(st)
         cams = [c for c in manifest.get("cams", []) if c["pass"] == p["slug"] and c.get("saved")]
         fc = nws_forecast(p["lat"], p["lon"])
         name = p["name"].split(" (")[0]
-        title = f"{name} conditions & live cameras ({p['route']}) | Conditions Now"
-        desc = (f"{name} road conditions now: live {STATE_NAMES[p['state']]} DOT cameras, official report, "
-                f"chain requirements and forecast for {p['route']} between {p['between']}.")
+        title = f"{name} conditions and live cameras ({p['route']}) | Conditions Now"
+        desc = (f"Is {name} snowy right now? Live {STATE_NAMES[p['state']]} DOT cameras, the official road report, "
+                f"chain rules and the summit forecast for {p['route']} between {p['between']}.")
         cam_html = "".join(
-            f'<figure class="cam"><img src="{e(c["url"])}?t={int(fetched.timestamp())}" alt="{e(c["title"])} camera" loading="lazy">'
-            f'<p>{e(c["title"])}</p></figure>' for c in cams) or '<p class="muted">Cameras offline right now.</p>'
-        fc_html = "".join(f"<tr><td>{e(x['name'])}</td><td>{e(x['shortForecast'])}, {x['temperature']}°{x['temperatureUnit']}</td></tr>" for x in fc)
+            f'<figure class="cam"><img src="{e(c["url"])}?t={int(fetched.timestamp())}" alt="Live camera: {e(c["title"])}" '
+            f'width="640" height="480" {LAZY if i else ""}decoding="async">'
+            f'<figcaption><span>{e(c["title"])}</span><time datetime="{fetched.isoformat()}">checked {checked}</time></figcaption></figure>'
+            for i, c in enumerate(cams)) or '<p class="note">These cameras are offline right now.</p>'
+        fc_html = "".join(
+            f'<div class="forecast__period"><div class="forecast__name">{e(x["name"])}</div>'
+            f'<div class="forecast__temp">{x["temperature"]}°{e(x["temperatureUnit"])}</div>'
+            f'<div class="forecast__text">{e(x["shortForecast"])}</div></div>' for x in fc)
+        sign = (f'<div class="summit-sign"><div class="summit-sign__face"><h1>{e(name)}</h1>'
+                f'<p class="summit-sign__sub"><span>Summit</span><span>Elev {p["elev_ft"]:,} ft</span></p></div></div>')
         body = f"""
-<h1>{e(name)} conditions & live cameras</h1>
-<p class="muted">{e(p['route'])} · elevation {p['elev_ft']:,} ft · between {e(p['between'])} · cameras checked {local(fetched)}</p>
-{status_block(st, p['state'])}
-<h2>Live cameras</h2><div class="grid">{cam_html}</div>
-<p class="muted">Automatic camera readings (snow on road, visibility, traffic) are coming soon.</p>
-<h2>Forecast at the summit</h2>{f'<div class="card"><table>{fc_html}</table><p class="muted">National Weather Service</p></div>' if fc_html else '<p class="muted">Forecast unavailable right now.</p>'}
+{sign}
+<p class="route-line">{shield(p['route'])}<span>{e(p['route'])} between {e(p['between'])}, {e(STATE_NAMES[p['state']])}</span></p>
+{verdict(st, level, p['state'])}
+<h2>Live cameras</h2>
+<div class="cams">{cam_html}</div>
+<p class="note">Soon each camera will get its own reading: snow on the road, visibility and traffic.</p>
+<h2>Summit forecast</h2>
+{f'<div class="forecast">{fc_html}</div><p class="note">From the National Weather Service.</p>' if fc_html else '<p class="note">The forecast did not load. Try again in a few minutes.</p>'}
 <h2>Before you go</h2>
-<ul><li>Official report: <a href="{DOT_NAMES[p['state']][1]}">{DOT_NAMES[p['state']][0]}</a></li>
-<li>Carry chains in winter; restrictions can change within the hour.</li></ul>
+<ul class="checklist"><li>Check the official report on <a href="{DOT_NAMES[p['state']][1]}">{DOT_NAMES[p['state']][0]}</a> right before you leave.</li>
+<li>Carry chains from November to April. Rules can change within the hour.</li>
+<li>Fill up before the climb; services near the summit are limited.</li></ul>
 """
         path = f"/passes/{p['slug']}/"
         os.makedirs(os.path.join(SITE, "passes", p["slug"]), exist_ok=True)
         with open(os.path.join(SITE, "passes", p["slug"], "index.html"), "w") as f:
-            f.write(page(title, desc, path, body))
+            f.write(head(title, desc, path) + body + FOOT)
         urls.append(path)
-        summary.append((p, st))
+        summary.append((p, st, level))
 
-    items = "".join(
-        f'<li><a href="/passes/{p["slug"]}/"><b>{e(p["name"])}</b></a> — {e(STATE_NAMES[p["state"]])}'
-        f'<br><span class="muted">{e((st or {}).get("road") or "Official report unavailable")}</span></li>'
-        for p, st in summary)
-    home = f"""<h1>Mountain pass conditions, live</h1>
-<p>Live DOT cameras and official reports for the passes people drive most, updated every 15 minutes.
-Automatic camera readings are coming soon.</p><ul class="passes">{items}</ul>
-<p class="muted">Updated {local(fetched)}.</p>"""
+    def thumb(slug):
+        c = next((c for c in manifest.get("cams", []) if c["pass"] == slug and c.get("saved")), None)
+        return (f'<img class="pass-row__thumb" src="{e(c["url"])}?t={int(fetched.timestamp())}" alt="" '
+                f'width="112" height="84" loading="lazy" decoding="async">') if c else ""
+
+    counts = {k: sum(1 for *_, lv in summary if lv == k) for k in LEVELS}
+    tally_words = {"closed": "closed", "snowice": "with snow or ice", "caution": "wet",
+                   "clear": "clear or no chain controls", "unknown": "without a report"}
+    tally = "".join(f'<li class="{LEVELS[k][0]}"><span class="status-mark">{n} {tally_words[k]}</span></li>'
+                    for k, n in counts.items() if n)
+    groups = ""
+    for state in dict.fromkeys(p["state"] for p, *_ in summary):
+        rows = "".join(
+            f'<li><a class="pass-row" href="/passes/{p["slug"]}/">{shield(p["route"])}'
+            f'<span class="pass-row__name">{e(p["name"].split(" (")[0])}</span>'
+            f'<span class="pass-row__status {LEVELS[lv][0]}"><span class="status-mark">{(st or {}).get("label") or LEVELS[lv][1]}</span>'
+            f'<span class="pass-row__road">{"" if (st or {}).get("label") else e((st or {}).get("road") or "")}</span></span>'
+            f'{thumb(p["slug"])}</a></li>'
+            for p, st, lv in summary if p["state"] == state)
+        groups += f"<h2>{STATE_NAMES[state]}</h2><ul>{rows}</ul>"
+    home = f"""
+<div class="board-intro"><h1>Mountain passes right now</h1>
+<p>Live DOT cameras and official road reports, checked every 15 minutes. Last check {checked}.</p>
+<ul class="tally">{tally}</ul></div>
+<section class="board" id="passes">{groups}</section>
+"""
     with open(os.path.join(SITE, "index.html"), "w") as f:
-        f.write(page("Conditions Now — live mountain pass conditions and cameras",
-                     "Live mountain pass conditions: DOT cameras, official road reports and chain requirements for Snoqualmie, Stevens, Donner and more.",
-                     "/", home))
+        f.write(head("Mountain pass conditions and live cameras | Conditions Now",
+                     "Is the pass snowy right now? Live DOT cameras, official road reports and chain rules for Snoqualmie, Stevens, Donner and more, checked every 15 minutes.",
+                     "/") + home + FOOT)
     today = fetched.date().isoformat()
     with open(os.path.join(SITE, "sitemap.xml"), "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['scripts/**', 'config/**', '.github/workflows/collect.yml']
+    paths: ['scripts/**', 'config/**', 'site/**', '.github/workflows/collect.yml']
 
 permissions:
   contents: read
