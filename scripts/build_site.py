@@ -277,6 +277,21 @@ LEVELS = {
 }
 
 
+STALE_HOURS = 12  # an official report older than this is flagged "old report" (DOTs can leave one up for days)
+
+
+def age_words(h):
+    """Report age in plain words: 13 hours, 30 hours, 3 days."""
+    return f"{int(h)} hours" if h < 48 else f"{int(h // 24)} days"
+
+
+def stale_tag(st):
+    """Board-row note for an old official report; empty when the report is fresh."""
+    if not (st or {}).get("stale_h"):
+        return ""
+    return f'<span class="pass-row__stale">Old report: {age_words(st["stale_h"])} old</span>'
+
+
 INFO_ONLY = {"Notes", "Snow beside the road"}  # shown, but not used to pick the status colour
 
 
@@ -447,9 +462,12 @@ def verdict(st, level, state, tz=TZ):
     for d, t in other:
         extra.append(f"<dt>{e(d or 'Restrictions')}</dt><dd>{e(t)}</dd>")
     when = f", updated {local(st['updated'], tz)}" if st.get("updated") else ""
+    stale = (f'<p class="verdict__stale">Old report: {dot} last updated it {age_words(st["stale_h"])} ago. '
+             f'Conditions may have changed; check the cameras below and <a href="{link}">{dot}</a>.</p>'
+             if st.get("stale_h") else "")
     where = f" for {e(st['where'])}" if st.get("where") else ""
     return (f'<section class="verdict {cls}" aria-label="Current road status">'
-            f'<p class="verdict__label">{label}</p>'
+            f'<p class="verdict__label">{label}</p>{stale}'
             f'<dl class="answers">{qa}{"".join(extra)}</dl>'
             f'<p class="verdict__meta">From the latest official {dot} report{where}{when}. Answers repeat its wording; '
             f'anything it doesn\'t cover says \u201cnot reported\u201d.'
@@ -527,6 +545,10 @@ def build():
         except Exception as ex:  # a feed changing shape must never stop the deploy
             print(f"status failed for {p['slug']}: {type(ex).__name__}: {ex}")
         level = classify(st)
+        if st and st.get("updated"):
+            age_h = (fetched - st["updated"]).total_seconds() / 3600
+            if age_h >= STALE_HOURS:
+                st["stale_h"] = age_h
         if st and level == "caution" and not st.get("label") and any(
                 re.search(r"carry chains|traction tires", t, re.I) for _, t in st.get("restrictions", [])):
             st["label"] = "Carry chains or traction tires"
@@ -605,7 +627,8 @@ def build():
             f'<li><a class="pass-row" href="/passes/{p["slug"]}/">{shield(p["route"])}'
             f'<span class="pass-row__name">{e(p["name"].split(" (")[0])}</span>'
             f'<span class="pass-row__status {LEVELS[lv][0]}"><span class="status-mark">{(st or {}).get("label") or LEVELS[lv][1]}</span>'
-            f'<span class="pass-row__road">{"" if (st or {}).get("label") else e((st or {}).get("road") or "")}</span></span>'
+            f'<span class="pass-row__road">{"" if (st or {}).get("label") else e((st or {}).get("road") or "")}</span>'
+            f'{stale_tag(st)}</span>'
             f'{thumb(p["slug"])}</a></li>'
             for p, st, lv in summary if p["state"] == state)
         groups += f"<h2>{STATE_NAMES[state]}</h2><ul>{rows}</ul>"
