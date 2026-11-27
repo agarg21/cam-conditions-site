@@ -7,4 +7,4 @@ holds:
 - Q8 Colorado: waiting for CDOT reply (sent 2026-11-27 09:40Z from apoorv20@gmail.com, cc hello@).
 - Q9 Search Console: no cloud access.
 - Q10 new states: owner D7 (terms: IA consent, NE approval, SD none, MT informational use).
-last_run: 2026-11-27T20:35Z Q10 terms read for IA/MT/SD/NE: none clearly allows our use, so Q10 is blocked on D7 (OWNER.md; MT recommend yes). No site change. Next: Q5 (D3 passes) or Q1 at the first run after 00:30Z 2026-11-28.
+last_run: 2026-11-27T20:40Z Q10 terms read (IA/MT/SD/NE): blocked on D7 (OWNER.md; MT recommend yes). Live defect found and fixed: 5 deploys in a row failed 19:12-20:10Z (deploy-pages listed 0 artifacts; site stale 18:59-20:24Z); collect.yml now retries the deploy twice (50bda5c). Next: Q5 (D3 passes) or Q1 at the first run after 00:30Z 2026-11-28.
