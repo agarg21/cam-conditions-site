@@ -21,7 +21,16 @@ Volumes are provider estimates (average monthly US searches; peak = highest mont
 Earlier batch (2026-11-26) for comparison: "<pass> road conditions" is much smaller than "<pass> weather"
 (snoqualmie pass road conditions 8,100 vs weather 135,000); the bare pass name is large (snoqualmie pass 90,500).
 
-## SERPs (who answers today)
+## Correction after a live look (2026-11-27, Google US, logged-in browser)
+- **Every "<pass> weather" search shows Google's own weather widget at the top** (current temp, hourly graph, 8-day
+  forecast; "Google Weather"). DataForSEO's result types did not list it. For "santiam pass weather" Google also shows an
+  AI Overview that quotes the forecast and embeds a TripCheck camera image. So most weather searches end on Google:
+  the 298K/mo is demand, not clicks we can expect. Treat weather as a secondary target, not the lead.
+- What the widget does not answer: is the road snowy or bare, chains, open/closed, what the camera shows, and how it is
+  changing. That is our page.
+- "snoqualmie pass webcam": WSDOT first, the ski resort's webcams second, then an AI Overview listing WSDOT cameras.
+
+## SERPs (DataForSEO, US)
 - **snoqualmie pass weather**: no AI Overview; Weather Underground, NWS, MSN. **santiam pass weather**: foreign-language
   weather spam (city-usa.net fr/it), MSN, wetter.com. Weak and winnable.
 - **snoqualmie pass webcam**: YouTube, Facebook, traffic-cams.com, worldcam: thin camera lists, AI Overview present.
@@ -30,9 +39,9 @@ Earlier batch (2026-11-26) for comparison: "<pass> road conditions" is much smal
 - **donner pass accident**: Facebook, Daily Mail, short videos: news intent, not a page we should chase.
 
 ## What this means for pass pages
-1. "Weather" is the main search word for a pass, about 3× cameras and 20× "open". Searchers want *conditions*, but they type
-   weather. Title and H1 area should say "weather, road conditions and live cameras". The forecast must be first-class:
-   now, tonight, tomorrow, the weekend; snow amounts and snow level where NWS gives them; hourly for the next 12 h.
+1. "Weather" is the biggest search word for a pass, but Google answers it with its own widget, so it brings few clicks.
+   Keep "weather" in titles (it costs nothing and some searchers do click through), keep a short forecast, but lead with
+   what Google does not show: road surface from the cameras, chains, open/closed, the camera images and the last 24 h.
 2. Cameras second: keep them high on the page with the time each was taken.
 3. Answer the decision questions at the top in one line each: Open? Chains? Snow on the road (our reading)?
 4. Fixed facts block: elevation, highway, between which towns, typical closures.

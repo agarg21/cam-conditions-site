@@ -4,7 +4,7 @@
    `run` n=300 (D2 budget). Read `docs/bakeoff/<date>-run.md`; write `docs/bakeoff/decision.md`: which model labels
    training data (agreement with Opus per field, day vs night, cost per 1,000), which fields are reliable, which to drop or
    reword (prompt v2). Gate: daylight images (first full US day 2026-11-27 15:00–01:00 UTC).
-2. **Q3 Pass pages around "weather".** From docs/research/search-intent-2026-11-27.md: "<pass> weather" is the main search (snoqualmie pass weather 135K/mo, KD 7; weather SERPs are weak). Retitle pages "<Pass> weather, road conditions and live cameras"; make the forecast first-class (now, tonight, tomorrow, weekend, snow amounts/level, next 12 h hourly from NWS); then add plain answers at the top of each pass page: "Open?", "Chains?", "Snow on the
+2. **Q3 Pass page answers.** From docs/research/search-intent-2026-11-27.md (read the correction: Google's weather widget answers most "<pass> weather" searches). Titles "<Pass> road conditions, cameras and weather"; lead with what Google doesn't show; keep a compact forecast (tonight, tomorrow, weekend); add plain answers at the top of each pass page: "Open?", "Chains?", "Snow on the
    road?", plus a tomorrow/weekend outlook from NWS periods, and a facts block (elevation, between, route). FAQ content only
    where an official source answers it. Design tokens only.
 3. **Q4 History.** Store each run's official status per pass (compact JSONL in the HF dataset, `status/<date>.jsonl`), and
