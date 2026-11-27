@@ -72,8 +72,8 @@ def idaho():
     cams = json.loads(body) if st == 200 else []
     print(f"  {len(cams)} cameras")
     for p in passes:
-        near = sorted(
-            (km(p["Latitude"], p["Longitude"], c["Latitude"], c["Longitude"]), c) for c in cams)
+        near = sorted(((km(p["Latitude"], p["Longitude"], c["Latitude"], c["Longitude"]), c)
+                       for c in cams), key=lambda x: x[0])
         near = [(d, c) for d, c in near if d < 6][:6]
         print(f"\n  -- near {p['Name']} ({p['Roadway']})")
         for d, c in near:
@@ -103,8 +103,8 @@ def oregon():
         cams = json.loads(body).get("CCTVInventoryRequest", [])
         print(f"  {len(cams)} cameras; first: {cams[0] if cams else None}")
     for name, lat, lon in OREGON:
-        near = sorted((km(lat, lon, c["latitude"], c["longitude"]), c) for c in cams
-                      if c.get("latitude") and c.get("longitude"))
+        near = sorted(((km(lat, lon, c["latitude"], c["longitude"]), c) for c in cams
+                       if c.get("latitude") and c.get("longitude")), key=lambda x: x[0])
         print(f"\n  -- near {name}")
         for d, c in [x for x in near if x[0] < 8][:6]:
             print(f"     {d:4.1f} km | {c['device-id']} | {c['device-name']} | {c['route-id']}"
@@ -129,5 +129,8 @@ def oregon():
 
 
 if __name__ == "__main__":
-    idaho()
-    oregon()
+    for fn in (idaho, oregon):
+        try:
+            fn()
+        except Exception as e:
+            print(f"!! {fn.__name__} failed: {type(e).__name__}: {e}")
