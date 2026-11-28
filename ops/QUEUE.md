@@ -15,6 +15,22 @@
    wording only, tonight/tomorrow/weekend NWS periods with snow totals, facts block, new titles. Live on all 18 pages
    12:30Z (OR/ID verified). (a) stale reports shipped 2026-11-27 14:35Z: reports ≥12 h old flagged on verdict and board.
    Left: (b) FAQ only where an official source answers; (c) "typical closures" fact only with a source per pass.
+2b. **Q11 SEO pass on pass pages (owner asked, 2026-11-28).** Gaps found on /passes/snoqualmie-pass/: (1) the word
+   "webcam" is nowhere, though "<pass> webcam" is the biggest search (~98K/mo across 12 passes): title "<Pass> Road
+   Conditions, Webcams & Chain Status", H2 "<Pass> webcams"; (2) H1 is the bare name: make it "<Pass> road conditions"
+   (the sign stays as the visual); (3) question headings that match searches: "Is <Pass> open right now?", "Do I need
+   chains?", "<Pass> weather" (short); (4) JSON-LD: WebPage with dateModified, BreadcrumbList, Place with geo; og:title,
+   og:description, og:image (latest summit camera); (5) internal links: breadcrumb Home › <State> › <Pass>, "Nearby passes"
+   and "Same highway" blocks, and state hub pages /states/<state>/ (WA, OR, CA, ID first) targeting "<state> mountain
+   passes"/"<state> pass conditions"; (6) a sourced evergreen block per pass: state chain/traction rules (link the DOT
+   page), typical closure causes, nearest towns; link out to ski areas for ski-intent searches. No FAQ schema (no rich
+   results for this site type). Keep stable image URLs per camera for Google Images; cache-bust with headers, not ?t=.
+3a. **Q12 Image archive policy (owner asked, 2026-11-28).** Today every 15-min image goes to the private HF dataset
+   (~36 cams). Write docs/plan/archive.md: measured MB/day and HF free-tier headroom; policy = keep every frame 30 days,
+   then 1 frame/hour per camera plus every frame within ±1 h of an official-status change, forever; per-image metadata
+   (time, pass, cam, sun elevation, official status) in a small parquet/JSONL index. Projection for 300 and 1,000 cameras
+   and when to move to cheap object storage (owner approval before any paid storage). Implement the thinning job only
+   after the plan is written.
 3. **Q4 History.** Shipped 2026-11-27: per-run official status rows in HF `status/<UTC date>.jsonl` (baa1f9a); pass pages show
    "Last 24 hours" (verified accruing 18:18Z: 108 rows loaded, section live on all pages); home board notes each pass whose report
    changed in 24 h plus an "N passes changed" line (7422dcc). Left: none; reopen only for a defect.
