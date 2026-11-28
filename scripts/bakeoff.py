@@ -907,6 +907,11 @@ def main():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     os.makedirs(os.path.join(ROOT, "docs", "bakeoff"), exist_ok=True)
     out_md = os.path.join(ROOT, "docs", "bakeoff", f"{today}-{mode}.md")
+    if mode == "humantest":  # one file per prompt set, so re-tests never overwrite each other
+        try:
+            out_md = out_md[:-3] + "-" + "".join(json.load(open(os.path.join(ROOT, "ops", "bakeoff-request.json"))).get("prompts", ["v2", "v3"])) + ".md"
+        except (OSError, ValueError):
+            pass
 
     counts = Counter((r["light"]) for r in rows)
     per_pass = defaultdict(Counter)

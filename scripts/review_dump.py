@@ -20,6 +20,12 @@ def main(set_name):
     for l in open(hf_hub_download(REPO, f"labels/humancheck/{set_name}-sonnet-v2v3.jsonl", repo_type="dataset", token=tok)):
         if l.strip():
             r = json.loads(l); h[r["id"]] = {"v2": r["v2"].get("reading"), "v3": r["v3"].get("reading")}
+    try:
+        for l in open(hf_hub_download(REPO, f"labels/humancheck/{set_name}-sonnet-v4.jsonl", repo_type="dataset", token=tok)):
+            if l.strip():
+                r = json.loads(l); h.setdefault(r["id"], {})["v4"] = r["v4"].get("reading")
+    except Exception as e:
+        print("no v4 file:", e)
     data = {it["id"]: {"v1": v1.get(it["path"], {}), **h.get(it["id"], {})} for it in items}
     d = tempfile.mkdtemp()
     plain, key = os.path.join(d, "p.json"), os.path.join(d, "k")
