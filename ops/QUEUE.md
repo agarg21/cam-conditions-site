@@ -17,7 +17,11 @@
    Training labels: use k>=0.7 or Opus-audited only. v4 (owner's method: center line first) 11:00Z, $0.21: day 81%, day+twilight 83%, k>=0.7 39/40; same as v2. Center line
    itself is a strong signal (visible -> person bare 36/39; hidden -> person snow 11/12) but a cl rule adds nothing over s.
    Prompt wording is not the lever. Owner is doing a second look on the disagreements (artifact "you vs the models").
-   Waiting on owner: go live with v2 or v4 + k>=0.7 gate (OWNER.md D9). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
+   Waiting on owner: go live with v2 or v4 + k>=0.7 gate (OWNER.md D9).
+   Low-confidence rule (proposed to owner 16:50 IST): 1) use the pass's other camera if it is confident now; 2) else carry
+   the last confident reading up to 2 h, shown with its time ("Cameras at 2:10 pm: bare lanes"); drop it early if snow is
+   seen falling or the official report changed since; 3) after 2 h or after dark: "Can't tell from cameras now" plus a
+   small "Last clear look: 4:30 pm, bare lanes". Never present an old reading as current. If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
    demand (likely Snoqualmie, Stevens, Donner, Lookout, Santiam; check docs/research), add an hourly reading job (Batch not
    needed at this size), store readings in HF readings/, and show on pass pages: per camera "Our reading: snow on lanes /
    bare / can't tell (too dark)" with time and confidence; a pass-level "Cameras show" line beside the official verdict;
