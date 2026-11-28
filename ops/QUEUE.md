@@ -1,6 +1,6 @@
 # Queue (top = next). Keep ≤15 items. Status: open | blocked (why) | NOT NOW.
 
-00. **Q16 Expansion sprint (D10, owner 2026-11-28): ~60 pass pages by 2026-11-30.** 24 live after the CA batch (b8cd2e2).
+00. **Q16 Expansion sprint (D10, owner 2026-11-28): ~60 pass pages by 2026-11-30.** 30 live after the MT batch (2026-11-28 18:50Z: Bozeman, Homestake, MacDonald, Rogers, Kings Hill, Raynolds + /states/montana/; elevation = USGS 3DEP where the MDT segment crosses the USGS GNIS gap, checked against MDT RWIS station elevation where the station is within 0.6 km). MT left: Big Hole (route name S-278 vs MT 278 unsettled), Elk Park (GNIS gap 6.8 km from I-15), Evaro Hill (no GNIS gap), Marias (no MDT camera).
    Alternate runs: a batch of up to 8 passes (one feed per run), then a Q6 student-v0 step, then a batch again. Order by
    weak official pages and demand: (1) Montana under D7a (Bozeman, Homestake, MacDonald, Rogers, Marias, Kings Hill, Evaro
    Hill, plus MT side of Lookout/Lost Trail/Monida if not shared) with a /states/montana/ hub; (2) Idaho 511 (Galena,

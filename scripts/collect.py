@@ -8,6 +8,7 @@ Writes to out/<UTC date>/<UTC time>/:
   idaho_winterroads.json        Idaho 511 road-condition segments (needs IDAHO511_KEY)
   odot_rw_reports.json          ODOT TripCheck road & weather reports (needs ODOT_KEY)
   odot_rw_metadata.json         ODOT code lists for those reports
+  mdt_road_conditions.json      MDT (511MT) road-condition code per highway segment (public, no key)
 
 Standard library only, so it runs on a bare GitHub Actions runner.
 """
@@ -43,6 +44,17 @@ def wsdot_reports():
 
 IDAHO_ROADS = "https://511.idaho.gov/api/v3/get/winterroads?key={key}&format=json"
 ODOT_API = "https://api.odot.state.or.us/tripcheck/{path}"
+
+
+MDT_ROADS = "https://mt.cdn.iteris-atis.com/mt3/road_conditions.json"  # what 511mt.net's map reads (D7a)
+
+
+def public_feeds(passes):
+    """Keyless official condition feeds, fetched only when a ready pass uses them."""
+    feeds = {}
+    if any(p.get("source") == "mdt-rwis" for p in passes):
+        feeds["mdt_road_conditions.json"] = (MDT_ROADS, {})
+    return feeds
 
 
 def keyed_feeds():
@@ -111,7 +123,7 @@ def main():
         manifest["wsdot_reports_error"] = str(e)[:200]
 
     manifest["feeds"] = {}
-    for fname, (url, hdr) in keyed_feeds().items():
+    for fname, (url, hdr) in {**public_feeds(passes), **keyed_feeds()}.items():
         try:
             status, body, _ = fetch(url, timeout=40, headers=hdr)
             json.loads(body)  # only keep valid JSON

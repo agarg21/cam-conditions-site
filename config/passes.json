@@ -528,6 +528,164 @@
    ]
   },
   {
+   "slug": "bozeman-pass",
+   "name": "Bozeman Pass (I-90)",
+   "state": "MT",
+   "source": "mdt-rwis",
+   "route": "I-90",
+   "tz": "America/Denver",
+   "lat": 45.66739,
+   "lon": -110.80825,
+   "elev_ft": 5709,
+   "between": "Bozeman and Livingston",
+   "mdt_segments": [
+    "10468",
+    "11465"
+   ],
+   "mdt_where": "9 miles east of Bozeman over Bozeman Pass",
+   "cams": [
+    {
+     "title": "I-90 at Bozeman Pass, looking east",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/564020-00-01.jpg"
+    },
+    {
+     "title": "I-90 at Bozeman Pass, looking west",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/564023-00-04.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "homestake-pass",
+   "name": "Homestake Pass (I-90)",
+   "state": "MT",
+   "source": "mdt-rwis",
+   "route": "I-90",
+   "tz": "America/Denver",
+   "lat": 45.92145,
+   "lon": -112.41626,
+   "elev_ft": 6403,
+   "between": "Butte and Whitehall",
+   "mdt_segments": [
+    "10459",
+    "11456"
+   ],
+   "mdt_where": "6 to 16 miles east of Butte over Homestake Pass",
+   "cams": [
+    {
+     "title": "I-90 at Homestake Pass, looking east",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/267080-00-01.jpg"
+    },
+    {
+     "title": "I-90 at Homestake Pass, roadway",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/267082-00-03.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "macdonald-pass",
+   "name": "MacDonald Pass (US 12)",
+   "state": "MT",
+   "source": "mdt-rwis",
+   "route": "US 12",
+   "tz": "America/Denver",
+   "lat": 46.56116,
+   "lon": -112.30964,
+   "elev_ft": 6318,
+   "between": "Helena and Avon",
+   "mdt_segments": [
+    "10709"
+   ],
+   "mdt_where": "MacDonald Pass",
+   "cams": [
+    {
+     "title": "US 12 at MacDonald Pass, looking east",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/267020-00-01.jpg"
+    },
+    {
+     "title": "US 12 at MacDonald Pass, looking west",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/267022-00-03.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "rogers-pass",
+   "name": "Rogers Pass (MT 200)",
+   "state": "MT",
+   "source": "mdt-rwis",
+   "route": "MT 200",
+   "tz": "America/Denver",
+   "lat": 47.07682,
+   "lon": -112.37055,
+   "elev_ft": 5615,
+   "between": "Lincoln and Great Falls",
+   "mdt_segments": [
+    "10539"
+   ],
+   "mdt_where": "Rogers Pass",
+   "cams": [
+    {
+     "title": "MT 200 near Rogers Pass, looking south",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/301071-00-02.jpg"
+    },
+    {
+     "title": "MT 200 near Rogers Pass, roadway",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/301070-00-01.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "kings-hill-pass",
+   "name": "Kings Hill Pass (US 89)",
+   "state": "MT",
+   "source": "mdt-rwis",
+   "route": "US 89",
+   "tz": "America/Denver",
+   "lat": 46.84064,
+   "lon": -110.69554,
+   "elev_ft": 7394,
+   "between": "White Sulphur Springs and Neihart",
+   "mdt_segments": [
+    "10824"
+   ],
+   "mdt_where": "2 miles south of Kings Hill to Neihart",
+   "cams": [
+    {
+     "title": "US 89 at Kings Hill, looking south",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/301120-00-01.jpg"
+    },
+    {
+     "title": "US 89 at Kings Hill, north curve",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/301123-00-03.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "raynolds-pass",
+   "name": "Raynolds Pass (MT 87)",
+   "state": "MT",
+   "source": "mdt-rwis",
+   "route": "MT 87",
+   "tz": "America/Denver",
+   "lat": 44.71116,
+   "lon": -111.46923,
+   "elev_ft": 6841,
+   "between": "the Idaho line and US 287",
+   "mdt_segments": [
+    "10645"
+   ],
+   "mdt_where": "the Idaho line over Raynolds Pass to the junction with US 287",
+   "cams": [
+    {
+     "title": "MT 87 near Raynolds Pass, looking south",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/564000-00-01.jpg"
+    },
+    {
+     "title": "MT 87 near Raynolds Pass, looking northwest",
+     "image": "https://mt.cdn.iteris-atis.com/rwis_images/564003-00-04.jpg"
+    }
+   ]
+  },
+  {
    "slug": "teton-pass",
    "name": "Teton Pass (WY 22)",
    "state": "WY",
@@ -601,11 +759,6 @@
    "slug": "little-cottonwood-canyon",
    "state": "UT",
    "source": "udot-api (key)"
-  },
-  {
-   "slug": "bozeman-pass",
-   "state": "MT",
-   "source": "mdt-rwis (public)"
   }
  ]
 }

@@ -26,17 +26,19 @@ BASE = "https://conditionsnow.com"
 UA = "ConditionsNow/0.1 (+https://conditionsnow.com; hello@conditionsnow.com)"
 TZ = ZoneInfo("America/Los_Angeles")
 CC_URL = "https://cwwp2.dot.ca.gov/data/d{d}/cc/ccStatusD{d:02d}.json"  # Caltrans chain controls, one file per district
-STATE_NAMES = {"WA": "Washington", "OR": "Oregon", "CA": "California", "ID": "Idaho", "WY": "Wyoming"}
+STATE_NAMES = {"WA": "Washington", "OR": "Oregon", "CA": "California", "ID": "Idaho", "MT": "Montana", "WY": "Wyoming"}
 STATE_ORDER = list(STATE_NAMES)
 DOT_NAMES = {"WA": ("WSDOT", "https://wsdot.com/travel/real-time/mountainpasses"),
              "CA": ("Caltrans QuickMap", "https://quickmap.dot.ca.gov/"),
              "OR": ("ODOT TripCheck", "https://www.tripcheck.com/"),
              "ID": ("Idaho 511", "https://511.idaho.gov/"),
+             "MT": ("MDT", "https://www.511mt.net/"),
              "WY": ("WYDOT", "https://www.wyoroad.info/")}
 # Who publishes the camera images, for the credit line under each camera grid.
 CAM_CREDIT = {"wsdot-arcgis": "WSDOT", "caltrans-cwwp2-d3": "Caltrans", "caltrans-cwwp2-d7": "Caltrans", "caltrans-cwwp2-d9": "Caltrans",
               "odot-tripcheck": "Oregon Department of Transportation (TripCheck)",
-              "idaho-511": "Idaho Transportation Department (Idaho 511)"}
+              "idaho-511": "Idaho Transportation Department (Idaho 511)",
+              "mdt-rwis": "Montana Department of Transportation (MDT)"}
 # ODOT's terms require republishers to repeat this disclaimer (Disclaimer of Warranty; Limitation of Liability).
 ODOT_DISCLAIMER = [
     "ODOT and public agencies providing the data on this portal attempt to provide the best service reasonably "
@@ -269,6 +271,36 @@ def odot_status(run_dir, p):
             "updated": updated, "expired": expired}
 
 
+# 511MT map legend wording for each road-condition code (511mt.net legend, read 2026-11-28).
+MDT_WORDS = {"dry": "Dry", "dry_normal": "Dry", "wet": "Wet", "slush": "Slush", "icy_patches": "Icy Patches", "icy": "Icy",
+             "packed_snow_patches": "Packed Snow Patches", "packed_snow": "Packed Snow", "snow_covered": "Snow Covered",
+             "severe_driving": "Severe Driving Conditions", "severedriving": "Severe Driving Conditions",
+             "road_closed": "Road Closed", "roadclosed": "Road Closed", "season_closed": "Closed for the season"}
+
+
+def mdt_status(run_dir, p):
+    """MDT road condition for the highway segments over the pass (segment ids in passes.json, mdt_segments).
+    Each segment's value is a comma list of codes, e.g. "snow_covered,reduced_vis"; "unknown" means no report."""
+    data = load_run_json(run_dir, "mdt_road_conditions.json")
+    if not data:
+        return None
+    road, vis = [], False
+    for sid in p.get("mdt_segments", []):
+        for code in str((data.get(sid) or {}).get("road_condition") or "").split(","):
+            code = code.strip().lower()
+            if code == "reduced_vis":
+                vis = True
+            elif code in MDT_WORDS and MDT_WORDS[code] not in road:
+                road.append(MDT_WORDS[code])
+    if not road:
+        return None
+    st = {"road": "; ".join(road), "weather": "Reduced visibility" if vis else "", "temp": "", "restrictions": [],
+          "where": p.get("mdt_where", ""), "updated": None}
+    if "Severe Driving Conditions" in road and not any(w in road for w in ("Road Closed", "Closed for the season")):
+        st["label"] = "Severe driving conditions"
+    return st
+
+
 def nws_forecast(lat, lon):
     try:
         pt = get_json(f"https://api.weather.gov/points/{lat:.4f},{lon:.4f}")
@@ -320,7 +352,7 @@ def classify(st):
         return "closed"
     if re.search(r"snow|ice|icy|slush|chains? (are )?required|\br-[123]\b|chain control|traction tires required", text):
         return "snowice"
-    if re.search(r"wet|standing water|traction tires|carry chains|fog|caution", text):
+    if re.search(r"wet|standing water|traction tires|carry chains|fog|caution|severe driving", text):
         return "caution"
     if re.search(r"bare|dry|no chain|open", text) or st.get("road"):
         return "clear"
@@ -333,7 +365,7 @@ WORDMARK = ('<svg viewBox="0 0 26 20" aria-hidden="true"><path d="M1 19 9 5l4 6 
             '<path d="m9 5 2.2 3.8-1.5-.6-1 1.2-.9-1.4-1.4.6z" fill="#fff"/></svg>')
 
 
-STATE_ROUTE = {"OR": "Oregon", "WA": "Washington", "CA": "California", "ID": "Idaho", "WY": "Wyoming"}
+STATE_ROUTE = {"OR": "Oregon", "WA": "Washington", "CA": "California", "ID": "Idaho", "MT": "Montana", "WY": "Wyoming"}
 
 
 def shield(route):
@@ -916,6 +948,8 @@ def build():
                 st = odot_status(run_dir, p)
             elif src == "idaho-511" and p["state"] == "ID":
                 st = idaho_status(run_dir, p)
+            elif src == "mdt-rwis":
+                st = mdt_status(run_dir, p)
         except Exception as ex:  # a feed changing shape must never stop the deploy
             print(f"status failed for {p['slug']}: {type(ex).__name__}: {ex}")
         level = classify(st)
@@ -943,7 +977,7 @@ def build():
         desc = (f"Is {name} open? Are chains required? Live webcams, the official "
                 f"{DOT_NAMES[p['state']][0]} report and the weather for {p['route']} between "
                 f"{p['between']}, checked every 15 minutes.")
-        short_credit = {"odot-tripcheck": "ODOT", "idaho-511": "Idaho 511"}.get(src, CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0]))
+        short_credit = {"odot-tripcheck": "ODOT", "idaho-511": "Idaho 511", "mdt-rwis": "MDT"}.get(src, CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0]))
         camread, caps = camread_html(p, reads.get(p["slug"], []), cams, fetched, tz, CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0])) if p.get("read", True) else ("", {})
         cam_html = "".join(
             f'<figure class="cam"><img src="{c["site_url"]}" alt="{e(name)} webcam: {e(c["title"])}" '
@@ -1103,6 +1137,7 @@ We download camera images every 15 minutes and serve our own copies, credited to
 <li><strong>Oregon:</strong> cameras and road and weather reports from the Oregon Department of Transportation, via the <a href="https://www.tripcheck.com/">TripCheck</a> API.</li>
 <li><strong>California:</strong> cameras and chain controls from <a href="https://quickmap.dot.ca.gov/">Caltrans</a>.</li>
 <li><strong>Idaho, and Teton Pass in Wyoming:</strong> cameras and road conditions from the Idaho Transportation Department, via <a href="https://511.idaho.gov/">Idaho 511</a>. The Teton Pass camera is operated by <a href="https://www.wyoroad.info/">WYDOT</a>.</li>
+<li><strong>Montana:</strong> camera images (unmodified) and road conditions from the Montana Department of Transportation, via <a href="https://www.511mt.net/">511MT</a>, used under MDT's <a href="https://www.mdt.mt.gov/mdt/terms-of-use.aspx">terms of use</a>.</li>
 <li><strong>Forecasts:</strong> the <a href="https://www.weather.gov/">National Weather Service</a>.</li>
 </ul>
 <p>Conditions change fast. Always check official closures and chain rules before you drive.</p>
