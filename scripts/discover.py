@@ -135,7 +135,7 @@ def oregon():
                        if c.get("latitude") and c.get("longitude")), key=lambda x: x[0])
         print(f"\n  -- near {name}")
         for d, c in [x for x in near if x[0] < 8][:8]:
-            print(f"     {d:4.1f} km | {c['device-id']} | {c['device-name']} | {c['route-id']}"
+            print(f"     {d:4.1f} km | {c['device-id']} | {c['device-name']} | {c['latitude']:.5f},{c['longitude']:.5f} | {c['route-id']}"
                   f" MP {c.get('milepoint')} | {c['cctv-url']} | {c.get('cctv-other')}")
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from build_site import seg_km
