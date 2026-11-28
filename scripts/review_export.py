@@ -108,4 +108,8 @@ def compare(set_name):
 
 if __name__ == "__main__":
     req = json.load(open(os.path.join(ROOT, "ops", "review-request.json")))
-    {"export": export, "compare": compare}[req["mode"]](req["set"])
+    if req["mode"] == "dump":
+        import review_dump
+        review_dump.main(req["set"])
+    else:
+        {"export": export, "compare": compare}[req["mode"]](req["set"])
