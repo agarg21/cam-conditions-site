@@ -22,7 +22,7 @@
    wording only, tonight/tomorrow/weekend NWS periods with snow totals, facts block, new titles. Live on all 18 pages
    12:30Z (OR/ID verified). (a) stale reports shipped 2026-11-27 14:35Z: reports ≥12 h old flagged on verdict and board.
    Left: (b) FAQ only where an official source answers; (c) "typical closures" fact only with a source per pass.
-2b. **Q11 SEO pass on pass pages (owner asked, 2026-11-28).** Part 1 shipped 2026-11-28 ~06:45Z: (1) title "<Pass> Road
+2b. **Q11 SEO pass on pass pages (owner asked, 2026-11-28).** Part 1 shipped 2026-11-28 (66007ac): (1) title "<Pass> Road
    Conditions, Webcams & Chain Status", H2 "<Pass> webcams", camera alt "<Pass> webcam: …"; (2) h1 "<Pass> road conditions"
    above the sign; (3) "Is <Pass> open right now?", "Do I need chains?", "<Pass> weather"; (4) WebPage+BreadcrumbList
    (Home › Pass)+Place geo JSON-LD, og/twitter tags with the first camera's stable URL. Left: (5) state hubs + 3-level
