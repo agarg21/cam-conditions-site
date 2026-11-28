@@ -1,1 +1,1 @@
-{"mode": "count", "n": 300, "requested": "2026-11-27T16:19Z", "note": "push this file to trigger the bake-off (manual dispatch from the UI is unreliable on this repo)"}
+{"mode": "run", "n": 300, "requested": "2026-11-28T00:30Z", "budget": "D2 USD 10 total; expected ~USD 4-5", "note": "push this file to trigger the bake-off (manual dispatch from the UI is unreliable on this repo)"}
