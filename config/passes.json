@@ -528,6 +528,182 @@
    ]
   },
   {
+   "slug": "lewiston-hill",
+   "name": "Lewiston Hill (US 95)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "US 95",
+   "tz": "America/Los_Angeles",
+   "lat": 46.463402,
+   "lon": -117.019624,
+   "elev_ft": 2687,
+   "between": "Lewiston and Moscow",
+   "cams": [
+    {
+     "title": "US 95 at Lewiston Hill, northbound",
+     "image": "https://511.idaho.gov/map/Cctv/460"
+    },
+    {
+     "title": "US 95 at Lewiston Hill, pavement view",
+     "image": "https://511.idaho.gov/map/Cctv/461"
+    }
+   ]
+  },
+  {
+   "slug": "horseshoe-bend-hill",
+   "name": "Horseshoe Bend Hill (ID 55)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "ID 55",
+   "tz": "America/Denver",
+   "lat": 43.83625,
+   "lon": -116.2451,
+   "elev_ft": 4258,
+   "between": "Boise and Horseshoe Bend",
+   "cams": [
+    {
+     "title": "ID 55 at Horseshoe Bend Hill, northbound",
+     "image": "https://511.idaho.gov/map/Cctv/327"
+    },
+    {
+     "title": "ID 55 at Horseshoe Bend Hill, southbound",
+     "image": "https://511.idaho.gov/map/Cctv/328"
+    }
+   ]
+  },
+  {
+   "slug": "malad-summit",
+   "name": "Malad Summit (I-15)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "I-15",
+   "tz": "America/Denver",
+   "lat": 42.342317,
+   "lon": -112.226516,
+   "elev_ft": 5558,
+   "between": "Malad City and Pocatello",
+   "cams": [
+    {
+     "title": "I-15 at Malad Summit, northbound",
+     "image": "https://511.idaho.gov/map/Cctv/554"
+    },
+    {
+     "title": "I-15 at Malad Summit, pavement view",
+     "image": "https://511.idaho.gov/map/Cctv/555"
+    }
+   ]
+  },
+  {
+   "slug": "sweetzer-summit",
+   "name": "Sweetzer Summit (I-84)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "I-84",
+   "tz": "America/Denver",
+   "lat": 42.207759,
+   "lon": -113.045856,
+   "elev_ft": 5522,
+   "between": "Burley, Idaho and Snowville, Utah",
+   "cams": [
+    {
+     "title": "I-84 at Sweetzer Summit, eastbound",
+     "image": "https://511.idaho.gov/map/Cctv/364"
+    },
+    {
+     "title": "I-84 at Sweetzer Summit, pavement view",
+     "image": "https://511.idaho.gov/map/Cctv/365"
+    }
+   ]
+  },
+  {
+   "slug": "pine-creek-pass",
+   "name": "Pine Creek Pass (ID 31)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "ID 31",
+   "tz": "America/Denver",
+   "lat": 43.571597,
+   "lon": -111.216172,
+   "elev_ft": 6764,
+   "between": "Swan Valley and Victor",
+   "cams": [
+    {
+     "title": "ID 31 at Pine Creek Pass, eastbound",
+     "image": "https://511.idaho.gov/map/Cctv/987"
+    },
+    {
+     "title": "ID 31 at Pine Creek Pass, westbound",
+     "image": "https://511.idaho.gov/map/Cctv/988"
+    }
+   ]
+  },
+  {
+   "slug": "fish-creek-summit",
+   "name": "Fish Creek Summit (US 30)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "US 30",
+   "tz": "America/Denver",
+   "lat": 42.6296,
+   "lon": -111.9177233,
+   "elev_ft": 6109,
+   "between": "Lava Hot Springs and Soda Springs",
+   "cams": [
+    {
+     "title": "US 30 at Fish Creek Summit, eastbound",
+     "image": "https://511.idaho.gov/map/Cctv/850"
+    },
+    {
+     "title": "US 30 at Fish Creek Summit, pavement view",
+     "image": "https://511.idaho.gov/map/Cctv/851"
+    }
+   ]
+  },
+  {
+   "slug": "georgetown-summit",
+   "name": "Georgetown Summit (US 30)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "US 30",
+   "tz": "America/Denver",
+   "lat": 42.53028,
+   "lon": -111.4066152,
+   "elev_ft": 6283,
+   "between": "Soda Springs and Montpelier",
+   "cams": [
+    {
+     "title": "US 30 at Georgetown Summit, eastbound",
+     "image": "https://511.idaho.gov/map/Cctv/606"
+    },
+    {
+     "title": "US 30 at Georgetown Summit, pavement view",
+     "image": "https://511.idaho.gov/map/Cctv/607"
+    }
+   ]
+  },
+  {
+   "slug": "geneva-summit",
+   "name": "Geneva Summit (US 89)",
+   "state": "ID",
+   "source": "idaho-511",
+   "route": "US 89",
+   "tz": "America/Denver",
+   "lat": 42.331681,
+   "lon": -111.1389454,
+   "elev_ft": 6939,
+   "between": "Montpelier, Idaho and the Wyoming line",
+   "cams": [
+    {
+     "title": "US 89 at Geneva Summit, eastbound",
+     "image": "https://511.idaho.gov/map/Cctv/511"
+    },
+    {
+     "title": "US 89 at Geneva Summit, pavement view",
+     "image": "https://511.idaho.gov/map/Cctv/512"
+    }
+   ]
+  },
+  {
    "slug": "bozeman-pass",
    "name": "Bozeman Pass (I-90)",
    "state": "MT",
