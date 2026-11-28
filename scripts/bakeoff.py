@@ -5,6 +5,8 @@ Modes
   count   list how many collected images exist per pass and light bucket (day / twilight / night)
   run     sample N images (stratified by light and pass), label each with every model,
           upload per-image labels to the private HF dataset, write an aggregate summary.
+  v2test  (Q6a) re-read the bake-off images with prompt v2 (short codes) via the Message Batches API at several
+          image sizes and compare with the v1.1 Opus readings; "batches" in the request file collects earlier ids.
 
 Opus is the reference. For each field we report how often Haiku and Sonnet agree with it,
 split by light bucket, plus real token usage and cost from the API's usage numbers.
@@ -158,11 +160,12 @@ def sample(rows, n, seed=7):
     return picked
 
 
-def shrink(jpeg_bytes):
+def shrink(jpeg_bytes, side=None):
     from PIL import Image
+    side = side or MAX_SIDE
     im = Image.open(io.BytesIO(jpeg_bytes)).convert("RGB")
-    if max(im.size) > MAX_SIDE:
-        im.thumbnail((MAX_SIDE, MAX_SIDE))
+    if max(im.size) > side:
+        im.thumbnail((side, side))
     buf = io.BytesIO()
     im.save(buf, "JPEG", quality=85)
     return buf.getvalue(), im.size
@@ -213,10 +216,327 @@ def call(model_id, img_b64, key, retries=4, extra=None):
     return {"error": "retries exhausted"}
 
 
-def cost(model, u):
+def cost(model, u, batch=False):
     _, i, o, cr, cw = MODELS[model]
-    return (u.get("input_tokens", 0) * i + u.get("output_tokens", 0) * o
+    full = (u.get("input_tokens", 0) * i + u.get("output_tokens", 0) * o
             + u.get("cache_read_input_tokens", 0) * cr + u.get("cache_creation_input_tokens", 0) * cw) / 1e6
+    return full * 0.5 if batch else full  # Message Batches: 50% off every token type
+
+
+# ------------------------------------------------------------------ prompt v2 (Q6a: short output)
+
+PROMPT_V2 = "pass-v2"
+FIELDS_V2 = {  # short keys and codes; the key in brackets is the v1 field it replaces
+    "u": ["ok", "dark", "glare", "obst", "stale", "off", "nr"],          # image_usable
+    "s": ["bare", "partly", "covered", "ice", "u"],                       # road_surface (collapsed)
+    "w": ["y", "n", "u"],                                                 # lanes wet (was bare_wet)
+    "f": ["y", "n", "u"],                                                 # snow falling visible (was precip_falling)
+    "v": ["good", "reduced", "poor", "u"],                                # visibility
+    "t": ["none", "light", "mod", "heavy", "stop", "u"],                  # traffic
+    "x": ["none", "crash", "emerg", "u"],                                 # incident_visible
+    "p": ["none", "plow", "chain", "u"],                                  # plow_or_chainup
+    "c": ["none", "gate", "u"],                                           # closure_visible
+    "b": ["none", "some", "deep", "u"],                                   # roadside_snow
+}
+SYSTEM_V2 = """You read one still image from a state highway department camera at a mountain pass.
+Report only what is visible in this image; never infer from season, place or time. If a field cannot be judged,
+answer "u" (unknown). Unknown always beats a guess.
+
+Fields and codes:
+- u image: ok | dark | glare | obst (lens blocked by snow, ice, water or dirt) | stale (overlay time clearly old, or a stock/placeholder frame) | off (offline placeholder) | nr (not a road view)
+- s road surface of the travel lanes, not the shoulders: bare | partly (some lane area white or slushy) | covered (lanes mostly white) | ice (ice clearly visible) | u
+- w lanes wet (dark, shiny or reflective pavement): y | n | u
+- f snow falling: y (flakes or streaks visible) | n (air looks clear, no flakes or streaks) | u
+- v visibility along the road: good | reduced | poor | u. At night answer u unless lights show the road ahead.
+- t traffic, vehicles on the road in view: none | light | mod | heavy | stop (a queue clearly not moving) | u
+- x incident: none | crash (crash or disabled vehicle) | emerg (emergency vehicles) | u
+- p plow or chain-up: none | plow | chain | u
+- c closure: none | gate (closed gate or barrier) | u
+- b snow beside the road: none | some | deep | u
+- k your confidence in s, 0 to 1
+- tf temperature shown in the image overlay, in F (convert C), or null if none
+Dark night images: s is usually u unless headlights or lights clearly show the lanes.
+Call r exactly once. Write no other text."""
+TOOL_V2 = {
+    "name": "r",
+    "description": "Record what this camera image shows.",
+    "input_schema": {
+        "type": "object",
+        "properties": {**{k: {"type": "string", "enum": v} for k, v in FIELDS_V2.items()},
+                       "k": {"type": "number"}, "tf": {"type": ["number", "null"]}},
+        "required": list(FIELDS_V2) + ["k", "tf"],
+        "additionalProperties": False,
+    },
+}
+V2_VARIANTS = {  # name: (model, max side px). Dropped from the end when the projected cost passes the cap.
+    "haiku640": ("haiku", 640), "sonnet640": ("sonnet", 640), "sonnet512": ("sonnet", 512), "sonnet448": ("sonnet", 448),
+}
+API = "https://api.anthropic.com/v1/messages"
+
+
+def v2_params(model, img_b64):
+    return {
+        "model": MODELS[model][0], "max_tokens": 1500,
+        "system": [{"type": "text", "text": SYSTEM_V2, "cache_control": {"type": "ephemeral"}}],
+        "tools": [dict(TOOL_V2, strict=True)], "tool_choice": {"type": "auto"},
+        "messages": [{"role": "user", "content": [
+            {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": img_b64}},
+            {"type": "text", "text": "Read this camera image and call r."}]}],
+    }
+
+
+def http(method, url, key, body=None, raw=False):
+    req = urllib.request.Request(url, method=method, data=json.dumps(body).encode() if body is not None else None,
+                                 headers={"x-api-key": key, "anthropic-version": "2023-06-01",
+                                          "content-type": "application/json"})
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=300) as r:
+                data = r.read()
+            return data if raw else json.loads(data)
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503, 529) and attempt < 3:
+                time.sleep(10 * (attempt + 1))
+                continue
+            raise RuntimeError(f"HTTP {e.code}: {e.read()[:400].decode('utf-8', 'replace')}")
+
+
+def parse_msg(out):
+    """Message -> {reading} or {error}, with usage. Same checks as call()."""
+    usage, stop = out.get("usage", {}), out.get("stop_reason")
+    kinds = [c.get("type") for c in out.get("content", [])]
+    base = {"usage": usage, "stop_reason": stop, "blocks": kinds}
+    reading = next((c.get("input") for c in out.get("content", []) if c.get("type") == "tool_use"), None)
+    if reading is None:
+        return dict(base, error=f"no tool call (stop_reason {stop}, blocks {kinds})")
+    missing = [k for k in TOOL_V2["input_schema"]["required"] if k not in reading]
+    if stop == "max_tokens" or missing:
+        return dict(base, error=f"incomplete reading (stop_reason {stop}, missing {missing[:4]})")
+    return dict(base, reading=reading)
+
+
+def collapse_v1(rs):
+    if rs in ("bare_dry", "bare_wet"):
+        return "bare"
+    if rs in ("slush", "partly_snow_covered", "snow_covered", "ice_visible"):
+        return "snow"
+    return "unknown"
+
+
+def collapse_v2(s):
+    return {"bare": "bare", "partly": "snow", "covered": "snow", "ice": "snow"}.get(s, "unknown")
+
+
+V2_TO_V1 = {  # v2 code -> v1 value, per field, for agreement with the v1.1 Opus reference
+    "u": ("image_usable", {"obst": "lens_obstructed", "stale": "frozen_or_stale", "off": "offline_placeholder",
+                           "nr": "not_road_view"}),
+    "v": ("visibility", {"u": "unknown"}),
+    "t": ("traffic", {"none": "none_visible", "mod": "moderate", "stop": "stopped", "u": "unknown"}),
+    "b": ("roadside_snow", {"u": "unknown"}),
+    "x": ("incident_visible", {"crash": "crash_or_disabled_vehicle", "emerg": "emergency_vehicles", "u": "unknown"}),
+    "p": ("plow_or_chainup", {"chain": "chain_up_activity", "u": "unknown"}),
+    "c": ("closure_visible", {"gate": "closed_gate_or_barrier", "u": "unknown"}),
+}
+
+
+def v2test(req, key, api, hf_hub_download, lines, out_md, today):
+    """Q6a: re-read the 300 bake-off images with prompt v2 (short codes) through the Message Batches API at
+    640/512/448 px (Sonnet) and 640 px (Haiku); compare with the v1.1 Opus readings; simulate a Haiku cascade.
+    Spend: a 4-image sync probe measures tokens, the batch is sized to stay under max_usd."""
+    max_usd = float(req.get("max_usd", 3.0))
+    src = req.get("labels", "labels/bakeoff-2026-11-28/pass-v1.1.jsonl")
+    ref = [json.loads(x) for x in open(hf_hub_download(REPO, src, repo_type="dataset",
+                                                         token=os.environ["HF_TOKEN"])) if x.strip()]
+    ref = [r for r in ref if "reading" in r["models"].get(REFERENCE, {})]
+    n = min(int(req.get("n", len(ref))), len(ref))
+    ref = ref[:n]
+    raw = {}
+    for r in ref:
+        raw[r["path"]] = open(hf_hub_download(REPO, r["path"], repo_type="dataset", token=os.environ["HF_TOKEN"]), "rb").read()
+    spent = 0.0
+    state_path = os.path.join(ROOT, "docs", "bakeoff", f"{today}-v2test-batches.json")
+    batches = req.get("batches") or {}
+    probe_rows = []
+    if not batches:
+        # 1. sync probe: 2 day + 2 night images, Sonnet 640 and Haiku 640, to measure real output tokens
+        pick = [r for r in ref if r["light"] == "day"][:2] + [r for r in ref if r["light"] == "night"][:2]
+        per_img = defaultdict(list)
+        for r in pick:
+            for m in ("sonnet", "haiku"):
+                b64 = base64.b64encode(shrink(raw[r["path"]], 640)[0]).decode()
+                try:
+                    res = parse_msg(http("POST", API, key, v2_params(m, b64)))
+                except RuntimeError as e:
+                    res = {"error": str(e), "usage": {}}
+                c = cost(m, res.get("usage", {}))
+                spent += c
+                u = res.get("usage", {})
+                probe_rows.append((m, r["light"], "reading" in res, u.get("input_tokens", 0),
+                                   u.get("cache_read_input_tokens", 0), u.get("output_tokens", 0), c,
+                                   res.get("error", "")[:200]))
+                if "reading" in res:
+                    # conservative projection: charge cache reads as fresh input (batch caching is best effort)
+                    uu = dict(u, input_tokens=u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0)
+                              + u.get("cache_creation_input_tokens", 0), cache_read_input_tokens=0,
+                              cache_creation_input_tokens=0)
+                    per_img[m].append(cost(m, uu, batch=True))
+        if not per_img["sonnet"]:
+            lines += ["", "## v2 probe failed: no Sonnet reading; nothing submitted", ""] + [str(x) for x in probe_rows]
+            open(out_md, "w").write("\n".join(lines) + "\n")
+            print("\n".join(lines))
+            return
+        est = {m: max(v) * 1.15 for m, v in per_img.items()}  # worst probe image + 15%
+        variants = dict(V2_VARIANTS)
+        while variants and spent + sum(est.get(m, est["sonnet"]) * n for m, _ in variants.values()) > max_usd:
+            variants.popitem()
+        if not variants:
+            lines += ["", f"## v2: projected cost over cap ${max_usd}; nothing submitted", ""]
+            open(out_md, "w").write("\n".join(lines) + "\n")
+            return
+        for name, (m, side) in variants.items():
+            reqs = [{"custom_id": f"{name}-{i}", "params": v2_params(
+                m, base64.b64encode(shrink(raw[r["path"]], side)[0]).decode())} for i, r in enumerate(ref)]
+            b = http("POST", API + "/batches", key, {"requests": reqs})
+            batches[name] = b["id"]
+            print(f"submitted {name}: {b['id']} ({len(reqs)} requests)", flush=True)
+        json.dump({"batches": batches, "n": n, "probe_usd": round(spent, 4), "submitted": today}, open(state_path, "w"))
+    # 2. poll (up to ~140 min); if not done, leave the ids for a later collect run
+    deadline = time.time() + float(req.get("poll_minutes", 140)) * 60
+    status = {}
+    while True:
+        status = {k: http("GET", f"{API}/batches/{v}", key) for k, v in batches.items()}
+        if all(s.get("processing_status") == "ended" for s in status.values()):
+            break
+        if time.time() > deadline:
+            lines += ["", "## v2 batches still processing; re-push ops/bakeoff-request.json with these ids to collect", "",
+                      json.dumps(batches), ""]
+            open(out_md, "w").write("\n".join(lines) + "\n")
+            print("\n".join(lines))
+            return
+        print("waiting:", {k: s.get("request_counts") for k, s in status.items()}, flush=True)
+        time.sleep(60)
+    # 3. results
+    got = defaultdict(dict)  # variant -> idx -> parsed
+    for name, s in status.items():
+        body = http("GET", s["results_url"], key, raw=True).decode()
+        for line in body.splitlines():
+            if not line.strip():
+                continue
+            x = json.loads(line)
+            idx = int(x["custom_id"].rsplit("-", 1)[1])
+            res = x.get("result", {})
+            got[name][idx] = parse_msg(res["message"]) if res.get("type") == "succeeded" else \
+                {"error": json.dumps(res)[:300], "usage": {}}
+    variants = list(batches)
+    out = []
+    for i, r in enumerate(ref):
+        out.append({"path": r["path"], "pass": r["pass"], "cam": r["cam"], "when": r["when"], "light": r["light"],
+                    "prompt": PROMPT_V2, "batch": True, "v2": {v: got[v].get(i, {"error": "missing"}) for v in variants}})
+    label_path = f"labels/bakeoff-{today}/{PROMPT_V2}-test.jsonl"
+    api.upload_file(path_or_fileobj=("\n".join(json.dumps(x) for x in out) + "\n").encode(), path_in_repo=label_path,
+                    repo_id=REPO, repo_type="dataset", commit_message=f"v2 test labels {today} ({len(out)} images)")
+
+    def opus(i):
+        return ref[i]["models"][REFERENCE]["reading"]
+
+    def v1(i, m):
+        return ref[i]["models"].get(m, {}).get("reading")
+
+    batch_usd = {v: sum(cost(V2_VARIANTS[v][0], got[v][i].get("usage", {}), batch=True) for i in got[v]) for v in variants}
+    spent_total = spent + sum(batch_usd.values())
+    if not probe_rows:  # collect run: the probe was paid by the submit run
+        try:
+            spent_total += json.load(open(state_path)).get("probe_usd", 0)
+        except (OSError, ValueError):
+            pass
+    lines += ["", f"## Prompt v2 test ({PROMPT_V2}, Message Batches), {n} bake-off images", "",
+              f"Reference: v1.1 Opus readings (`{src}`). Per-image v2 labels: `{label_path}` (private).",
+              f"Batches: `{json.dumps(batches)}`. Spend this test: **${spent_total:.2f}** (cap ${max_usd:.2f}; "
+              f"probe ${spent:.3f}, batches ${sum(batch_usd.values()):.2f}).", ""]
+    if probe_rows:
+        lines += ["Sync probe (prompt v2, 640 px):", "", "| model | light | ok | in tok | cache read | out tok | cost | error |",
+                  "|---|---|---|---:|---:|---:|---:|---|"]
+        lines += [f"| {a} | {b} | {'yes' if c else 'no'} | {d:,} | {e:,} | {f:,} | ${g:.4f} | {h.replace('|', '/')} |"
+                  for a, b, c, d, e, f, g, h in probe_rows] + [""]
+    lines += ["### Cost (batch prices, from usage)", "",
+              "| variant | ok | errors | input tok | cache read | output tok | out tok / image | cost | per 1,000 images |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for v in variants:
+        ok = [got[v][i] for i in got[v] if "reading" in got[v][i]]
+        u = Counter()
+        for x in ok:
+            u.update({k: val for k, val in x["usage"].items() if isinstance(val, int)})
+        errs = [got[v][i]["error"] for i in got[v] if "error" in got[v][i]]
+        lines.append(f"| {v} | {len(ok)} | {len(errs)} | {u['input_tokens']:,} | {u['cache_read_input_tokens']:,} | "
+                     f"{u['output_tokens']:,} | {u['output_tokens'] / max(len(ok), 1):.0f} | ${batch_usd[v]:.2f} | "
+                     f"${batch_usd[v] / max(len(ok), 1) * 1000:.2f} |")
+        if errs:
+            lines.append(f"|  | first error: {errs[0][:120].replace('|', '/')} ||||||||")
+    lines += ["", "v1.1 sync for comparison: Sonnet $5.98 and Haiku $0.47 per 1,000; Sonnet 529 output tokens per image.", ""]
+
+    def rd(v, i):
+        return got[v].get(i, {}).get("reading")
+
+    lines += ["### Road surface, collapsed (bare / snow / unknown), agreement with v1.1 Opus", "",
+              "| reader | all | day | twilight | night | snow on Opus-bare | missed snow (Opus snow -> bare) | unknown rate |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|"]
+    opus_c = [collapse_v1(opus(i).get("road_surface")) for i in range(n)]
+    readers = {f"{v} (v2)": [collapse_v2(rd(v, i)["s"]) if rd(v, i) else None for i in range(n)] for v in variants}
+    for m in ("sonnet", "haiku"):
+        readers[f"{m} v1.1 sync"] = [collapse_v1(v1(i, m).get("road_surface")) if v1(i, m) else None for i in range(n)]
+    if "haiku640" in variants and "sonnet640" in variants:  # cascade: keep Haiku "bare", send the rest to Sonnet
+        readers["cascade haiku640 bare + sonnet640"] = [
+            (h if h == "bare" else s) if h and s else None
+            for h, s in zip(readers["haiku640 (v2)"], readers["sonnet640 (v2)"])]
+        sent = sum(1 for h in readers["haiku640 (v2)"] if h != "bare")
+        lines_cascade = f"Cascade sends {sent}/{n} images ({sent / n:.0%}) to Sonnet."
+    else:
+        lines_cascade = ""
+    for name, vals in readers.items():
+        cells = []
+        for light in ("all", "day", "twilight", "night"):
+            idx = [i for i in range(n) if vals[i] is not None and (light == "all" or ref[i]["light"] == light)]
+            cells.append(f"{sum(vals[i] == opus_c[i] for i in idx) / len(idx):.0%} ({len(idx)})" if idx else "-")
+        ob = [i for i in range(n) if vals[i] is not None and opus_c[i] == "bare"]
+        os_ = [i for i in range(n) if vals[i] is not None and opus_c[i] == "snow"]
+        fs = sum(vals[i] == "snow" for i in ob)
+        ms = sum(vals[i] == "bare" for i in os_)
+        un = sum(1 for x in vals if x == "unknown") / max(sum(1 for x in vals if x is not None), 1)
+        lines.append(f"| {name} | " + " | ".join(cells) + f" | {fs}/{len(ob)} | {ms}/{len(os_)} | {un:.0%} |")
+    lines += ["", f"Opus v1.1 collapsed: " + ", ".join(f"{k} {v}" for k, v in Counter(opus_c).most_common()) + ". "
+              + lines_cascade, ""]
+
+    lines += ["### Other fields vs v1.1 Opus (exact, mapped to v1 values; day in brackets)", "",
+              "| field | " + " | ".join(variants) + " |", "|---|" + "---:|" * len(variants)]
+    day = [i for i in range(n) if ref[i]["light"] == "day"]
+    for code, (f, mp) in V2_TO_V1.items():
+        cells = []
+        for v in variants:
+            def agree(idx):
+                ok = [i for i in idx if rd(v, i)]
+                return sum(mp.get(rd(v, i)[code], rd(v, i)[code]) == opus(i).get(f) for i in ok) / max(len(ok), 1)
+            cells.append(f"{agree(range(n)):.0%} [{agree(day):.0%}]")
+        lines.append(f"| {f} ({code}) | " + " | ".join(cells) + " |")
+    # wet vs Opus bare_wet/bare_dry; snow falling vs Opus precip
+    for code, label, ref_map in (("w", "wet (w) on Opus-bare lanes", {"bare_wet": "y", "bare_dry": "n"}),):
+        cells = []
+        for v in variants:
+            idx = [i for i in range(n) if rd(v, i) and opus(i).get("road_surface") in ref_map]
+            cells.append(f"{sum(rd(v, i)[code] == ref_map[opus(i)['road_surface']] for i in idx) / max(len(idx), 1):.0%} ({len(idx)})")
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+    lines += ["", "### Snow falling (f): unknown rate, and vs Opus precip (snow/mixed = y, none/rain = n)", "",
+              "| variant | y | n | u | unknown rate day | agrees where Opus judged |", "|---|---:|---:|---:|---:|---:|"]
+    pm = {"snow": "y", "mixed": "y", "none": "n", "rain": "n"}
+    for v in variants:
+        c = Counter(rd(v, i)["f"] for i in range(n) if rd(v, i))
+        ud = [i for i in day if rd(v, i)]
+        judged = [i for i in range(n) if rd(v, i) and opus(i).get("precip_falling") in pm]
+        lines.append(f"| {v} | {c['y']} | {c['n']} | {c['u']} | "
+                     f"{sum(rd(v, i)['f'] == 'u' for i in ud) / max(len(ud), 1):.0%} | "
+                     f"{sum(rd(v, i)['f'] == pm[opus(i)['precip_falling']] for i in judged) / max(len(judged), 1):.0%} ({len(judged)}) |")
+    lines += ["", "Opus v1.1 precip_falling was unknown on 67% of images (59% of daytime).", ""]
+    open(out_md, "w").write("\n".join(lines) + "\n")
+    print("\n".join(lines))
 
 
 # ------------------------------------------------------------------ main
@@ -288,6 +608,8 @@ def main():
     extra = req.get("extra") or {}  # optional request fields, e.g. {"output_config": {"effort": "low"}}
     if mode == "probe":
         return probe(rows, key, lines, out_md, hf_hub_download)
+    if mode == "v2test":
+        return v2test(req, key, api, hf_hub_download, lines, out_md, today)
     picked = sample(rows, n)
     print(f"sampled {len(picked)}: {Counter(r['light'] for r in picked)}")
     work = []

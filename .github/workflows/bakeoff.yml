@@ -7,7 +7,7 @@ on:
         description: "count = list collected images; run = label a sample with all three models"
         default: count
         type: choice
-        options: [count, probe, run]
+        options: [count, probe, run, v2test]
       n:
         description: "Images to sample in run mode"
         default: "300"
@@ -25,7 +25,7 @@ concurrency:
 jobs:
   bakeoff:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
       - run: pip install --quiet huggingface_hub pillow
