@@ -751,6 +751,114 @@ def probe(rows, key, lines, out_md, hf_hub_download):
     print("\n".join(lines))
 
 
+
+# ------------------------------------------------------------------ prompt v3 (owner check: roadside snow != lane snow)
+
+PROMPT_V3 = "pass-v3"
+FIELDS_V3 = {"b": FIELDS_V2["b"], **{k: v for k, v in FIELDS_V2.items() if k != "b"}}  # roadside first, then lanes
+SYSTEM_V3 = SYSTEM_V2.replace(
+    "- s road surface of the travel lanes, not the shoulders: bare | partly (some lane area white or slushy) | covered (lanes mostly white) | ice (ice clearly visible) | u",
+    "- s road surface of the travel lanes ONLY: judge the pavement between the lane lines and the wheel tracks. Snow on\n"
+    "  shoulders, banks, medians, guardrails, signs or the ground beside the road does NOT count, however deep (that is b).\n"
+    "  White paint, salt or sand residue, and wet pavement shining in sun, glare or headlights are not snow.\n"
+    "  bare | partly (snow, slush or ice visible in the lanes or wheel tracks themselves) | covered (lanes mostly white) | ice (ice clearly visible) | u",
+).replace("- b snow beside the road: none | some | deep | u\n", "")
+SYSTEM_V3 = SYSTEM_V3.replace("Fields and codes:\n", "Fields and codes (answer b first, then judge the lanes separately):\n- b snow beside the road: none | some | deep | u\n")
+assert "ONLY" in SYSTEM_V3 and SYSTEM_V3.count("- b snow beside") == 1
+TOOL_V3 = dict(TOOL_V2, input_schema=dict(TOOL_V2["input_schema"],
+    properties={**{k: {"type": "string", "enum": v} for k, v in FIELDS_V3.items()}, "k": {"type": "number"},
+                "tf": {"type": ["number", "null"]}},
+    required=list(FIELDS_V3) + ["k", "tf"]))
+
+
+def v3_params(model, img_b64):
+    p = v2_params(model, img_b64)
+    p["system"] = [{"type": "text", "text": SYSTEM_V3, "cache_control": {"type": "ephemeral"}}]
+    p["tools"] = [dict(TOOL_V3, strict=True)]
+    return p
+
+
+def humantest(req, key, hf_hub_download, lines, out_md, today):
+    """Owner check re-test: Sonnet prompt v2 vs v3 on the owner's answered review set, via Message Batches.
+    Per-image readings -> private HF labels/humancheck/; aggregates only -> docs/bakeoff."""
+    set_name = req.get("set", "2026-11-28")
+    model = req.get("model", "sonnet")
+    rdir = os.path.join(ROOT, "review", set_name)
+    items = {x["id"]: x for x in json.load(open(os.path.join(rdir, "items.json")))}
+    human = json.load(open(os.path.join(rdir, "human.json")))
+    ids = sorted(i for i in human if i in items)
+    reqs = {"v2": [], "v3": []}
+    for i in ids:
+        local = hf_hub_download(REPO, items[i]["path"], repo_type="dataset", token=os.environ["HF_TOKEN"])
+        b64 = base64.b64encode(shrink(open(local, "rb").read())[0]).decode()
+        reqs["v2"].append({"custom_id": f"h-{i}", "params": v2_params(model, b64)})
+        reqs["v3"].append({"custom_id": f"h-{i}", "params": v3_params(model, b64)})
+    batches = {k: http("POST", f"{API}/batches", key, {"requests": v})["id"] for k, v in reqs.items()}
+    status = run_batches(key, batches, time.time() + 60 * float(req.get("poll_minutes", 120)))
+    if status is None:
+        lines += ["", f"## Human-check re-test: batches did not finish in time: {batches}", ""]
+        open(out_md, "w").write("\n".join(lines) + "\n")
+        return
+    got = batch_results(key, status)
+    usd = sum(cost(model, r.get("usage", {}), batch=True) for v in got.values() for r in v.values())
+    lp = os.path.join(ROOT, "docs", "bakeoff", "label-ledger.json")
+    if os.path.exists(lp):
+        led = json.load(open(lp))
+        led["spent_usd"] = round(led["spent_usd"] + usd, 4)
+        led["jobs"].append({"date": today, "kind": "eval", "note": f"human-check re-test v2 vs v3, {set_name}", "usd": round(usd, 4)})
+        json.dump(led, open(lp, "w"), indent=1)
+    # per-image readings stay private
+    import tempfile
+    tmp = os.path.join(tempfile.mkdtemp(), "h.jsonl")
+    with open(tmp, "w") as f:
+        for i in ids:
+            f.write(json.dumps({"id": i, "path": items[i]["path"], "light": items[i]["light"], "human": human[i],
+                                "v2": got["v2"].get(f"h-{i}", {}), "v3": got["v3"].get(f"h-{i}", {})}) + "\n")
+    from huggingface_hub import HfApi
+    HfApi(token=os.environ["HF_TOKEN"]).upload_file(path_or_fileobj=tmp, repo_id=REPO, repo_type="dataset",
+        path_in_repo=f"labels/humancheck/{set_name}-{model}-v2v3.jsonl", commit_message="human-check re-test")
+
+    def rd(v, i):
+        return got[v].get(f"h-{i}", {}).get("reading") or {}
+
+    def g(v, i, kmin=0.0):
+        r = rd(v, i)
+        if not r:
+            return "error"
+        c = collapse_v2(r.get("s"))
+        return c if (c == "unknown" or float(r.get("k") or 0) >= kmin) else "unknown"
+
+    errs = {v: sum(1 for i in ids if not rd(v, i)) for v in got}
+    lines += ["", f"## Human-check re-test {today}: {model}, prompt v2 vs v3 ({PROMPT_V3}), set {set_name}", "",
+              f"{len(ids)} images the owner answered. Cost ${usd:.2f} (Message Batches). Failed readings: {errs}.", "",
+              "| light | prompt | agrees (person sure) | says snow, person bare | says bare, person snow | model unknown, person sure |",
+              "|---|---|---:|---:|---:|---:|"]
+    for light in ("day", "twilight", "night"):
+        sure = [i for i in ids if items[i]["light"] == light and human[i]["road"] != "unknown"]
+        for v in ("v2", "v3"):
+            a = sum(g(v, i) == human[i]["road"] for i in sure)
+            fs = sum(g(v, i) == "snow" and human[i]["road"] == "bare" for i in sure)
+            ms = sum(g(v, i) == "bare" and human[i]["road"] == "snow" for i in sure)
+            un = sum(g(v, i) == "unknown" for i in sure)
+            lines.append(f"| {light} | {v} | {a}/{len(sure)} ({a / max(len(sure), 1):.0%}) | {fs} | {ms} | {un} |")
+    trap = [i for i in ids if human[i]["road"] == "bare" and human[i].get("side") == "yes"]
+    lines += ["", f"Snow beside the road, lanes bare (person), {len(trap)} images; model says snow on lanes:"]
+    for v in ("v2", "v3"):
+        w = sum(g(v, i) == "snow" for i in trap)
+        lines.append(f"- {v}: {w}/{len(trap)} ({w / max(len(trap), 1):.0%})")
+    lines += ["", "Day + twilight, person sure: answer only when confidence k >= threshold, else \"can't tell\":", "",
+              "| prompt | k >= | answered | right when answered | says snow, person bare |", "|---|---:|---:|---:|---:|"]
+    dt = [i for i in ids if items[i]["light"] in ("day", "twilight") and human[i]["road"] != "unknown"]
+    for v in ("v2", "v3"):
+        for kmin in (0.0, 0.6, 0.7, 0.8, 0.9):
+            ans = [i for i in dt if g(v, i, kmin) in ("bare", "snow")]
+            right = sum(g(v, i, kmin) == human[i]["road"] for i in ans)
+            fs = sum(g(v, i, kmin) == "snow" and human[i]["road"] == "bare" for i in ans)
+            lines.append(f"| {v} | {kmin} | {len(ans)}/{len(dt)} | {right}/{max(len(ans), 1)} ({right / max(len(ans), 1):.0%}) | {fs} |")
+    open(out_md, "w").write("\n".join(lines) + "\n")
+    print("\n".join(lines))
+
+
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "count"
     n = int(sys.argv[2]) if len(sys.argv) > 2 else 300
@@ -790,6 +898,8 @@ def main():
         return label(req, key, api, rows, hf_hub_download, lines, out_md, today)
     if mode == "v2test":
         return v2test(req, key, api, hf_hub_download, lines, out_md, today)
+    if mode == "humantest":
+        return humantest(req, key, hf_hub_download, lines, out_md, today)
     picked = sample(rows, n)
     print(f"sampled {len(picked)}: {Counter(r['light'] for r in picked)}")
     work = []
