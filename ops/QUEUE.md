@@ -5,11 +5,12 @@
    no Haiku cascade (missed snow 2/31 vs 1/31). D2 closed at $8.97 of $10. Installment 1 done 03:04Z: 1,513 day+twilight
    labels, $3.55, Opus audit 95% (143/151); D8 ledger docs/bakeoff/label-ledger.json $3.55 of $40. Left: one installment per
    day (push ops/bakeoff-request.json mode "label", same settings, bump "requested") until ~5,000 images; next when the
-   unlabeled day+twilight pool is ≥1,000 (~1,500/day collected). Non-JPEG fix done 2026-11-28 04:25Z: the bad file was
+   unlabeled day+twilight pool is ≥1,000 (~1,500/day collected). Label job now defaults to prompt pass-v4 (35eb012; "prompt": "v2" for the old one). Non-JPEG fix done 2026-11-28 04:25Z: the bad file was
    raw/2026-11-28/0002/blewett-pass/0.jpg; collect.py now saves only complete JPEGs (SOI + EOI), else `problem` in manifest.
 
 0b. **Q13 Claude readings on the top 5 passes (D9).** SHIPPED 2026-11-28 ~11:40Z by Claude in chat (scripts/read_cams.py in collect.yml;
-   pass page "What the cameras show" + per-camera caption line). Left: verify accruing; a "Cameras" row in the 24 h history strip;
+   pass page "What the cameras show" + per-camera caption line). "Cameras" row in the 24 h history shipped 2026-11-28 12:40Z (b6c4317;
+   shows once readings exist in the window). Left: verify readings accruing after first light (none yet at 12:20Z, dark);
    10% Opus audit of live readings (~$1/month); review owner's second-look answers when he finishes. Owner check compared 2026-11-28 08:00Z (review/2026-11-28/report.md):
    Sonnet 88% day (52/59 sure), 86% twilight, 50% night; misses the 90% bar by ~1 image. Main error: snow beside the road
    read as snow on the lanes (Sonnet 10/53, Opus 10/53, Haiku 38/53). Sample oversampled model-snowy images, so real rates
