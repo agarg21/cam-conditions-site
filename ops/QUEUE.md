@@ -1,13 +1,11 @@
 # Queue (top = next). Keep ≤15 items. Status: open | blocked (why) | NOT NOW.
 
-0. **Q6a Cheaper labels, then the labeling job (owner, 2026-11-28; D8 approved). Do first.** Sonnet cost is ~90% output: 529 output tokens per image in the
-   bake-off ($5.30 of $5.98 per 1,000). (1) Prompt v2 with short enum codes and no free-text note; record output tokens
-   (target ≤150). (2) Message Batches API (50% off input and output; forced tool_choice still returns 400, keep auto + strict).
-   (3) Try 448 px and 512 px vs 640 px on the 300 bake-off images: does Sonnet's agreement with Opus hold? (4) Cascade: Haiku
-   has 0/36 missed snow; if that holds on v2, accept Haiku "bare" and send only Haiku snow/unknown to Sonnet. Spend from D2's
-   remaining $3.20 only. Then submit the D8 labeling job as Message Batches: ~5,000 images (day + twilight first, spread over passes and
-   cameras), Sonnet with the cheapest setup that holds agreement, plus a 10% Opus audit; per-image labels to the private HF
-   dataset only; record measured cost per 1,000. Owner said no second vendor.
+0. **Q6a Cheaper labels, then the labeling job (D8).** Test done 2026-11-28 (docs/bakeoff/decision.md "Q6a update"): prompt
+   pass-v2 via Message Batches, Sonnet $1.89 per 1,000 (was $5.98); vs Opus v2 95% day / 93% twilight; 512 px saves nothing;
+   no Haiku cascade (missed snow 2/31 vs 1/31). D2 closed at $8.97 of $10. Installment 1 done 03:04Z: 1,513 day+twilight
+   labels, $3.55, Opus audit 95% (143/151); D8 ledger docs/bakeoff/label-ledger.json $3.55 of $40. Left: one installment per
+   day (push ops/bakeoff-request.json mode "label", same settings, bump "requested") until ~5,000 images; next when the
+   unlabeled day+twilight pool is ≥1,000 (~1,500/day collected). 1 dataset file was not a JPEG: check collect.py's image check.
 
 1. **Q1 Labeling bake-off.** Done 2026-11-28 01:08Z: docs/bakeoff/decision.md (Sonnet labels; Haiku 18% false snow;
    collapsed road surface Sonnet 93% vs Opus). D2 spent $6.80 of $10. Follow-up lives in Q6.
