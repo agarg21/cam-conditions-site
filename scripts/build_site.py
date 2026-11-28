@@ -686,9 +686,24 @@ def related_html(p, summary):
     return out
 
 
+def rules_html(state, chain_rules):
+    """State chain and traction rules for passenger vehicles, from config/chain-rules.json (official pages only)."""
+    r = chain_rules.get(state)
+    if not r:
+        return ""
+    checked = datetime.fromisoformat(r["checked"]).strftime("%b %-d, %Y")
+    src = ", ".join(f'<a href="{e(u)}">{e(n)}</a>' for n, u in r["sources"])
+    return (f'<h2>{STATE_NAMES[state]} chain and traction tire rules</h2>'
+            f'<ul class="checklist">{"".join(f"<li>{e(t)}</li>" for t in r["rules"])}</ul>'
+            f'<p class="note">Rules for cars and light trucks, summarised from {src} (read {checked}). '
+            f'The signs on the road and the official report decide what applies today.</p>')
+
+
 def build():
     with open(os.path.join(ROOT, "config", "passes.json")) as f:
         passes = json.load(f)["ready"]
+    with open(os.path.join(ROOT, "config", "chain-rules.json")) as f:
+        chain_rules = json.load(f)
     run_dir, manifest = latest_run()
     fetched = datetime.fromisoformat(manifest["fetched_at"]) if manifest else datetime.now(timezone.utc)
     checked = fetched.astimezone(TZ).strftime("%-I:%M %p %Z")
@@ -794,6 +809,7 @@ def build():
 <dt>Highway</dt><dd>{e(p["route"])}, {STATE_NAMES[p["state"]]}</dd>
 <dt>Between</dt><dd>{e(p["between"])}</dd>
 <dt>Official reports</dt><dd><a href="{dot_link}">{dot_name}</a></dd></dl>
+{rules_html(p["state"], chain_rules)}
 <!--RELATED-->
 <h2>Before you go</h2>
 <ul class="checklist"><li>Check the official report on <a href="{dot_link}">{dot_name}</a> right before you leave.</li>

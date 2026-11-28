@@ -1,0 +1,51 @@
+{
+  "_note": "State chain and traction rules for passenger vehicles, shown on pass pages. Each line paraphrases or quotes the linked official page only. Re-read the sources before each winter season; change 'checked' only after a re-read.",
+  "WA": {
+    "checked": "2026-11-28",
+    "rules": [
+      "When a pass shows “Chains required”, you must have chains or an approved alternative traction device on your drive tires to enter.",
+      "All-wheel-drive vehicles are exempt only with all wheels in gear and “equipped with approved traction devices”, and with chains for one set of drive tires carried in the vehicle.",
+      "Studded tires are legal November 1 to March 31, and they do not meet a posted chain requirement."
+    ],
+    "sources": [
+      ["WAC 204-24-050 (Washington State Patrol tire chain rule)", "https://lawfilesext.leg.wa.gov/Law/WACArchive/2024/htm/WAC%20204%20-%2024%20%20CHAPTER/WAC%20204%20-%2024%20-050.htm"],
+      ["WSDOT winter driving news release", "https://wsdot.wa.gov/about/news/2023/ice-ice-baby-wsdot-ready-winter-are-you"]
+    ]
+  },
+  "CA": {
+    "checked": "2026-11-28",
+    "rules": [
+      "R-1: chains required, except cars and light trucks under 6,000 lb with snow tires on at least two drive wheels. Those must carry chains.",
+      "R-2: chains or traction devices required, except four-wheel or all-wheel drive with snow-tread tires on all four wheels. Those must carry traction devices.",
+      "R-3: chains or traction devices on all vehicles, no exceptions.",
+      "With chains on, the speed limit is 25 or 30 mph. The CHP can cite drivers who don’t chain up when signs say so."
+    ],
+    "sources": [
+      ["Caltrans: Chain controls", "https://dot.ca.gov/travel/winter-driving-tips/chain-controls"]
+    ]
+  },
+  "OR": {
+    "checked": "2026-11-28",
+    "rules": [
+      "Where signs say to carry chains or traction tires, you must have them in or on your vehicle.",
+      "Vehicles rated 10,000 lb GVW or less and not towing may use traction tires instead of chains: studded tires, or tires marked with the mountain-snowflake symbol.",
+      "In very bad conditions all vehicles may be required to use chains.",
+      "Studded tires are legal November 1 to March 31. Ignoring chain or traction tire signs is a Class C traffic infraction."
+    ],
+    "sources": [
+      ["TripCheck: Oregon chain law", "https://tripcheck.com/Pages/Chain-Law"],
+      ["TripCheck: Traction tires", "https://tripcheck.com/Pages/Traction-Tires"]
+    ]
+  },
+  "ID": {
+    "checked": "2026-11-28",
+    "rules": [
+      "Idaho’s chain-up law applies only to commercial vehicles over 26,000 lb; ITD says it “does not apply to most drivers on the road”.",
+      "Studded tires are legal October 1 to April 30."
+    ],
+    "sources": [
+      ["ITD: What you need to know about the chain up law", "https://itd.idaho.gov/?p=31952"],
+      ["ITD: Studded tires are legal in Idaho from Oct. 1 to April 30", "https://itd.idaho.gov/?p=13890"]
+    ]
+  }
+}
