@@ -778,6 +778,36 @@ def v3_params(model, img_b64):
     return p
 
 
+# ------------------------------------------------------------------ prompt v4 (owner: read the road from the center line)
+
+PROMPT_V4 = "pass-v4"
+FIELDS_V4 = {"cl": ["vis", "part", "hid", "none", "u"], **FIELDS_V3}
+SYSTEM_V4 = SYSTEM_V2.replace(
+    "- s road surface of the travel lanes, not the shoulders: bare | partly (some lane area white or slushy) | covered (lanes mostly white) | ice (ice clearly visible) | u",
+    "- s road surface: judge the pavement within about one car width either side of the center line; if there is no center\n"
+    "  line, the strip where vehicles drive. Ignore shoulders and anything beside the road.\n"
+    "  bare | partly (snow, slush or ice on that pavement) | covered (mostly white) | ice (ice clearly visible) | u.\n"
+    "  If cl is hid, s cannot be bare.",
+).replace("- b snow beside the road: none | some | deep | u\n", "").replace(
+    "Fields and codes:\n",
+    "Fields and codes (answer cl first, then b, then the rest):\n"
+    "- cl center line, the painted line between the two directions (usually the clearest mark on the road):\n"
+    "  vis (clearly visible) | part (partly hidden by snow or slush) | hid (hidden under snow) | none (no center line in view) | u\n"
+    "- b snow beside the road: none | some | deep | u\n")
+assert SYSTEM_V4.count("- cl center") == 1 and SYSTEM_V4.count("- b snow beside") == 1 and "If cl is hid" in SYSTEM_V4
+TOOL_V4 = dict(TOOL_V2, input_schema=dict(TOOL_V2["input_schema"],
+    properties={**{k: {"type": "string", "enum": v} for k, v in FIELDS_V4.items()}, "k": {"type": "number"},
+                "tf": {"type": ["number", "null"]}},
+    required=list(FIELDS_V4) + ["k", "tf"]))
+
+
+def v4_params(model, img_b64):
+    p = v2_params(model, img_b64)
+    p["system"] = [{"type": "text", "text": SYSTEM_V4, "cache_control": {"type": "ephemeral"}}]
+    p["tools"] = [dict(TOOL_V4, strict=True)]
+    return p
+
+
 def humantest(req, key, hf_hub_download, lines, out_md, today):
     """Owner check re-test: Sonnet prompt v2 vs v3 on the owner's answered review set, via Message Batches.
     Per-image readings -> private HF labels/humancheck/; aggregates only -> docs/bakeoff."""
@@ -787,12 +817,14 @@ def humantest(req, key, hf_hub_download, lines, out_md, today):
     items = {x["id"]: x for x in json.load(open(os.path.join(rdir, "items.json")))}
     human = json.load(open(os.path.join(rdir, "human.json")))
     ids = sorted(i for i in human if i in items)
-    reqs = {"v2": [], "v3": []}
+    builders = {"v2": v2_params, "v3": v3_params, "v4": v4_params}
+    pv = req.get("prompts", ["v2", "v3"])
+    reqs = {v: [] for v in pv}
     for i in ids:
         local = hf_hub_download(REPO, items[i]["path"], repo_type="dataset", token=os.environ["HF_TOKEN"])
         b64 = base64.b64encode(shrink(open(local, "rb").read())[0]).decode()
-        reqs["v2"].append({"custom_id": f"h-{i}", "params": v2_params(model, b64)})
-        reqs["v3"].append({"custom_id": f"h-{i}", "params": v3_params(model, b64)})
+        for v in pv:
+            reqs[v].append({"custom_id": f"h-{i}", "params": builders[v](model, b64)})
     batches = {k: http("POST", f"{API}/batches", key, {"requests": v})["id"] for k, v in reqs.items()}
     status = run_batches(key, batches, time.time() + 60 * float(req.get("poll_minutes", 120)))
     if status is None:
@@ -805,7 +837,7 @@ def humantest(req, key, hf_hub_download, lines, out_md, today):
     if os.path.exists(lp):
         led = json.load(open(lp))
         led["spent_usd"] = round(led["spent_usd"] + usd, 4)
-        led["jobs"].append({"date": today, "kind": "eval", "note": f"human-check re-test v2 vs v3, {set_name}", "usd": round(usd, 4)})
+        led["jobs"].append({"date": today, "kind": "eval", "note": f"human-check re-test {'+'.join(pv)}, {set_name}", "usd": round(usd, 4)})
         json.dump(led, open(lp, "w"), indent=1)
     # per-image readings stay private
     import tempfile
@@ -813,10 +845,10 @@ def humantest(req, key, hf_hub_download, lines, out_md, today):
     with open(tmp, "w") as f:
         for i in ids:
             f.write(json.dumps({"id": i, "path": items[i]["path"], "light": items[i]["light"], "human": human[i],
-                                "v2": got["v2"].get(f"h-{i}", {}), "v3": got["v3"].get(f"h-{i}", {})}) + "\n")
+                                **{v: got[v].get(f"h-{i}", {}) for v in pv}}) + "\n")
     from huggingface_hub import HfApi
     HfApi(token=os.environ["HF_TOKEN"]).upload_file(path_or_fileobj=tmp, repo_id=REPO, repo_type="dataset",
-        path_in_repo=f"labels/humancheck/{set_name}-{model}-v2v3.jsonl", commit_message="human-check re-test")
+        path_in_repo=f"labels/humancheck/{set_name}-{model}-{''.join(pv)}.jsonl", commit_message="human-check re-test")
 
     def rd(v, i):
         return got[v].get(f"h-{i}", {}).get("reading") or {}
@@ -829,13 +861,13 @@ def humantest(req, key, hf_hub_download, lines, out_md, today):
         return c if (c == "unknown" or float(r.get("k") or 0) >= kmin) else "unknown"
 
     errs = {v: sum(1 for i in ids if not rd(v, i)) for v in got}
-    lines += ["", f"## Human-check re-test {today}: {model}, prompt v2 vs v3 ({PROMPT_V3}), set {set_name}", "",
+    lines += ["", f"## Human-check re-test {today}: {model}, prompts {', '.join(pv)}, set {set_name}", "",
               f"{len(ids)} images the owner answered. Cost ${usd:.2f} (Message Batches). Failed readings: {errs}.", "",
               "| light | prompt | agrees (person sure) | says snow, person bare | says bare, person snow | model unknown, person sure |",
               "|---|---|---:|---:|---:|---:|"]
     for light in ("day", "twilight", "night"):
         sure = [i for i in ids if items[i]["light"] == light and human[i]["road"] != "unknown"]
-        for v in ("v2", "v3"):
+        for v in pv:
             a = sum(g(v, i) == human[i]["road"] for i in sure)
             fs = sum(g(v, i) == "snow" and human[i]["road"] == "bare" for i in sure)
             ms = sum(g(v, i) == "bare" and human[i]["road"] == "snow" for i in sure)
@@ -843,18 +875,24 @@ def humantest(req, key, hf_hub_download, lines, out_md, today):
             lines.append(f"| {light} | {v} | {a}/{len(sure)} ({a / max(len(sure), 1):.0%}) | {fs} | {ms} | {un} |")
     trap = [i for i in ids if human[i]["road"] == "bare" and human[i].get("side") == "yes"]
     lines += ["", f"Snow beside the road, lanes bare (person), {len(trap)} images; model says snow on lanes:"]
-    for v in ("v2", "v3"):
+    for v in pv:
         w = sum(g(v, i) == "snow" for i in trap)
         lines.append(f"- {v}: {w}/{len(trap)} ({w / max(len(trap), 1):.0%})")
     lines += ["", "Day + twilight, person sure: answer only when confidence k >= threshold, else \"can't tell\":", "",
               "| prompt | k >= | answered | right when answered | says snow, person bare |", "|---|---:|---:|---:|---:|"]
     dt = [i for i in ids if items[i]["light"] in ("day", "twilight") and human[i]["road"] != "unknown"]
-    for v in ("v2", "v3"):
+    for v in pv:
         for kmin in (0.0, 0.6, 0.7, 0.8, 0.9):
             ans = [i for i in dt if g(v, i, kmin) in ("bare", "snow")]
             right = sum(g(v, i, kmin) == human[i]["road"] for i in ans)
             fs = sum(g(v, i, kmin) == "snow" and human[i]["road"] == "bare" for i in ans)
             lines.append(f"| {v} | {kmin} | {len(ans)}/{len(dt)} | {right}/{max(len(ans), 1)} ({right / max(len(ans), 1):.0%}) | {fs} |")
+    if "v4" in pv:
+        lines += ["", "v4 center line (cl) vs the person's lane answer, all lights:", "",
+                  "| cl | person bare | person snow | person can't tell |", "|---|---:|---:|---:|"]
+        for c in FIELDS_V4["cl"]:
+            sel = [i for i in ids if rd("v4", i).get("cl") == c]
+            lines.append(f"| {c} | " + " | ".join(str(sum(human[i]["road"] == h for i in sel)) for h in ("bare", "snow", "unknown")) + " |")
     open(out_md, "w").write("\n".join(lines) + "\n")
     print("\n".join(lines))
 
