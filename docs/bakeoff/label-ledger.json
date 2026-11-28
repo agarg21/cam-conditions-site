@@ -1,0 +1,21 @@
+{
+ "budget_usd": 40.0,
+ "spent_usd": 3.5471,
+ "images": 1513,
+ "jobs": [
+  {
+   "date": "2026-11-28",
+   "model": "sonnet",
+   "side": 640,
+   "images_ok": 1513,
+   "audit": 151,
+   "usd_main": 2.8543,
+   "usd_audit": 0.6928,
+   "batches": {
+    "sonnet-0": "msgbatch_01Un6ALP8RhtFNy6JcMLRyJv",
+    "sonnet-1": "msgbatch_015vJmFvd1XL9hhvTdEXoaGf",
+    "opus-0": "msgbatch_01EtARR36BNpURrvxqiKkyrs"
+   }
+  }
+ ]
+}
