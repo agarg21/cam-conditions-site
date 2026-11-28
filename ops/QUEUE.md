@@ -14,7 +14,10 @@
    are lower. Re-test 08:30Z (docs/bakeoff/2026-11-28-humantest.md, $0.39): prompt v3 made it WORSE (day 78%, roadside trap
    40%); v2 day 81%. But v2 with a confidence gate (show only k>=0.7, else "can't tell") was right 45/46 (98%) on day+
    twilight, zero false snow, answering 63%. Gate chosen on the same 73 images: confirm on fresh images via a 10% Opus audit.
-   Training labels: use k>=0.7 or Opus-audited only. Waiting on owner: go live with v2 + gate (OWNER.md D9). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
+   Training labels: use k>=0.7 or Opus-audited only. v4 (owner's method: center line first) 11:00Z, $0.21: day 81%, day+twilight 83%, k>=0.7 39/40; same as v2. Center line
+   itself is a strong signal (visible -> person bare 36/39; hidden -> person snow 11/12) but a cl rule adds nothing over s.
+   Prompt wording is not the lever. Owner is doing a second look on the disagreements (artifact "you vs the models").
+   Waiting on owner: go live with v2 or v4 + k>=0.7 gate (OWNER.md D9). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
    demand (likely Snoqualmie, Stevens, Donner, Lookout, Santiam; check docs/research), add an hourly reading job (Batch not
    needed at this size), store readings in HF readings/, and show on pass pages: per camera "Our reading: snow on lanes /
    bare / can't tell (too dark)" with time and confidence; a pass-level "Cameras show" line beside the official verdict;
