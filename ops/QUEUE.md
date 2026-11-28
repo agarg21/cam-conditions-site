@@ -27,8 +27,11 @@
 2b. **Q11 SEO pass on pass pages (owner asked, 2026-11-28).** Part 1 shipped 2026-11-28 (66007ac): (1) title "<Pass> Road
    Conditions, Webcams & Chain Status", H2 "<Pass> webcams", camera alt "<Pass> webcam: …"; (2) h1 "<Pass> road conditions"
    above the sign; (3) "Is <Pass> open right now?", "Do I need chains?", "<Pass> weather"; (4) WebPage+BreadcrumbList
-   (Home › Pass)+Place geo JSON-LD, og/twitter tags with the first camera's stable URL. Left: (5) state hubs + 3-level
-   breadcrumb, nearby/same-highway blocks; (6) sourced evergreen block; images still carry ?t= (decide: drop it, since
+   (Home › Pass)+Place geo JSON-LD, og/twitter tags with the first camera's stable URL. Part 2 shipped 2026-11-28 (ba7f7f7):
+   (5) hubs /states/{washington,oregon,california,idaho}/ (states with ≥2 passes; WY's 1 pass keeps a 2-level crumb), home
+   state headings link to them, pass crumbs All passes › State › Pass, "Other passes on <route>" + "Nearby passes" (≤3, ≤300 km)
+   with live official status; ODOT disclaimer added wherever ODOT status appears (home board still shows ODOT rows without it:
+   check). Left: (6) sourced evergreen block; images still carry ?t= (decide: drop it, since
    Pages serves max-age=600). Original notes: gaps found on /passes/snoqualmie-pass/: (1) the word
    "webcam" is nowhere, though "<pass> webcam" is the biggest search (~98K/mo across 12 passes): title "<Pass> Road
    Conditions, Webcams & Chain Status", H2 "<Pass> webcams"; (2) H1 is the bare name: make it "<Pass> road conditions"
