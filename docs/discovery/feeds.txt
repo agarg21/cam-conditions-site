@@ -181,7 +181,7 @@
       0.0 km | cam 321 RWIS 19.C1 | US-30 Border Summit | Unknown | view 393 Enabled https://511.idaho.gov/map/Cctv/393 | 
 
 === Idaho winterroads: HTTP 200
-  237 segments; statuses: ['Dry', 'Icy Patches', 'No Report', 'Packed Snow Patches', 'Slush', 'Snow Covered', 'Wet']
+  237 segments; statuses: ['Dry', 'Icy Patches', 'No Report', 'Slush', 'Snow Covered', 'Wet']
    {'Id': 755, 'LocationDescription': 'test', 'Overall Status': 'No Report', 'Weather Conditions': None, 'Special Conditions': None, 'AreaName': 'District 6 Foreman 672', 'RoadwayName': 'test', 'LastUpdated': 1795209742}
    {'Id': 752, 'LocationDescription': 'TEST ', 'Overall Status': 'No Report', 'Weather Conditions': None, 'Special Conditions': None, 'AreaName': 'Local', 'RoadwayName': 'TEST ', 'LastUpdated': 1795729695}
    {'Id': 694, 'LocationDescription': 'Banks/Alder Creek Rd. from MP 0 to MP 12', 'Overall Status': 'No Report', 'Weather Conditions': None, 'Special Conditions': None, 'AreaName': 'Local', 'RoadwayName': 'CO-17', 'LastUpdated': 1795729695}
@@ -190,16 +190,16 @@
   Fourth of July Pass (I-90): 0.0 km | I-90 | Wolf Lodge/Kingston from MP 22 to MP 43 | Icy Patches | updated 1795884039
   White Bird Hill (US 95): 0.0 km | US-95 | White Bird/White Bird Hill from MP 223 to MP 234 | Wet | updated 1795872179
   Geneva (US 89): 0.0 km | US-89 | Montpelier/Wyoming LIne from MP 25 to MP 44 | Wet | updated 1795884316
-  Georgetown (US 30): 0.0 km | US-30 | Soda Yard/Georgetown Summit from MP 399 to MP 419 | Wet | updated 1795874321
+  Georgetown (US 30): 0.0 km | US-30 | Soda Yard/Georgetown Summit from MP 399 to MP 419 | Dry | updated 1795895119
   Lewiston Hill (US 95): 0.0 km | US-95 | Lewiston/Genesee from MP 312 to MP 330 | No Report | updated 1795879037
-  Fish Creek (US 30): 0.0 km | US-30 | Fish Creek Summit/Jct SH-34 from MP 376 to MP 387 | Wet | updated 1795874321
+  Fish Creek (US 30): 0.0 km | US-30 | Fish Creek Summit/Jct SH-34 from MP 376 to MP 387 | Dry | updated 1795895119
   Beaver Creek (SH 21): 0.0 km | SH-21 | Beaver Creek Summit/Grandjean Road from MP 60 to MP 94 | Icy Patches | updated 1795872873
   Lolo Pass (US 12): 0.0 km | US-12 | Bald Mountain/Montana Line (Lolo Pass) from MP 128 to MP 174 | Wet | updated 1795875657
-  Lookout Pass (I-90): 0.0 km | I-90 | Wallace/Montana Line (Lookout Pass) from MP 62 to MP 74 | Icy Patches | updated 1795879089
+  Lookout Pass (I-90): 0.0 km | I-90 | Wallace/Montana Line (Lookout Pass) from MP 62 to MP 74 | Dry | updated 1795896957
   Lost Trail Pass (US 93): 0.3 km | US-93 | Salmon/Montana Line (Lost Trail Pass) from MP 304 to MP 351 | Icy Patches | updated 1795877876
-  Malad (I-15): 0.0 km | I-15 | Jct SH-36/Downey (Malad Summit) from MP 17 to MP 27 | Slush | updated 1795879330
+  Malad (I-15): 0.0 km | I-15 | Jct SH-36/Downey (Malad Summit) from MP 17 to MP 27 | Dry | updated 1795894372
   Midvale Hill (US 95): 0.0 km | US-95 | Weiser/Cambridge from MP 84 to MP 113 | Wet | updated 1795870909
-  Monida Pass (I-15): 0.0 km | I-15 | Dubois/Montana Line (Monida Pass) from MP 167 to MP 196 | Packed Snow Patches | updated 1795875592
+  Monida Pass (I-15): 0.0 km | I-15 | Dubois/Montana Line (Monida Pass) from MP 167 to MP 196 | Wet | updated 1795895056
   Nevada Line Pass (US 93): 0.0 km | US-93 | Nevada Line/Rogerson from MP 0 to MP 17 | Dry | updated 1795872157
   Sweetzer (I-84): 0.0 km | I-84 | Sublett Rd IC/Utah line (Sweetzer Summit) from MP 245 to MP 276 | Wet | updated 1795871074
   Willow Creek (US 93): 0.0 km | US-93 | Mackay/McGowan Creek (willow creek summit) | Wet | updated 1795888327
@@ -212,7 +212,7 @@
   Galena (SH 75): 0.0 km | SH-75 | Ketchum/Sawtooth City from MP 128 to MP 165 | Icy Patches | updated 1795873623
   Gilmore (SH 28): 0.4 km | SH-28 | Lone Pine/Leadore (Gilmore Summit) | Icy Patches | updated 1795890327
   Highland Valley (SH 21): 0.0 km | SH-21 | Lucky Peak Dam/Robie Creek from MP 11 to MP 22 | Wet | updated 1795868137
-  Holbrook (SH 38): 0.0 km | SH-38 | Malad/Holbrook (Holbrook Summit) from MP 0 to MP 24 | Wet | updated 1795872071
+  Holbrook (SH 38): 0.0 km | SH-38 | Malad/Holbrook (Holbrook Summit) from MP 0 to MP 24 | Dry | updated 1795894372
   Horseshoe Bend Hill (SH 55): 0.0 km | SH-55 | Spring Valley/Horseshoe Bend from MP 54 to MP 65 | Dry | updated 1795872320
   Mores Creek (SH 21): 0.0 km | SH-21 | Idaho CityBeaver Creek Summit from MP 39 to MP 60 | Icy Patches | updated 1795876739
   Pine Creek Pass (SH 31): 0.0 km | SH-31 | Swan Valley/Victor (Pine Cr. Pass) from MP 0 to MP 21 | Slush | updated 1795888853
@@ -223,61 +223,94 @@
 === ODOT Cctv/Inventory: HTTP 200
   1134 cameras; first: {'device-id': 277, 'device-name': 'AstoriaUS101MeglerBrNB', 'latitude': 46.18785, 'longitude': -123.85347, 'hwy-id': '009', 'route-id': 'US101', 'milepoint': 3.7, 'cctv-url': 'http://www.TripCheck.com/roadcams/cams/AstoriaUS101MeglerBrNB_pid392.jpg', 'cctv-other': 'US101 at Astoria - ODOT District Office', 'last-update-time': '2026-11-28T03:41:45.027-08:00'}
 
-  -- near Santiam Pass US 20
-      0.3 km | 1443 | Santiam Pass WB | US20 MP 80.14 | http://www.TripCheck.com/roadcams/cams/Santiam Pass WB_pid5258.jpg | US20 at Santiam Pass
-      0.3 km | 567 | Santiam Pass EB | US20 MP 80.14 | http://www.TripCheck.com/roadcams/cams/Santiam Pass_pid2728.JPG | US20 at Santiam Pass
-      6.7 km | 719 | US20 at Santiam Jct WB | US20 MP 74.8 | http://www.TripCheck.com/roadcams/cams/US20 at Santiam Jct WB_pid3342.JPG | US20 at Santiam Jct
-      6.7 km | 401 | US20 at Santiam Jct EB | US20 MP 74.8 | http://www.TripCheck.com/roadcams/cams/US20 at Santiam Jct_pid1675.JPG | US20 at Santiam Jct
+  -- near Sexton Summit I-5 (GNIS Sexton Mountain Pass)
+      0.3 km | 522 | SextonSummitN | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitN_pid2527.JPG | I-5 at Sexton Summit
+      0.3 km | 523 | SextonSummitS | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitS_pid2531.JPG | I-5 at Sexton Summit
+      7.3 km | 476 | I-5 at Hugo NB | I5 MP 64.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Hugo NB_pid2340.JPG | I-5 at Hugo
+      7.3 km | 477 | I-5 at Hugo SB | I5 MP 64.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Hugo SB_pid2344.JPG | I-5 at Hugo
 
-  -- near Willamette Pass OR 58
-      0.3 km | 721 | OR58 at Willamette Pass W | OR58 MP 62.0 | http://www.TripCheck.com/roadcams/cams/Willamette Pass_pid3351.JPG | OR58 at Willamette Pass
-      0.3 km | 207 | OR58 at Willamette Pass | OR58 MP 62.0 | http://www.TripCheck.com/roadcams/cams/WillamettePass_pid658.jpg | OR58 at Willamette Pass
+  -- near Smith Hill Summit I-5
+      7.4 km | 522 | SextonSummitN | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitN_pid2527.JPG | I-5 at Sexton Summit
+      7.4 km | 523 | SextonSummitS | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitS_pid2531.JPG | I-5 at Sexton Summit
+      7.8 km | 1142 | I-5 at Stage Road Pass SB | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass SB_pid4664.jpg | I-5 at Stage Road Pass
+      7.8 km | 1143 | I-5 at Stage Road Pass NB | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass NB_pid4666.jpg | I-5 at Stage Road Pass
 
-  -- near Government Camp / Mt Hood US 26
-      0.8 km | 440 | US26 at Govn Camp Maint | US26 MP 54.13 | http://www.TripCheck.com/roadcams/cams/US26 at Govn Camp Maint_pid1899.JPG | US26 at Government Camp Maint
-      1.0 km | 203 | Government Camp | US26 MP 54.23 | http://www.TripCheck.com/roadcams/cams/GovernmentCamp_pid624.jpg | US26 at Government Camp
-      1.2 km | 418 | US26 at Govt Camp Lp Rd | US26 MP 52.87 | http://www.TripCheck.com/roadcams/cams/US26 at Govt Camp Lp Rd_pid1776.JPG | US26 at Govt Camp Lp Rd
-      2.0 km | 910 | US26 at Ski Bowl West EB | US26 MP 52.44 | http://www.TripCheck.com/roadcams/cams/US26 at Ski Bowl West EB_pid4117.jpg | US26 at Ski Bowl West
-      2.9 km | 909 | US26 at West of Mirror Lake Trailhead WB | US26 MP 51.83 | http://www.TripCheck.com/roadcams/cams/US26 at West of Mirror Lake Trailhead WB_pid4113.jpg | US26 at West of Mirror Lake Trailhead
-      3.1 km | 437 | US26 at Trillium Lake EB | US26 MP 56.0 | http://www.TripCheck.com/roadcams/cams/US26 at Trillium Lake EB_pid1887.JPG | US26 at Trillium Lake
+  -- near Stage Road Pass I-5
+      0.5 km | 1142 | I-5 at Stage Road Pass SB | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass SB_pid4664.jpg | I-5 at Stage Road Pass
+      0.5 km | 1143 | I-5 at Stage Road Pass NB | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass NB_pid4666.jpg | I-5 at Stage Road Pass
+      5.1 km | 491 | I-5 at Barton Rd | I5 MP 83.5 | http://www.TripCheck.com/roadcams/cams/I-5 at Barton Rd_pid2392.JPG | I-5 at Barton Rd
+
+  -- near Canyon Creek Pass I-5
+      0.1 km | 588 | I-5 at Canyon Mt NB | I5 MP 90.1 | http://www.TripCheck.com/roadcams/cams/I-5 at Canyon Mt NB_pid2816.JPG | I-5 at Canyon Mt
+      0.1 km | 590 | I-5 at Canyon Mt SB | I5 MP 90.1 | http://www.TripCheck.com/roadcams/cams/I-5 at Canyon Mt SB_pid2824.JPG | I-5 at Canyon Mt
 
   -- near Bennett Pass OR 35
-      0.7 km | 850 | OR35 at Meadows Dr SB | OR35 MP 63.8 | http://www.TripCheck.com/roadcams/cams/ORE35 at Meadows Dr SB_pid3874.jpg | OR35 at Meadows Dr
-      6.9 km | 435 | US26 at Hwy35 | US26 MP 57.62 | http://www.TripCheck.com/roadcams/cams/US26 at Hwy35_pid1881.JPG | US26 at Hwy35
-      7.7 km | 437 | US26 at Trillium Lake EB | US26 MP 56.0 | http://www.TripCheck.com/roadcams/cams/US26 at Trillium Lake EB_pid1887.JPG | US26 at Trillium Lake
+      0.1 km | 850 | OR35 at Meadows Dr SB | OR35 MP 63.8 | http://www.TripCheck.com/roadcams/cams/ORE35 at Meadows Dr SB_pid3874.jpg | OR35 at Meadows Dr
+      6.3 km | 435 | US26 at Hwy35 | US26 MP 57.62 | http://www.TripCheck.com/roadcams/cams/US26 at Hwy35_pid1881.JPG | US26 at Hwy35
+      7.1 km | 437 | US26 at Trillium Lake EB | US26 MP 56.0 | http://www.TripCheck.com/roadcams/cams/US26 at Trillium Lake EB_pid1887.JPG | US26 at Trillium Lake
+      7.8 km | 203 | Government Camp | US26 MP 54.23 | http://www.TripCheck.com/roadcams/cams/GovernmentCamp_pid624.jpg | US26 at Government Camp
+      8.0 km | 440 | US26 at Govn Camp Maint | US26 MP 54.13 | http://www.TripCheck.com/roadcams/cams/US26 at Govn Camp Maint_pid1899.JPG | US26 at Government Camp Maint
 
-  -- near Siskiyou Summit I-5
-      1.0 km | 179 | I-5 at Exit 6 | I5 MP 5.0 | http://www.TripCheck.com/roadcams/cams/I-5atExit6_pid625.jpg | I-5 at Exit 6 Near Siskiyou Summit
-      1.7 km | 1159 | I-5 at Siskiyou MP6.87 SB | I5 MP 6.87 | http://www.TripCheck.com/roadcams/cams/I-5 at Siskiyou MP6.87 SB_pid4696.jpg | I-5 at Siskiyou
-      1.7 km | 1160 | I-5 at Siskiyou MP6.87NB | I5 MP 6.87 | http://www.TripCheck.com/roadcams/cams/I-5 at Siskiyou MP6.87NB_pid4698.jpg | I-5 at Siskiyou
-      1.7 km | 1155 | I-5 at Siskiyou Summit S | I5 MP 4.62 | http://www.TripCheck.com/roadcams/cams/I-5 at Siskiyou Summit S_pid4690.jpg | I-5 at Siskiyou Summit
-      3.1 km | 1157 | I-5 at Siskiyou MP3.68 NB | I5 MP 3.68 | http://www.TripCheck.com/roadcams/cams/I-5 at Siskiyou MP3.68 NB_pid4692.jpg | I-5 at Siskiyou
-      6.6 km | 1161 | I-5 at Siskiyou 10N | I5 MP 10.08 | http://www.TripCheck.com/roadcams/cams/I-5 at Siskiyou 10N_pid4700.jpg | I-5 at Siskiyou
+  -- near Ochoco Pass US 26
+      0.2 km | 534 | US26 at Ochoco Summit | US26 MP 49.9 | http://www.TripCheck.com/roadcams/cams/US26 at Ochoco Summit_pid2588.JPG | US26 at Ochoco Summit
 
-  -- near Sexton Summit I-5
-      1.6 km | 522 | SextonSummitN | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitN_pid2527.JPG | I-5 at Sexton Summit
-      1.6 km | 523 | SextonSummitS | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitS_pid2531.JPG | I-5 at Sexton Summit
-      7.5 km | 476 | I-5 at Hugo NB | I5 MP 64.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Hugo NB_pid2340.JPG | I-5 at Hugo
-      7.5 km | 477 | I-5 at Hugo SB | I5 MP 64.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Hugo SB_pid2344.JPG | I-5 at Hugo
+  -- near Dixie Summit US 26
 
-  -- near Cabbage Hill / Deadman Pass I-84
-      0.3 km | 208 | DeadmanP-CabbageHill | I84 MP 229.2 | http://www.TripCheck.com/roadcams/cams/DeadmanP-CabbageHill_pid623.jpg | I-84 at Cabbage Hill - Deadman Pass
-      0.4 km | 1043 | I-84 at DeadmanPassW | I84 MP 229.18 | http://www.TripCheck.com/roadcams/cams/I-84 at DeadmanPassW_pid4467.jpg | I-84 at Deadman Pass
-      0.4 km | 1044 | I-84 at DeadmanPassE | I84 MP 229.18 | http://www.TripCheck.com/roadcams/cams/I-84 at DeadmanPassE_pid4469.jpg | I-84 at Deadman Pass
-      4.1 km | 1045 | I-84 at Poverty Flats WB | I84 MP 226.62 | http://www.TripCheck.com/roadcams/cams/I-84 at Poverty Flats WB_pid4471.jpg | I-84 at Poverty Flats
-      4.1 km | 1046 | I-84 at Poverty Flats EB | I84 MP 226.62 | http://www.TripCheck.com/roadcams/cams/I-84 at Poverty Flats EB_pid4473.jpg | I-84 at Poverty Flats
-      6.9 km | 1047 | I-84 at Poverty Flats Gate | I84 MP 224.0 | http://www.TripCheck.com/roadcams/cams/I-84 at Poverty Flats Gate_pid4475.jpg | I-84 at Poverty Flats Gate
+  -- near Blue Mountain Summit US 26
 
-  -- near Tollgate OR 204
-      1.6 km | 1015 | OR204 at Tollgate | OR204 MP 19.5 | http://www.TripCheck.com/roadcams/cams/ORE204 at Tollgate_pid4411.jpg | OR204 at Tollgate
-      3.8 km | 1061 | OR204 at Spout Springs EB | OR204 MP 22.3 | http://www.TripCheck.com/roadcams/cams/ORE204 at Spout Springs_pid4503.jpg | OR204 at Spout Springs
-      3.8 km | 1111 | OR204 at Spout Springs WB | OR204 MP 22.3 | http://www.TripCheck.com/roadcams/cams/ORE204 at Spout Springs WB_pid4602.jpg | OR204 at Spout Springs
+  -- near Battle Mountain Summit US 395
+      0.2 km | 766 | US395 at Battle Mountain | US395 MP 39.7 | http://www.TripCheck.com/roadcams/cams/US395 at Battle Mountain_pid3536.JPG | US395 at Battle Mountain
+      3.9 km | 1389 | US395 at Cape Horn S | US395 MP 35.76 | http://www.TripCheck.com/roadcams/cams/US395 at Cape Horn S_pid5150.jpg | US395 at Cape Horn
+      3.9 km | 1390 | US395 at Cape Horn N | US395 MP 35.76 | http://www.TripCheck.com/roadcams/cams/US395 at Cape Horn S_pid5153.jpg | US395 at Cape Horn
 
-  -- near Santiam Junction OR 22
-      0.6 km | 401 | US20 at Santiam Jct EB | US20 MP 74.8 | http://www.TripCheck.com/roadcams/cams/US20 at Santiam Jct_pid1675.JPG | US20 at Santiam Jct
-      0.7 km | 719 | US20 at Santiam Jct WB | US20 MP 74.8 | http://www.TripCheck.com/roadcams/cams/US20 at Santiam Jct WB_pid3342.JPG | US20 at Santiam Jct
-      7.2 km | 567 | Santiam Pass EB | US20 MP 80.14 | http://www.TripCheck.com/roadcams/cams/Santiam Pass_pid2728.JPG | US20 at Santiam Pass
-      7.2 km | 1443 | Santiam Pass WB | US20 MP 80.14 | http://www.TripCheck.com/roadcams/cams/Santiam Pass WB_pid5258.jpg | US20 at Santiam Pass
+  -- near Ritter Butte Summit US 395
+
+  -- near Beech Creek Summit US 395
+
+  -- near Tombstone Pass US 20
+      0.0 km | 332 | US20 at Tombstone | US20 MP 63.64 | http://www.TripCheck.com/roadcams/cams/US20atTombstone_pid1354.jpg | US20 at Tombstone
+
+  -- near Stinkingwater Pass US 20
+      0.1 km | 1428 | US20 at Stinking Water Summit EB | US20 MP 160.9 | http://www.TripCheck.com/roadcams/cams/US20 at Stinking Water Summit EB_pid5227.jpg | US20 at Stinking Water Summit
+      0.1 km | 1429 | US20 at Stinking Water Summit WB | US20 MP 160.9 | http://www.TripCheck.com/roadcams/cams/US20 at Stinking Water Summit WB_pid5229.jpg | US20 at Stinking Water Summit
+
+  -- near Drinkwater Pass US 20
+      4.7 km | 662 | US20 at Drinkwater Pass E | US20 MP 174.53 | http://www.TripCheck.com/roadcams/cams/US20 at Drinkwater Pass_pid3113.JPG | US20 at Drinkwater Pass
+
+  -- near Hayes Hill Summit US 199
+      0.6 km | 521 | HayesHillSummit | US199 MP 16.0 | http://www.TripCheck.com/roadcams/cams/HayesHillSummit_pid2523.JPG | US199 at Hayes Hill
+
+=== ODOT RW/Reports nearest each pass above (build_site uses same route <= 10 km)
+  Sexton Summit I-5 (GNIS Sexton Mountain Pass): 1.0 km | SEXTON PASS TO STAGE PASS SB | I5 MP 81.0-66.0 | road 1.0 | entry 2026-11-28T10:04:12.637-08:00
+  Sexton Summit I-5 (GNIS Sexton Mountain Pass): 1.0 km | SEXTON PASS TO STAGE PASS NB | I5 MP 66.0-81.0 | road 1.0 | entry 2026-11-28T10:04:06.363-08:00
+  Smith Hill Summit I-5: 0.7 km | SEXTON PASS TO STAGE PASS SB | I5 MP 81.0-66.0 | road 1.0 | entry 2026-11-28T10:04:12.637-08:00
+  Smith Hill Summit I-5: 0.8 km | SEXTON PASS TO STAGE PASS NB | I5 MP 66.0-81.0 | road 1.0 | entry 2026-11-28T10:04:06.363-08:00
+  Stage Road Pass I-5: 0.0 km | SEXTON PASS TO STAGE PASS SB | I5 MP 81.0-66.0 | road 1.0 | entry 2026-11-28T10:04:12.637-08:00
+  Stage Road Pass I-5: 0.1 km | SEXTON PASS TO STAGE PASS NB | I5 MP 66.0-81.0 | road 1.0 | entry 2026-11-28T10:04:06.363-08:00
+  Canyon Creek Pass I-5: 0.6 km | CANYON CREEK PASS | I5 MP 87.4-99.1 | road 1.0 | entry 2026-11-28T10:03:49.88-08:00
+  Canyon Creek Pass I-5: 12.5 km | SEXTON PASS TO STAGE PASS SB | I5 MP 81.0-66.0 | road 1.0 | entry 2026-11-28T10:04:12.637-08:00
+  Bennett Pass OR 35: 0.3 km | BENNETT PASS/MT HOOD MEADOWS | OR35 MP 62.0-68.0 | road 2.0 | entry 2026-11-28T10:03:02.11-08:00
+  Bennett Pass OR 35: 2.0 km | WHITE RIVER | OR35 MP 60.0-62.0 | road 1.0 | entry 2026-11-28T10:04:03.103-08:00
+  Ochoco Pass US 26: 0.1 km | OCHOCO SUMMIT | US26 MP 57.3-50.0 | road 2.0 | entry 2026-11-28T09:39:11.187-08:00
+  Ochoco Pass US 26: 47.8 km | CONDON | OR19 MP 22.1-73.6 | road 1.0 | entry 2026-11-28T09:31:38.403-08:00
+  Dixie Summit US 26: 8.4 km | AUSTIN | US26 MP 190.47-191.3 | road 2.0 | entry 2026-11-28T09:48:40.67-08:00
+  Dixie Summit US 26: 8.8 km | TIPTON SUMMIT | OR7 MP 0.07-25.0 | road 2.0 | entry 2026-11-28T09:48:44.767-08:00
+  Blue Mountain Summit US 26: 8.6 km | TIPTON SUMMIT | OR7 MP 0.07-25.0 | road 2.0 | entry 2026-11-28T09:48:44.767-08:00
+  Blue Mountain Summit US 26: 11.5 km | AUSTIN | US26 MP 190.47-191.3 | road 2.0 | entry 2026-11-28T09:48:40.67-08:00
+  Battle Mountain Summit US 395: 0.5 km | BATTLE MT SUMMIT | US395 MP 33.6-42.5 | road 2.0 | entry 2026-11-28T09:40:03.403-08:00
+  Battle Mountain Summit US 395: 26.4 km | PENDLETON SOUTH | US395 MP 3.0-15.0 | road 1.0 | entry 2026-11-28T09:41:16.47-08:00
+  Ritter Butte Summit US 395: 0.8 km | MEADOWBROOK SUMMIT | US395 MP 65.0-82.9 | road 2.0 | entry 2026-11-28T09:40:14.443-08:00
+  Ritter Butte Summit US 395: 14.3 km | LONG CREEK MT | US395 MP 90.49-97.18 | road 2.0 | entry 2026-11-28T09:51:36.73-08:00
+  Beech Creek Summit US 395: 8.8 km | LONG CREEK MT | US395 MP 90.49-97.18 | road 2.0 | entry 2026-11-28T09:51:36.73-08:00
+  Beech Creek Summit US 395: 27.1 km | MEADOWBROOK SUMMIT | US395 MP 65.0-82.9 | road 2.0 | entry 2026-11-28T09:40:14.443-08:00
+  Tombstone Pass US 20: 2.0 km | TOMBSTONE | US20 MP 52.5-71.59 | road 1.0 | entry 2026-11-28T09:48:50.413-08:00
+  Tombstone Pass US 20: 11.6 km | SANTIAM PASS SMT | US20 MP 71.59-88.0 | road 1.0 | entry 2026-11-28T10:10:11.08-08:00
+  Stinkingwater Pass US 20: 1.1 km | STINKINGWATER SUMMIT | US20 MP 154.2-166.6 | road 1.0 | entry 2026-11-28T07:08:33.123-08:00
+  Stinkingwater Pass US 20: 36.2 km | DEVINE SUMMIT | US395 MP 47.3-59.6 | road 2.0 | entry 2026-11-28T09:52:49.55-08:00
+  Drinkwater Pass US 20: 16.1 km | STINKINGWATER SUMMIT | US20 MP 154.2-166.6 | road 1.0 | entry 2026-11-28T07:08:33.123-08:00
+  Drinkwater Pass US 20: 53.3 km | DEVINE SUMMIT | US395 MP 47.3-59.6 | road 2.0 | entry 2026-11-28T09:52:49.55-08:00
+  Hayes Hill Summit US 199: 0.2 km | HAYES HILL SMT | US199 MP 14.0-17.0 | road 1.0 | entry 2026-11-28T10:04:50.557-08:00
+  Hayes Hill Summit US 199: 30.9 km | SEXTON PASS TO STAGE PASS NB | I5 MP 66.0-81.0 | road 1.0 | entry 2026-11-28T10:04:06.363-08:00
 
 === ODOT RW/Reports: HTTP 200
   shape: {"organization-information": {"organization-id": "str", "organization-name": "str", "last-update-time": "str"}, "road-weather-reports": [{"station-id": "int", "entry-time": "str", "expiry-time": "str", "location": {"location-name": "str", "route-id": "str", "hwy-id": "str", "start-location": "dict", "end-location": "dict"}, "air-temperature": "float", "snowfall-accum-rate": "float", "adjacent-snow-depth": "float", "weather-conditions": {"weather-id": "float"}, "road-conditions": {"road-cond-id": "float"}, "commercial-vehicle-restriction": {"restriction-id": "float", "restriction-type": "str"}, "driving-restriction": {"restriction-id": "str", "restriction-start-milepost": "float", "restriction-end-milepost": "float"}, "comments": "str"}]}
@@ -288,9 +321,3 @@
 === ODOT RW/Metadata: HTTP 200
   shape: {"organization-information": {"organization-id": "str", "organization-name": "str", "last-update-time": "str"}, "road-weather-items": {"weather-condition-list": [{"weather-id": "int", "weather-desc": "str"}], "road-condition-list": [{"road-cond-id": "int", "road-cond-desc": "str"}], "commercial-vehicle-restriction-list": [{"restriction-id": "int", "restriction-desc": "str", "restriction-type": "str"}], "driving-restriction-list": [{"restriction-id": "str", "restriction-desc": "str"}]}}
   0 items
-
-=== ODOT Rwis/Status/v2: HTTP 404
-   b'{ "statusCode": 404, "message": "Resource not found" }'
-
-=== ODOT Incd: HTTP 404
-   b'{ "statusCode": 404, "message": "Resource not found" }'
