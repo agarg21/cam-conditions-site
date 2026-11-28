@@ -38,6 +38,7 @@ MIN_GAP = timedelta(minutes=50)   # about hourly per camera
 MIN_SUN = -6.0                    # read in day and civil twilight only
 MONTH_CAP_USD = 15.0
 SHOW_K = 0.7                      # below this a reading is "can't tell" on the page
+READ_CAMS = [0, 1]                # D9: 2 cameras per pass; a pass can name its two with "read_cams" in passes.json
 AUDIT_MODEL = "opus"
 AUDIT_SHARE = 0.10                # routine Opus re-reads outside storms (only while spend is under pace)
 STORM_EVENTS = {"Winter Storm Warning", "Winter Weather Advisory", "Blizzard Warning", "Ice Storm Warning"}
@@ -208,7 +209,7 @@ def read():
     due = []
     for c in manifest.get("cams", []):
         p = passes.get(c["pass"])
-        if not p or not c.get("saved"):
+        if not p or not c.get("saved") or c["cam"] not in p.get("read_cams", READ_CAMS):
             continue
         if b.sun_elevation(p["lat"], p["lon"], now) < MIN_SUN:
             continue

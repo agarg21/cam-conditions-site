@@ -185,7 +185,8 @@
    "route": "I-80",
    "cc_route": "I-80",
    "between": "Sacramento and Reno",
-   "read": true
+   "read": true,
+   "read_cams": [2, 0]
   },
   {
    "slug": "echo-summit",
