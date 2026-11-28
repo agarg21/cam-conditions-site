@@ -1,6 +1,6 @@
 {
  "budget_usd": 40.0,
- "spent_usd": 3.9419,
+ "spent_usd": 4.1523,
  "images": 1513,
  "jobs": [
   {
@@ -22,6 +22,12 @@
    "kind": "eval",
    "note": "human-check re-test v2 vs v3, 2026-11-28",
    "usd": 0.3948
+  },
+  {
+   "date": "2026-11-28",
+   "kind": "eval",
+   "note": "human-check re-test v4, 2026-11-28",
+   "usd": 0.2104
   }
  ]
 }
