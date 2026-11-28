@@ -9,7 +9,7 @@
 | UT | UDOT Traffic API (`udottraffic.utah.gov/api/v2/get/cameras`) | Developer key, 10 calls/60 s | Need key. |
 | ID | Idaho 511 API (`511.idaho.gov/api/v2/get/cameras`) | Developer key, 10 calls/60 s | Need key. |
 | OR | TripCheck API (ODOT API portal) | Subscription key | Need key. |
-| IA | 511ia.org (CARS `/api/graphql`), data.iowadot.gov traffic cameras | Public, no key | Terms 2026-11-27: incorporating content into another website needs Iowa DOT written consent. Stopped (D7). |
+| IA | 511ia.org (CARS `/api/graphql`), data.iowadot.gov traffic cameras | Public, no key | Terms 2026-11-27: incorporating content needs written consent. Consent given 2026-11-28 by Iowa DOT (Traffic Operations & Safety Bureau): camera stills (no video streams) and road-condition wording as published; credit "Iowa DOT" with a direct link to https://511ia.org (OWNER D13). |
 | SD | sd511.org (Iteris GeoJSON) | Public, no key | Terms 2026-11-27: none published. Stopped (D7). |
 | NE | 511.nebraska.gov (CARS `/api/graphql`) | Public, no key | Terms 2026-11-27: camera images "for transportation purposes only, unless otherwise approved". Stopped (D7). |
 | WY | wyoroad.info camera pages (226 cams, new image every 5 min) | Public pages, no API | Map image URLs per pass. |
