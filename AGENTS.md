@@ -30,7 +30,7 @@ with "unknown" rather than a guess. Details: `docs/research/` and `docs/bakeoff/
    deploys on push; confirm the change on https://conditionsnow.com). Run `python3 -m py_compile scripts/*.py`, a local
    `build_site.py` against a sample run, and Playwright at 390 and 1280 px (no horizontal overflow, no console errors)
    before pushing site changes.
-5. Record: update QUEUE (≤15 items), STATE (≤6 KB: active, holds, last run; set `run: none` when done), append ≤6 lines to `ops/runs/YYYY-MM.md`,
+5. Record: update QUEUE (≤15 items), STATE (≤6 KB: active, holds, last run; add new public URLs to `to_index:` (D12); set `run: none` when done), append ≤6 lines to `ops/runs/YYYY-MM.md`,
    real questions to `ops/OWNER.md` as yes/no with a recommendation. Commit, push fast-forward
    (if rejected: `git pull --no-rebase` once; bots also commit docs/discovery and docs/bakeoff).
 6. Final message (owner's phone): ≤4 short lines: what shipped (URL), what was learned (one number), any owner question.

@@ -34,6 +34,11 @@
   model takes over: read every pass, every 3 h when calm, hourly when snow is forecast (NWS) or seen falling; Opus audit and
   storm checks (Q14) count inside it.
 
+- D12 (2026-11-28 17:46Z, owner "yes - keep on indexing") Search Console "Request indexing" for new pass and state pages,
+  at most 10 URLs a day. Only Claude in chat does this (in the owner's Chrome); the operator never does. The operator lists
+  each new public URL on the `to_index:` line in ops/STATE.md; Claude in chat requests them and clears the line.
+  Done 2026-11-28 17:45Z: /passes/tejon-pass/, /passes/deadman-summit/, /passes/conway-summit/.
+
 ## Not approved (ask first)
 - Any email or outreach (CDOT reply handling, B2B pitches), new sign-ups, Search Console changes, paid spend beyond D2.
 
