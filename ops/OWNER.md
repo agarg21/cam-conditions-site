@@ -22,3 +22,6 @@
   "personal or informational use", unmodified; ads/affiliate not addressed. Build the Montana page with unmodified, credited
   MDT images? Recommend **yes**. (b) Iowa (written consent), Nebraska (NDOT approval for cameras), South Dakota (no terms):
   will you send the drafted permission request (in that doc) to each DOT? Recommend **yes**; until a reply, those stay off.
+- D8 (2026-11-28) Training labels for Q6 (docs/bakeoff/decision.md): Sonnet 5.5 labels ~5,000 images (~$30) and Opus 5.5
+  re-labels 500 as an audit (~$8): approve Anthropic API spend up to **USD 40** for this? Recommend **yes**. (D2 has $3.20 left.)
+

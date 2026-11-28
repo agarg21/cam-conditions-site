@@ -1,10 +1,7 @@
 # Queue (top = next). Keep ≤15 items. Status: open | blocked (why) | NOT NOW.
 
-1. **Q1 Labeling bake-off.** Count 2026-11-27 16:19Z: 2,202 images (day 101, twilight 215, night 1,886). Next: at the first
-   run after 00:30Z 2026-11-28 (so the day sample spans morning to dusk; day will be ≫150), push `ops/bakeoff-request.json`
-   mode `run` n=300 (D2 budget). Read `docs/bakeoff/<date>-run.md`; write `docs/bakeoff/decision.md`: which model labels
-   training data (agreement with Opus per field, day vs night, cost per 1,000), which fields are reliable, which to drop or
-   reword (prompt v2).
+1. **Q1 Labeling bake-off.** Done 2026-11-28 01:08Z: docs/bakeoff/decision.md (Sonnet labels; Haiku 18% false snow;
+   collapsed road surface Sonnet 93% vs Opus). D2 spent $6.80 of $10. Follow-up lives in Q6.
 2. **Q3 Pass page answers.** Shipped 2026-11-27 (a1a832a): answers block (Open? / Chains? / Snow on the road?) from official
    wording only, tonight/tomorrow/weekend NWS periods with snow totals, facts block, new titles. Live on all 18 pages
    12:30Z (OR/ID verified). (a) stale reports shipped 2026-11-27 14:35Z: reports ≥12 h old flagged on verdict and board.
@@ -22,7 +19,7 @@
    per run, `/states/<state>/` page (official condition layer summary, key corridors with 2–4 cameras, credits) linked from home;
    MT also Bozeman, Homestake, MacDonald pass pages. Feeds: IA/NE CARS `/api/graphql`; SD/MT Iteris
    `*.cdn.iteris-atis.com/geojson/icons/metadata/icons.<layer>.geojson`. Targets: IA 40.5K, MT 27.1K, SD 6.6K, NE ~6K/mo.
-5. **Q6 Student model plan.** After Q1, write the training plan in cam-conditions-engine (CLIP/SigLIP embeddings + heads vs
+5. **Q6 Student model plan.** Q1 done. Write prompt `pass-v2` (decision.md item 2) and the training plan in cam-conditions-engine (CLIP/SigLIP embeddings + heads vs
    small CNN; unseen-camera eval; 81.5% NYSDOT bar, target ≥90% daylight) and a labeling job for ~5,000 images.
 6. **Q7 Montana.** Folded into Q10.
 7. **Q8 Colorado.** blocked (waiting for CDOT reply to the 2026-11-27 request; owner reads hello@ mail).
