@@ -1,5 +1,5 @@
 # State
-run: none
+run: 2026-11-28T20:18Z Q16 Oregon TripCheck batch (cloud operator)
 active: Q6a (daily label installments); Q14 storm report after the Teton window (~06:00Z 11-29)
 live: 38 passes (WA 7, OR 6, CA 5, ID 13, MT 6, WY 1) + state hubs /states/{washington,oregon,california,idaho,montana}/ + /sources/; collector ~every 15 min; images mirrored; wordmark ConditionsNow.
 data: 3,559 images by 2026-11-28 00:34Z (day 1,310, twilight 363, night 1,886); ~3,500/day (36 cams). Status history in HF status/ from 16:36Z.
