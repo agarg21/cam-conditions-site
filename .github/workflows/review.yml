@@ -1,0 +1,27 @@
+name: Human check set (export / compare)
+
+on:
+  push:
+    branches: [main]
+    paths: ['ops/review-request.json']
+
+permissions:
+  contents: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet huggingface_hub pillow
+      - name: Run
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python3 scripts/review_export.py
+      - name: Commit
+        run: |
+          git config user.name "conditionsnow-bot"; git config user.email "hello@conditionsnow.com"
+          git add review/
+          git commit -m "Human check set: $(python3 -c "import json;r=json.load(open('ops/review-request.json'));print(r['mode'],r['set'])")" || exit 0
+          git pull --no-rebase -q && git push
