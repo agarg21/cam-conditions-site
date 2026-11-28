@@ -23,6 +23,7 @@
 - Any email or outreach (CDOT reply handling, B2B pitches), new sign-ups, Search Console changes, paid spend beyond D2.
 
 ## Open questions
-- D8 (2026-11-28) on hold: owner asked to cut the labeling cost first (Batch API at 50%, shorter output, smaller images,
-  cheaper vision models). Q6a below; re-ask D8 with the new per-1,000 cost.
+- D8 (2026-11-28, owner) Training labels APPROVED with the Q6a optimizations, no second vendor: Batch API, prompt v2
+  with short output, Haiku pre-screen only if the test shows it keeps snow recall. Up to USD 40 total (expect ~$8);
+  Sonnet labels ~5,000 images, Opus audits ~500. No re-ask needed unless the measured cost would pass $40.
 

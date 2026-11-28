@@ -1,5 +1,14 @@
 # Queue (top = next). Keep ≤15 items. Status: open | blocked (why) | NOT NOW.
 
+0. **Q6a Cheaper labels, then the labeling job (owner, 2026-11-28; D8 approved). Do first.** Sonnet cost is ~90% output: 529 output tokens per image in the
+   bake-off ($5.30 of $5.98 per 1,000). (1) Prompt v2 with short enum codes and no free-text note; record output tokens
+   (target ≤150). (2) Message Batches API (50% off input and output; forced tool_choice still returns 400, keep auto + strict).
+   (3) Try 448 px and 512 px vs 640 px on the 300 bake-off images: does Sonnet's agreement with Opus hold? (4) Cascade: Haiku
+   has 0/36 missed snow; if that holds on v2, accept Haiku "bare" and send only Haiku snow/unknown to Sonnet. Spend from D2's
+   remaining $3.20 only. Then submit the D8 labeling job as Message Batches: ~5,000 images (day + twilight first, spread over passes and
+   cameras), Sonnet with the cheapest setup that holds agreement, plus a 10% Opus audit; per-image labels to the private HF
+   dataset only; record measured cost per 1,000. Owner said no second vendor.
+
 1. **Q1 Labeling bake-off.** Done 2026-11-28 01:08Z: docs/bakeoff/decision.md (Sonnet labels; Haiku 18% false snow;
    collapsed road surface Sonnet 93% vs Opus). D2 spent $6.80 of $10. Follow-up lives in Q6.
 2. **Q3 Pass page answers.** Shipped 2026-11-27 (a1a832a): answers block (Open? / Chains? / Snow on the road?) from official
@@ -19,13 +28,6 @@
    per run, `/states/<state>/` page (official condition layer summary, key corridors with 2–4 cameras, credits) linked from home;
    MT also Bozeman, Homestake, MacDonald pass pages. Feeds: IA/NE CARS `/api/graphql`; SD/MT Iteris
    `*.cdn.iteris-atis.com/geojson/icons/metadata/icons.<layer>.geojson`. Targets: IA 40.5K, MT 27.1K, SD 6.6K, NE ~6K/mo.
-4c. **Q6a Cheaper labels (owner, 2026-11-28), before D8.** Sonnet cost is ~90% output: 529 output tokens per image in the
-   bake-off ($5.30 of $5.98 per 1,000). (1) Prompt v2 with short enum codes and no free-text note; record output tokens
-   (target ≤150). (2) Message Batches API (50% off input and output; forced tool_choice still returns 400, keep auto + strict).
-   (3) Try 448 px and 512 px vs 640 px on the 300 bake-off images: does Sonnet's agreement with Opus hold? (4) Cascade: Haiku
-   has 0/36 missed snow; if that holds on v2, accept Haiku "bare" and send only Haiku snow/unknown to Sonnet. Spend from D2's
-   remaining $3.20 only. Report cost per 1,000 and agreement per option, then re-ask D8 with the number. Other vendors'
-   vision models (Gemini Flash, GPT mini, open-weight Qwen-VL) need a new key and are owner decisions: note, don't sign up.
 5. **Q6 Student model plan.** Q1 done. Write prompt `pass-v2` (decision.md item 2) and the training plan in cam-conditions-engine (CLIP/SigLIP embeddings + heads vs
    small CNN; unseen-camera eval; 81.5% NYSDOT bar, target ≥90% daylight) and a labeling job for ~5,000 images.
 6. **Q7 Montana.** Folded into Q10.

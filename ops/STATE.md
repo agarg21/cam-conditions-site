@@ -6,6 +6,6 @@ data: 3,559 images by 2026-11-28 00:34Z (day 1,310, twilight 363, night 1,886); 
 holds:
 - Q8 Colorado: waiting for CDOT reply (sent 2026-11-27 09:40Z from apoorv20@gmail.com, cc hello@).
 - Q9 Search Console: no cloud access.
-- Q6 labeling job: owner D8 (spend).
+- Q6a: D8 approved 2026-11-28 with optimizations; next run does it.
 - Q10 new states: owner D7 (terms: IA consent, NE approval, SD none, MT informational use).
 last_run: 2026-11-28T01:10Z Q1 bake-off done (docs/bakeoff/decision.md): Sonnet 5.5 labels training data; D2 spent $6.80/$10; asked D8 ($40 for 5,000 labels). Next: Q6 (prompt v2 + training plan), else Q5.
