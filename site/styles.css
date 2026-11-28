@@ -218,3 +218,11 @@ p, li { max-width: var(--w-read); }
   .history__when { grid-row: auto; }
   .history__answers { grid-column: 1; }
 }
+
+/* Pass page: other passes on the same highway and nearby passes, each with its current official status */
+.related { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--c-line); max-width: var(--w-read); }
+.related li { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-1) var(--s-3); padding: var(--s-2) 0; border-bottom: 1px solid var(--c-line); }
+.related a { font: 800 var(--t-base)/1.3 var(--f-display); color: var(--c-sign-dark); }
+.related__route { font-size: var(--t-sm); color: var(--c-asphalt-muted); }
+.related li > span:last-child { flex-basis: 100%; }
+.board h2 a { color: inherit; }

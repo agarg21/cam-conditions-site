@@ -610,7 +610,7 @@ def changed_tag(ch, now, tz):
     return f'<span class="pass-row__changed">{head} {when}, was \u201c{e(was)}\u201d</span>'
 
 
-def pass_meta(p, name, title, desc, path, cams, fetched):
+def pass_meta(p, name, title, desc, path, cams, fetched, trail):
     """Social tags plus JSON-LD (WebPage, BreadcrumbList, Place) for one pass page.
 
     Every value comes from config/passes.json or the run itself; the image is the first camera we saved this run,
@@ -625,15 +625,65 @@ def pass_meta(p, name, title, desc, path, cams, fetched):
     page = {"@type": "WebPage", "@id": url, "url": url, "name": title, "description": desc, "inLanguage": "en-US",
             "dateModified": fetched.isoformat(timespec="seconds"), "about": place,
             "isPartOf": {"@type": "WebSite", "name": "Conditions Now", "url": f"{BASE}/"},
-            "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": [
-                {"@type": "ListItem", "position": 1, "name": "All passes", "item": f"{BASE}/"},
-                {"@type": "ListItem", "position": 2, "name": name, "item": url}]}}
+            "breadcrumb": crumbs_ld(trail)}
     if img:
         page["primaryImageOfPage"] = {"@type": "ImageObject", "contentUrl": img, "caption": alt}
     return social(title, desc, path, img, alt) + json_ld({"@context": "https://schema.org", **page})
 
 
 LAZY = 'loading="lazy" '
+NEARBY_KM = 300  # "Nearby passes" lists up to 3 other passes within this straight-line distance
+
+
+def odot_disclaimer():
+    """ODOT's terms: repeat its disclaimer wherever its data appears (pass pages, related lists, the Oregon hub)."""
+    return ('<details class="disclaimer"><summary>ODOT data disclaimer</summary>'
+            + "".join(f"<p>{e(t)}</p>" for t in ODOT_DISCLAIMER) + "</details>")
+
+
+def hub_slug(state):
+    return STATE_NAMES[state].lower().replace(" ", "-")
+
+
+def hub_states(passes):
+    """States with at least two ready passes get a hub page /states/<state>/; one pass is too thin for a page."""
+    n = {}
+    for p in passes:
+        n[p["state"]] = n.get(p["state"], 0) + 1
+    return {s for s, k in n.items() if k >= 2}
+
+
+def crumbs_ld(items):
+    """[(name, absolute url)] -> schema.org BreadcrumbList."""
+    return {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i, "name": n, "item": u} for i, (n, u) in enumerate(items, 1)]}
+
+
+def crumbs_html(items):
+    """[(name, path or None)] -> visible breadcrumb; the last item is the current page."""
+    parts = [f'<a href="{u}">{e(n)}</a>' if u else f'<span aria-current="page">{e(n)}</span>' for n, u in items]
+    return ('<nav class="crumbs" aria-label="Breadcrumb">'
+            + ' <span aria-hidden="true">›</span> '.join(parts) + '</nav>')
+
+
+def related_html(p, summary):
+    """'Other passes on <route>' and 'Nearby passes' blocks: links with each pass's current official status."""
+    def item(q, st, lv):
+        return (f'<li><a href="/passes/{q["slug"]}/">{e(q["name"].split(" (")[0])}</a> '
+                f'<span class="related__route">{e(q["route"])}, {STATE_NAMES[q["state"]]}</span> '
+                f'<span class="{LEVELS[lv][0]}"><span class="status-mark">{e((st or {}).get("label") or LEVELS[lv][1])}</span></span></li>')
+    others = sorted(((km(p["lat"], p["lon"], q["lat"], q["lon"]), q, st, lv) for q, st, lv in summary
+                     if q["slug"] != p["slug"]), key=lambda x: x[0])
+    same = [x for x in others if x[1]["route"] == p["route"]]
+    near = [x for x in others if x[1]["route"] != p["route"] and x[0] <= NEARBY_KM][:3]
+    out = ""
+    if same:
+        out += (f'<h2>Other passes on {e(p["route"])}</h2><ul class="related">'
+                + "".join(item(q, st, lv) for _, q, st, lv in same) + "</ul>")
+    if near:
+        out += ('<h2>Nearby passes</h2><ul class="related">'
+                + "".join(item(q, st, lv) for _, q, st, lv in near) + "</ul>")
+    return out
 
 
 def build():
@@ -649,7 +699,8 @@ def build():
 
     os.makedirs(SITE, exist_ok=True)
     shutil.copy(os.path.join(ROOT, "site", "styles.css"), os.path.join(SITE, "styles.css"))
-    urls, summary = ["/"], []
+    urls, summary, pages = ["/"], [], []
+    hubs = hub_states(passes)
     past, new_rows, changes = {}, [], {}
     for r in hist.load(fetched):
         past.setdefault(r["p"], []).append(r)
@@ -718,15 +769,15 @@ def build():
             f'{snow_note(x)}</div>'
             for x in pick_periods(fc, tz))
         summit = p.get("summit", True)
-        sign = (f'<nav class="crumbs" aria-label="Breadcrumb"><a href="/">All passes</a> <span aria-hidden="true">›</span> '
-                f'<span aria-current="page">{e(name)}</span></nav>'
+        path = f"/passes/{p['slug']}/"
+        trail = [("All passes", "/")]
+        if p["state"] in hubs:
+            trail.append((STATE_NAMES[p["state"]], f"/states/{hub_slug(p['state'])}/"))
+        trail.append((name, None))
+        sign = (crumbs_html(trail) +
                 f'<h1 class="page-title">{e(name)} road conditions</h1>'
                 f'<div class="summit-sign"><div class="summit-sign__face"><p class="summit-sign__name">{e(name)}</p>'
                 f'<p class="summit-sign__sub">{"<span>Summit</span>" if summit else ""}<span>Elev {p["elev_ft"]:,} ft</span></p></div></div>')
-        disclaimer = ""
-        if src == "odot-tripcheck":
-            disclaimer = ('<details class="disclaimer"><summary>ODOT data disclaimer</summary>'
-                          + "".join(f"<p>{e(t)}</p>" for t in ODOT_DISCLAIMER) + "</details>")
         dot_name, dot_link = DOT_NAMES[p["state"]]
         body = f"""
 {sign}
@@ -743,20 +794,26 @@ def build():
 <dt>Highway</dt><dd>{e(p["route"])}, {STATE_NAMES[p["state"]]}</dd>
 <dt>Between</dt><dd>{e(p["between"])}</dd>
 <dt>Official reports</dt><dd><a href="{dot_link}">{dot_name}</a></dd></dl>
+<!--RELATED-->
 <h2>Before you go</h2>
 <ul class="checklist"><li>Check the official report on <a href="{dot_link}">{dot_name}</a> right before you leave.</li>
 <li>Carry chains from November to April. Rules can change within the hour.</li>
 <li>Fill up before the climb; services near the top are limited.</li></ul>
-{disclaimer}
+<!--ODOT-->
 """
-        path = f"/passes/{p['slug']}/"
-        os.makedirs(os.path.join(SITE, "passes", p["slug"]), exist_ok=True)
-        with open(os.path.join(SITE, "passes", p["slug"], "index.html"), "w") as f:
-            f.write(head(title, desc, path, pass_meta(p, name, title, desc, path, cams, fetched)) + body + FOOT)
+        ld_trail = [(n, f"{BASE}{u or path}") for n, u in trail]
+        pages.append((p, path, head(title, desc, path, pass_meta(p, name, title, desc, path, cams, fetched, ld_trail)) + body + FOOT))
         urls.append(path)
         summary.append((p, st, level))
         changes[p["slug"]] = changed_tag(last_change(hist_rows), fetched, tz)
 
+    for p, path, page in pages:  # written after the loop so related blocks can show every pass's current status
+        os.makedirs(os.path.join(SITE, "passes", p["slug"]), exist_ok=True)
+        with open(os.path.join(SITE, "passes", p["slug"], "index.html"), "w") as f:
+            rel = related_html(p, summary)
+            odot = p.get("source") == "odot-tripcheck" or any(
+                q.get("source") == "odot-tripcheck" and f'/passes/{q["slug"]}/' in rel for q, *_ in summary)
+            f.write(page.replace("<!--RELATED-->", rel, 1).replace("<!--ODOT-->", odot_disclaimer() if odot else "", 1))
     if run_dir:
         print(f"history: {hist.append(fetched, new_rows)} rows added, {sum(map(len, past.values()))} loaded")
     checked = fetched.astimezone(TZ).strftime("%-I:%M %p %Z")
@@ -766,17 +823,22 @@ def build():
         return (f'<img class="pass-row__thumb" src="{c["site_url"]}" alt="" '
                 f'width="112" height="84" loading="lazy" decoding="async">') if c else ""
 
-    counts = {k: sum(1 for *_, lv in summary if lv == k) for k in LEVELS}
     tally_words = {"closed": "closed", "snowice": "with snow or ice", "caution": "wet or chains advised",
                    "clear": "clear or no chain controls", "unknown": "without a report"}
-    tally = "".join(f'<li class="{LEVELS[k][0]}"><span class="status-mark">{n} {tally_words[k]}</span></li>'
-                    for k, n in counts.items() if n)
-    n_changed = sum(1 for v in changes.values() if v)
-    changed_line = (f'<p class="board-intro__changed">{n_changed} pass{"es" if n_changed > 1 else ""} changed {"their" if n_changed > 1 else "its"} official '
-                    f'report in the last 24 hours.</p>' if n_changed else "")
-    groups = ""
-    for state in sorted(dict.fromkeys(p["state"] for p, *_ in summary), key=STATE_ORDER.index):
-        rows = "".join(
+
+    def tally_html(items):
+        counts = {k: sum(1 for *_, lv in items if lv == k) for k in LEVELS}
+        return "".join(f'<li class="{LEVELS[k][0]}"><span class="status-mark">{n} {tally_words[k]}</span></li>'
+                       for k, n in counts.items() if n)
+
+    def changed_html(items):
+        n = sum(1 for q, *_ in items if changes.get(q["slug"]))
+        return (f'<p class="board-intro__changed">{n} pass{"es" if n > 1 else ""} changed {"their" if n > 1 else "its"} official '
+                f'report in the last 24 hours.</p>' if n else "")
+
+    tally, changed_line = tally_html(summary), changed_html(summary)
+    def board_rows(state):
+        return "".join(
             f'<li><a class="pass-row" href="/passes/{p["slug"]}/">{shield(p["route"])}'
             f'<span class="pass-row__name">{e(p["name"].split(" (")[0])}</span>'
             f'<span class="pass-row__status {LEVELS[lv][0]}"><span class="status-mark">{(st or {}).get("label") or LEVELS[lv][1]}</span>'
@@ -784,7 +846,11 @@ def build():
             f'{stale_tag(st)}{changes.get(p["slug"], "")}</span>'
             f'{thumb(p["slug"])}</a></li>'
             for p, st, lv in summary if p["state"] == state)
-        groups += f"<h2>{STATE_NAMES[state]}</h2><ul>{rows}</ul>"
+
+    groups = ""
+    for state in sorted(dict.fromkeys(p["state"] for p, *_ in summary), key=STATE_ORDER.index):
+        h = (f'<a href="/states/{hub_slug(state)}/">{STATE_NAMES[state]}</a>' if state in hubs else STATE_NAMES[state])
+        groups += f"<h2>{h}</h2><ul>{board_rows(state)}</ul>"
     home = f"""
 <div class="board-intro"><h1>Mountain passes right now</h1>
 <p>Live DOT cameras and official road reports, checked every 15 minutes. Last check {checked}.</p>
@@ -795,6 +861,45 @@ def build():
         f.write(head("Mountain pass conditions and live cameras | Conditions Now",
                      "Is the pass snowy right now? Live DOT cameras, official road reports and chain rules for Snoqualmie, Stevens, Donner, Santiam, Lookout and more, checked every 15 minutes.",
                      "/") + home + FOOT)
+    for state in sorted(hubs, key=STATE_ORDER.index):
+        items = [x for x in summary if x[0]["state"] == state]
+        sname, (dot_name, dot_link) = STATE_NAMES[state], DOT_NAMES[state]
+        path = f"/states/{hub_slug(state)}/"
+        names = [q["name"].split(" (")[0] for q, *_ in items]
+        lead = ", ".join(names[:3]) + (f" and {len(names) - 3} more" if len(names) > 3 else "")
+        title = f"{sname} Mountain Pass Conditions & Webcams | Conditions Now"
+        desc = (f"{lead}: official {dot_name} reports, chain rules and live webcams for {len(names)} {sname} "
+                f"mountain passes, checked every 15 minutes.")
+        tz = ZoneInfo(items[0][0].get("tz", "America/Los_Angeles"))
+        credits = sorted({CAM_CREDIT.get(q.get("source", ""), dot_name) for q, *_ in items})
+        first = next((c for q, *_ in items for c in manifest.get("cams", []) if c["pass"] == q["slug"] and c.get("saved")), None)
+        img = f'{BASE}/cams/{first["pass"]}/{first["cam"]}.jpg' if first else None
+        alt = f'{first["title"]} webcam' if first else ""
+        ld = {"@context": "https://schema.org", "@type": "CollectionPage", "@id": f"{BASE}{path}", "url": f"{BASE}{path}",
+              "name": title, "description": desc, "inLanguage": "en-US",
+              "dateModified": fetched.isoformat(timespec="seconds"),
+              "isPartOf": {"@type": "WebSite", "name": "Conditions Now", "url": f"{BASE}/"},
+              "breadcrumb": crumbs_ld([("All passes", f"{BASE}/"), (sname, f"{BASE}{path}")]),
+              "mainEntity": {"@type": "ItemList", "itemListElement": [
+                  {"@type": "ListItem", "position": i, "name": n, "url": f'{BASE}/passes/{q["slug"]}/'}
+                  for i, (n, (q, *_)) in enumerate(zip(names, items), 1)]}}
+        disclaimer = odot_disclaimer() if any(q.get("source") == "odot-tripcheck" for q, *_ in items) else ""
+        body = f"""
+{crumbs_html([("All passes", "/"), (sname, None)])}
+<div class="board-intro"><h1>{e(sname)} mountain pass conditions</h1>
+<p>Official {e(dot_name)} reports and live webcams for {len(names)} {e(sname)} passes, checked every 15 minutes. Last check {fetched.astimezone(tz).strftime("%-I:%M %p %Z")}.</p>
+<ul class="tally">{tally_html(items)}</ul>{changed_html(items)}</div>
+<section class="board" id="passes"><ul>{board_rows(state)}</ul></section>
+<h2>Where this comes from</h2>
+<p>Road reports{" and camera images" if credits == [dot_name] else ""} from <a href="{dot_link}">{e(dot_name)}</a>{"" if credits == [dot_name] else "; camera images from " + e(" and ".join(credits))}; forecasts on each pass page from the
+<a href="https://www.weather.gov/">National Weather Service</a>. Conditions change fast: check the official report right before you drive.</p>
+{disclaimer}
+"""
+        os.makedirs(os.path.join(SITE, "states", hub_slug(state)), exist_ok=True)
+        with open(os.path.join(SITE, "states", hub_slug(state), "index.html"), "w") as f:
+            f.write(head(title, desc, path, social(title, desc, path, img, alt) + json_ld(ld)) + body + FOOT)
+        urls.append(path)
+
     sources = f"""
 <h1>Data sources</h1>
 <p>Conditions Now brings together information that state transportation departments and the National Weather Service publish.
