@@ -34,8 +34,11 @@
    (5) hubs /states/{washington,oregon,california,idaho}/ (states with ≥2 passes; WY's 1 pass keeps a 2-level crumb), home
    state headings link to them, pass crumbs All passes › State › Pass, "Other passes on <route>" + "Nearby passes" (≤3, ≤300 km)
    with live official status; ODOT disclaimer added wherever ODOT status appears (home board still shows ODOT rows without it:
-   check). Left: (6) sourced evergreen block; images still carry ?t= (decide: drop it, since
-   Pages serves max-age=600). Original notes: gaps found on /passes/snoqualmie-pass/: (1) the word
+   check). Part 3 shipped 2026-11-28 (aff9b81, a0a2d5b): ODOT disclaimer on the home board; "<State> chain and traction tire
+   rules" on WA/OR/CA/ID pass pages from config/chain-rules.json (official pages only, read 2026-11-28; WY none yet).
+   ?t= decided: keep it on visible images (Pages max-age=600 would show an image up to 10 min older than its time label);
+   og:image and JSON-LD already use the stable URL. Left: typical closure causes and nearest towns only with a source per
+   pass; ski-area links; WY rules from a WYDOT page. Original notes: gaps found on /passes/snoqualmie-pass/: (1) the word
    "webcam" is nowhere, though "<pass> webcam" is the biggest search (~98K/mo across 12 passes): title "<Pass> Road
    Conditions, Webcams & Chain Status", H2 "<Pass> webcams"; (2) H1 is the bare name: make it "<Pass> road conditions"
    (the sign stays as the visual); (3) question headings that match searches: "Is <Pass> open right now?", "Do I need
