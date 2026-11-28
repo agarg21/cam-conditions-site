@@ -418,6 +418,170 @@
    ]
   },
   {
+   "slug": "sexton-summit",
+   "name": "Sexton Summit (I-5)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "I-5",
+   "odot_route": "I5",
+   "lat": 42.60123,
+   "lon": -123.38313,
+   "elev_ft": 1963,
+   "between": "Grants Pass and Wolf Creek",
+   "cams": [
+    {
+     "title": "I-5 at Sexton Summit, north",
+     "image": "https://www.tripcheck.com/roadcams/cams/SextonSummitN_pid2527.JPG"
+    },
+    {
+     "title": "I-5 at Sexton Summit, south",
+     "image": "https://www.tripcheck.com/roadcams/cams/SextonSummitS_pid2531.JPG"
+    }
+   ]
+  },
+  {
+   "slug": "stage-road-pass",
+   "name": "Stage Road Pass (I-5)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "I-5",
+   "odot_route": "I5",
+   "lat": 42.7304,
+   "lon": -123.36925,
+   "elev_ft": 1820,
+   "between": "Wolf Creek and Glendale",
+   "cams": [
+    {
+     "title": "I-5 at Stage Road Pass, southbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/I-5%20at%20Stage%20Road%20Pass%20SB_pid4664.jpg"
+    },
+    {
+     "title": "I-5 at Stage Road Pass, northbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/I-5%20at%20Stage%20Road%20Pass%20NB_pid4666.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "canyon-creek-pass",
+   "name": "Canyon Creek Pass (I-5)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "I-5",
+   "odot_route": "I5",
+   "lat": 42.8279,
+   "lon": -123.26008,
+   "elev_ft": 2014,
+   "between": "Glendale and Canyonville",
+   "cams": [
+    {
+     "title": "I-5 at Canyon Mountain, northbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/I-5%20at%20Canyon%20Mt%20NB_pid2816.JPG"
+    },
+    {
+     "title": "I-5 at Canyon Mountain, southbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/I-5%20at%20Canyon%20Mt%20SB_pid2824.JPG"
+    }
+   ]
+  },
+  {
+   "slug": "bennett-pass",
+   "name": "Bennett Pass (OR 35)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "OR 35",
+   "odot_route": "OR35",
+   "lat": 45.31068,
+   "lon": -121.64287,
+   "elev_ft": 4667,
+   "between": "Government Camp and Hood River",
+   "cams": [
+    {
+     "title": "OR 35 at Meadows Drive, southbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/ORE35%20at%20Meadows%20Dr%20SB_pid3874.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "ochoco-pass",
+   "name": "Ochoco Pass (US 26)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "US 26",
+   "odot_route": "US26",
+   "lat": 44.50153,
+   "lon": -120.3867,
+   "elev_ft": 4746,
+   "between": "Prineville and Mitchell",
+   "cams": [
+    {
+     "title": "US 26 at Ochoco Summit",
+     "image": "https://www.tripcheck.com/roadcams/cams/US26%20at%20Ochoco%20Summit_pid2588.JPG"
+    }
+   ]
+  },
+  {
+   "slug": "battle-mountain-summit",
+   "name": "Battle Mountain Summit (US 395)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "US 395",
+   "odot_route": "US395",
+   "lat": 45.27097,
+   "lon": -118.97584,
+   "elev_ft": 4290,
+   "between": "Pilot Rock and Ukiah",
+   "cams": [
+    {
+     "title": "US 395 at Battle Mountain",
+     "image": "https://www.tripcheck.com/roadcams/cams/US395%20at%20Battle%20Mountain_pid3536.JPG"
+    },
+    {
+     "title": "US 395 at Cape Horn, milepost 35.8",
+     "image": "https://www.tripcheck.com/roadcams/cams/US395%20at%20Cape%20Horn%20S_pid5150.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "tombstone-pass",
+   "name": "Tombstone Pass (US 20)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "US 20",
+   "odot_route": "US20",
+   "lat": 44.39568,
+   "lon": -122.14119,
+   "elev_ft": 4221,
+   "between": "Sweet Home and Santiam Junction",
+   "cams": [
+    {
+     "title": "US 20 at Tombstone Pass",
+     "image": "https://www.tripcheck.com/roadcams/cams/US20atTombstone_pid1354.jpg"
+    }
+   ]
+  },
+  {
+   "slug": "stinkingwater-pass",
+   "name": "Stinkingwater Pass (US 20)",
+   "state": "OR",
+   "source": "odot-tripcheck",
+   "route": "US 20",
+   "odot_route": "US20",
+   "lat": 43.69155,
+   "lon": -118.53994,
+   "elev_ft": 4853,
+   "between": "Burns and Juntura",
+   "cams": [
+    {
+     "title": "US 20 at Stinkingwater Summit, eastbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/US20%20at%20Stinking%20Water%20Summit%20EB_pid5227.jpg"
+    },
+    {
+     "title": "US 20 at Stinkingwater Summit, westbound",
+     "image": "https://www.tripcheck.com/roadcams/cams/US20%20at%20Stinking%20Water%20Summit%20WB_pid5229.jpg"
+    }
+   ]
+  },
+  {
    "slug": "lookout-pass",
    "name": "Lookout Pass (I-90)",
    "state": "ID",
