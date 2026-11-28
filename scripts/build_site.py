@@ -471,14 +471,18 @@ def verdict(st, level, state, tz=TZ, name=""):
     label = (st or {}).get("label") or label
     dot, link = DOT_NAMES[state]
     rows, other = answers(st, level, state)
-    ask = f'<h2 class="verdict__ask">Is {e(name)} open right now?</h2>' if name else ""
-    qa = "".join(f'<dt>{SHOWN_Q.get(q, q)}</dt><dd><strong>{e(a)}</strong> <span class="verdict__quote">{e(d)}</span></dd>'
+    def shown(q):
+        if q == "Open?" and name:
+            return f"Is {e(name)} open?"
+        return SHOWN_Q.get(q, q)
+    qa = "".join(f'<dt>{shown(q)}</dt><dd><strong>{e(a)}</strong> <span class="verdict__quote">{e(d)}</span></dd>'
                  for q, a, d in rows)
     if not st:
-        return (f'<section class="verdict {cls}" aria-label="Current road status">{ask}<p class="verdict__label">{label}</p>'
+        return (f'<section class="verdict {cls}" aria-label="Current road status">'
+                f'<p class="verdict__source">Right now, from {dot}</p>'
+                f'<h2 class="verdict__label">{label}</h2>'
                 f'<dl class="answers">{qa}</dl>'
-                f'<p class="verdict__meta">We have no current official road report for this spot. Check the cameras below '
-                f'and <a href="{link}">{dot}</a>.</p></section>')
+                f'<p class="verdict__meta">Check the cameras below and <a href="{link}">{dot}</a>.</p></section>')
     extra = []
     if st.get("weather"):
         extra.append(f"<dt>Weather</dt><dd>{e(st['weather'])}</dd>")
@@ -492,10 +496,11 @@ def verdict(st, level, state, tz=TZ, name=""):
              if st.get("stale_h") else "")
     where = f" for {e(st['where'])}" if st.get("where") else ""
     return (f'<section class="verdict {cls}" aria-label="Current road status">'
-            f'{ask}<p class="verdict__label">{label}</p>{stale}'
+            f'<p class="verdict__source">Right now, from the official {dot} report{where}{when}</p>'
+            f'<h2 class="verdict__label">{label}</h2>{stale}'
             f'<dl class="answers">{qa}{"".join(extra)}</dl>'
-            f'<p class="verdict__meta">From the latest official {dot} report{where}{when}. Answers repeat its wording; '
-            f'anything it doesn\'t cover says \u201cnot reported\u201d.'
+            f'<p class="verdict__meta">Answers repeat {dot}\'s wording; anything it doesn\'t cover says \u201cnot reported\u201d. '
+            f'Full report: <a href="{link}">{dot}</a>.'
             f'{" ODOT marks this report as past its expiry time, so trust the cameras more." if st.get("expired") else ""}</p></section>')
 
 
@@ -918,12 +923,14 @@ def build():
         desc = (f"Is {name} open? Are chains required? Live webcams, the official "
                 f"{DOT_NAMES[p['state']][0]} report and the weather for {p['route']} between "
                 f"{p['between']}, checked every 15 minutes.")
+        short_credit = {"odot-tripcheck": "ODOT", "idaho-511": "Idaho 511"}.get(src, CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0]))
         camread, caps = camread_html(p, reads.get(p["slug"], []), cams, fetched, tz, CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0])) if p.get("read") else ("", {})
         cam_html = "".join(
             f'<figure class="cam"><img src="{c["site_url"]}" alt="{e(name)} webcam: {e(c["title"])}" '
             f'width="640" height="480" {LAZY if i else ""}decoding="async">'
             f'<figcaption><span>{e(c["title"])}</span><time datetime="{fetched.isoformat()}">checked {checked}</time>'
-            f'{cap_line(caps, c)}</figcaption></figure>'
+            f'{cap_line(caps, c)}<a class="cam__live" href="{e(c["url"])}" rel="noopener">Newest image from {e(short_credit)}</a>'
+            f'</figcaption></figure>'
             for i, c in enumerate(cams)) or '<p class="note">These cameras are offline right now.</p>'
         credit = CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0])
         fc_html = "".join(

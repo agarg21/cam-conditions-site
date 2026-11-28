@@ -107,8 +107,8 @@ p, li { max-width: var(--w-read); }
   background: var(--status-tint);
   padding: var(--s-4) var(--s-5);
 }
-.verdict__ask { margin: 0 0 var(--s-1); font-size: var(--t-base); font-weight: 700; }
-.verdict__label { font: 800 var(--t-status)/1.1 var(--f-display); margin: 0; }
+.verdict__source { margin: 0 0 var(--s-1); font-size: var(--t-sm); font-weight: 600; }
+.verdict__label { font: 800 var(--t-status)/1.1 var(--f-display); margin: 0; max-width: none; }
 .verdict__official { margin: var(--s-2) 0 0; font-size: var(--t-lg); }
 .verdict__stale { margin: var(--s-2) 0 0; font-weight: 600; font-size: var(--t-sm); }
 .verdict__meta { margin: var(--s-2) 0 0; font-size: var(--t-xs); color: var(--c-asphalt-muted); }
@@ -149,12 +149,13 @@ p, li { max-width: var(--w-read); }
 .camread { max-width: 40rem; margin: 0 0 var(--s-5); border: 1px solid var(--c-line); border-left: 4px solid var(--status);
   background: var(--c-surface); padding: var(--s-3) var(--s-5) var(--s-4); }
 .camread__ask { margin: 0 0 var(--s-1); font-size: var(--t-base); font-weight: 700; }
-.camread__label { font: 800 var(--t-xl)/1.15 var(--f-display); margin: 0; }
+.camread__label { font: 800 var(--t-lg)/1.2 var(--f-display); margin: 0; }
 .camread__lines { margin: var(--s-2) 0 0; padding-left: var(--s-5); }
 .camread__lines li { margin: var(--s-1) 0; }
 .camread__meta { margin: var(--s-2) 0 0; font-size: var(--t-xs); color: var(--c-asphalt-muted); }
 .cam figcaption { flex-wrap: wrap; }
 .cam__reading { flex-basis: 100%; font-weight: 600; }
+.cam__live { flex-basis: 100%; font-size: var(--t-xs); }
 .note { font-size: var(--t-sm); color: var(--c-asphalt-muted); }
 
 /* Forecast */
