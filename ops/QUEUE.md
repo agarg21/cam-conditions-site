@@ -2,7 +2,8 @@
 
 00. **Q16 Expansion sprint (D10, owner 2026-11-28): ~60 pass pages by 2026-11-30.** 30 live after the MT batch (2026-11-28 18:50Z: Bozeman, Homestake, MacDonald, Rogers, Kings Hill, Raynolds + /states/montana/; elevation = USGS 3DEP where the MDT segment crosses the USGS GNIS gap, checked against MDT RWIS station elevation where the station is within 0.6 km). MT left: Big Hole (route name S-278 vs MT 278 unsettled), Elk Park (GNIS gap 6.8 km from I-15), Evaro Hill (no GNIS gap), Marias (no MDT camera).
    Alternate runs: a batch of up to 8 passes (one feed per run), then a Q6 student-v0 step, then a batch again. Order by
-   weak official pages and demand: (1) Montana under D7a (Bozeman, Homestake, MacDonald, Rogers, Marias, Kings Hill, Evaro
+   weak official pages and demand: (1) Montana under D7a, then Iowa under D13 (/states/iowa/ with I-80 and I-35 corridor
+   pages, CARS 511 cameras and road conditions) (Bozeman, Homestake, MacDonald, Rogers, Marias, Kings Hill, Evaro
    Hill, plus MT side of Lookout/Lost Trail/Monida if not shared) with a /states/montana/ hub; (2) Idaho 511 (Galena,
    Banner, Malad, Pine Creek, Sweetzer, Johnson Creek or others with a camera within 3 km and a winter-road segment);
    (3) Oregon TripCheck (Sexton, Bennett Pass OR 35, Ochoco, Battle Mountain, Dixie, Tombstone, Blue Mountain summit);
@@ -106,8 +107,8 @@
    Disautel have reports too). Left: Oregon (Sexton Summit, OR 35 near Bennett Pass), Idaho (Malad, Sweetzer, Galena if a camera appears),
    California (US 395 Conway Summit, Big Bear via CWWP2 D8, Mount Rose via NDOT if keyless). Use `discover.yml` and
    CWWP2 JSON; 2 cameras per pass; verify images fetch.
-4b. **Q10 New states (D5): Iowa, Montana, South Dakota, Nebraska.** MONTANA UNBLOCKED (D7a: build with unmodified, credited MDT
-   images under MDT terms §4); do it before Q5. IA/NE/SD stay blocked until a written yes (D7b). Terms read 2026-11-27
+4b. **Q10 New states (D5): Iowa, Montana, South Dakota, Nebraska.** MONTANA UNBLOCKED (D7a) and IOWA UNBLOCKED (D13: stills only,
+   credit "Iowa DOT", direct link https://511ia.org); do them before Q5. NE/SD stay blocked until a written yes (D7b). Terms read 2026-11-27
    (docs/research/state-terms-2026-11-27.md, config/SOURCES.md): IA needs written consent; NE cameras need NDOT approval; SD has no
    terms; MT grants copying for "personal or informational use", unmodified, commercial use not addressed. When D7 answers: one state
    per run, `/states/<state>/` page (official condition layer summary, key corridors with 2–4 cameras, credits) linked from home;
