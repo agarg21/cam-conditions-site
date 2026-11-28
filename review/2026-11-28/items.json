@@ -1,0 +1,802 @@
+[
+ {
+  "id": "001",
+  "path": "raw/2026-11-27/1635/lost-trail-pass/0.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 0,
+  "when": "2026-11-27T16:35:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "002",
+  "path": "raw/2026-11-27/2037/monida-pass/0.jpg",
+  "pass": "monida-pass",
+  "cam": 0,
+  "when": "2026-11-27T20:37:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "003",
+  "path": "raw/2026-11-27/2052/fourth-of-july-pass/0.jpg",
+  "pass": "fourth-of-july-pass",
+  "cam": 0,
+  "when": "2026-11-27T20:52:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "004",
+  "path": "raw/2026-11-28/0002/lost-trail-pass/0.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 0,
+  "when": "2026-11-28T00:02:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "005",
+  "path": "raw/2026-11-27/1955/lolo-pass/0.jpg",
+  "pass": "lolo-pass",
+  "cam": 0,
+  "when": "2026-11-27T19:55:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "006",
+  "path": "raw/2026-11-27/1801/tollgate/0.jpg",
+  "pass": "tollgate",
+  "cam": 0,
+  "when": "2026-11-27T18:01:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "007",
+  "path": "raw/2026-11-27/0537/donner-pass/4.jpg",
+  "pass": "donner-pass",
+  "cam": 4,
+  "when": "2026-11-27T05:37:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "008",
+  "path": "raw/2026-11-28/0034/sherman-pass/0.jpg",
+  "pass": "sherman-pass",
+  "cam": 0,
+  "when": "2026-11-28T00:34:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "009",
+  "path": "raw/2026-11-27/1801/government-camp/0.jpg",
+  "pass": "government-camp",
+  "cam": 0,
+  "when": "2026-11-27T18:01:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "010",
+  "path": "raw/2026-11-27/1941/tollgate/1.jpg",
+  "pass": "tollgate",
+  "cam": 1,
+  "when": "2026-11-27T19:41:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "011",
+  "path": "raw/2026-11-27/2249/willamette-pass/1.jpg",
+  "pass": "willamette-pass",
+  "cam": 1,
+  "when": "2026-11-27T22:49:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "012",
+  "path": "raw/2026-11-27/0605/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T06:05:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "013",
+  "path": "raw/2026-11-27/0537/lost-trail-pass/0.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 0,
+  "when": "2026-11-27T05:37:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "014",
+  "path": "raw/2026-11-27/1830/willamette-pass/0.jpg",
+  "pass": "willamette-pass",
+  "cam": 0,
+  "when": "2026-11-27T18:30:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "015",
+  "path": "raw/2026-11-27/2120/siskiyou-summit/1.jpg",
+  "pass": "siskiyou-summit",
+  "cam": 1,
+  "when": "2026-11-27T21:20:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "016",
+  "path": "raw/2026-11-27/1607/monida-pass/0.jpg",
+  "pass": "monida-pass",
+  "cam": 0,
+  "when": "2026-11-27T16:07:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "017",
+  "path": "raw/2026-11-27/2150/white-pass/0.jpg",
+  "pass": "white-pass",
+  "cam": 0,
+  "when": "2026-11-27T21:50:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "018",
+  "path": "raw/2026-11-27/1912/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T19:12:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "019",
+  "path": "raw/2026-11-27/2318/stevens-pass/0.jpg",
+  "pass": "stevens-pass",
+  "cam": 0,
+  "when": "2026-11-27T23:18:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "020",
+  "path": "raw/2026-11-27/1830/monida-pass/0.jpg",
+  "pass": "monida-pass",
+  "cam": 0,
+  "when": "2026-11-27T18:30:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "021",
+  "path": "raw/2026-11-27/2348/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T23:48:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "022",
+  "path": "raw/2026-11-27/0937/santiam-pass/1.jpg",
+  "pass": "santiam-pass",
+  "cam": 1,
+  "when": "2026-11-27T09:37:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "023",
+  "path": "raw/2026-11-27/1200/donner-pass/3.jpg",
+  "pass": "donner-pass",
+  "cam": 3,
+  "when": "2026-11-27T12:00:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "024",
+  "path": "raw/2026-11-27/1747/teton-pass/1.jpg",
+  "pass": "teton-pass",
+  "cam": 1,
+  "when": "2026-11-27T17:47:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "025",
+  "path": "raw/2026-11-28/0016/stevens-pass/0.jpg",
+  "pass": "stevens-pass",
+  "cam": 0,
+  "when": "2026-11-28T00:16:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "026",
+  "path": "raw/2026-11-28/0016/sherman-pass/1.jpg",
+  "pass": "sherman-pass",
+  "cam": 1,
+  "when": "2026-11-28T00:16:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "027",
+  "path": "raw/2026-11-27/1747/blewett-pass/0.jpg",
+  "pass": "blewett-pass",
+  "cam": 0,
+  "when": "2026-11-27T17:47:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "028",
+  "path": "raw/2026-11-27/0923/tollgate/0.jpg",
+  "pass": "tollgate",
+  "cam": 0,
+  "when": "2026-11-27T09:23:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "029",
+  "path": "raw/2026-11-27/2249/sherman-pass/0.jpg",
+  "pass": "sherman-pass",
+  "cam": 0,
+  "when": "2026-11-27T22:49:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "030",
+  "path": "raw/2026-11-28/0002/lost-trail-pass/1.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 1,
+  "when": "2026-11-28T00:02:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "031",
+  "path": "raw/2026-11-27/1815/donner-pass/4.jpg",
+  "pass": "donner-pass",
+  "cam": 4,
+  "when": "2026-11-27T18:15:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "032",
+  "path": "raw/2026-11-27/2249/sherman-pass/1.jpg",
+  "pass": "sherman-pass",
+  "cam": 1,
+  "when": "2026-11-27T22:49:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "033",
+  "path": "raw/2026-11-27/1537/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T15:37:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "034",
+  "path": "raw/2026-11-28/0016/white-pass/0.jpg",
+  "pass": "white-pass",
+  "cam": 0,
+  "when": "2026-11-28T00:16:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "035",
+  "path": "raw/2026-11-27/0523/monida-pass/0.jpg",
+  "pass": "monida-pass",
+  "cam": 0,
+  "when": "2026-11-27T05:23:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "036",
+  "path": "raw/2026-11-27/0909/white-pass/0.jpg",
+  "pass": "white-pass",
+  "cam": 0,
+  "when": "2026-11-27T09:09:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "037",
+  "path": "raw/2026-11-28/0016/lost-trail-pass/0.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 0,
+  "when": "2026-11-28T00:16:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "038",
+  "path": "raw/2026-11-28/0002/donner-pass/6.jpg",
+  "pass": "donner-pass",
+  "cam": 6,
+  "when": "2026-11-28T00:02:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "039",
+  "path": "raw/2026-11-27/2303/deadman-pass/0.jpg",
+  "pass": "deadman-pass",
+  "cam": 0,
+  "when": "2026-11-27T23:03:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "040",
+  "path": "raw/2026-11-27/0923/lost-trail-pass/1.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 1,
+  "when": "2026-11-27T09:23:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "041",
+  "path": "raw/2026-11-27/2234/sherman-pass/1.jpg",
+  "pass": "sherman-pass",
+  "cam": 1,
+  "when": "2026-11-27T22:34:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "042",
+  "path": "raw/2026-11-27/2234/lost-trail-pass/0.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 0,
+  "when": "2026-11-27T22:34:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "043",
+  "path": "raw/2026-11-27/1747/donner-pass/3.jpg",
+  "pass": "donner-pass",
+  "cam": 3,
+  "when": "2026-11-27T17:47:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "044",
+  "path": "raw/2026-11-27/1258/donner-pass/6.jpg",
+  "pass": "donner-pass",
+  "cam": 6,
+  "when": "2026-11-27T12:58:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "045",
+  "path": "raw/2026-11-27/1830/echo-summit/1.jpg",
+  "pass": "echo-summit",
+  "cam": 1,
+  "when": "2026-11-27T18:30:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "046",
+  "path": "raw/2026-11-27/2023/donner-pass/6.jpg",
+  "pass": "donner-pass",
+  "cam": 6,
+  "when": "2026-11-27T20:23:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "047",
+  "path": "raw/2026-11-27/1258/tollgate/0.jpg",
+  "pass": "tollgate",
+  "cam": 0,
+  "when": "2026-11-27T12:58:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "048",
+  "path": "raw/2026-11-27/1103/monida-pass/0.jpg",
+  "pass": "monida-pass",
+  "cam": 0,
+  "when": "2026-11-27T11:03:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "049",
+  "path": "raw/2026-11-27/1537/teton-pass/1.jpg",
+  "pass": "teton-pass",
+  "cam": 1,
+  "when": "2026-11-27T15:37:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "050",
+  "path": "raw/2026-11-27/1341/echo-summit/1.jpg",
+  "pass": "echo-summit",
+  "cam": 1,
+  "when": "2026-11-27T13:41:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "051",
+  "path": "raw/2026-11-27/1941/lookout-pass/0.jpg",
+  "pass": "lookout-pass",
+  "cam": 0,
+  "when": "2026-11-27T19:41:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "052",
+  "path": "raw/2026-11-27/2150/teton-pass/1.jpg",
+  "pass": "teton-pass",
+  "cam": 1,
+  "when": "2026-11-27T21:50:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "053",
+  "path": "raw/2026-11-27/1508/tollgate/0.jpg",
+  "pass": "tollgate",
+  "cam": 0,
+  "when": "2026-11-27T15:08:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "054",
+  "path": "raw/2026-11-27/1941/donner-pass/2.jpg",
+  "pass": "donner-pass",
+  "cam": 2,
+  "when": "2026-11-27T19:41:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "055",
+  "path": "raw/2026-11-27/2249/loup-loup-pass/0.jpg",
+  "pass": "loup-loup-pass",
+  "cam": 0,
+  "when": "2026-11-27T22:49:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "056",
+  "path": "raw/2026-11-27/1215/lost-trail-pass/1.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 1,
+  "when": "2026-11-27T12:15:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "057",
+  "path": "raw/2026-11-27/1258/lost-trail-pass/0.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 0,
+  "when": "2026-11-27T12:58:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "058",
+  "path": "raw/2026-11-27/2219/tollgate/1.jpg",
+  "pass": "tollgate",
+  "cam": 1,
+  "when": "2026-11-27T22:19:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "059",
+  "path": "raw/2026-11-27/1508/siskiyou-summit/0.jpg",
+  "pass": "siskiyou-summit",
+  "cam": 0,
+  "when": "2026-11-27T15:08:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "060",
+  "path": "raw/2026-11-27/2234/sherman-pass/0.jpg",
+  "pass": "sherman-pass",
+  "cam": 0,
+  "when": "2026-11-27T22:34:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "061",
+  "path": "raw/2026-11-27/1621/donner-pass/1.jpg",
+  "pass": "donner-pass",
+  "cam": 1,
+  "when": "2026-11-27T16:21:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "062",
+  "path": "raw/2026-11-27/0909/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T09:09:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "063",
+  "path": "raw/2026-11-27/1454/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T14:54:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "064",
+  "path": "raw/2026-11-27/2333/donner-pass/6.jpg",
+  "pass": "donner-pass",
+  "cam": 6,
+  "when": "2026-11-27T23:33:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "065",
+  "path": "raw/2026-11-27/0730/lolo-pass/0.jpg",
+  "pass": "lolo-pass",
+  "cam": 0,
+  "when": "2026-11-27T07:30:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "066",
+  "path": "raw/2026-11-27/2303/stevens-pass/1.jpg",
+  "pass": "stevens-pass",
+  "cam": 1,
+  "when": "2026-11-27T23:03:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "067",
+  "path": "raw/2026-11-27/2120/government-camp/1.jpg",
+  "pass": "government-camp",
+  "cam": 1,
+  "when": "2026-11-27T21:20:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "068",
+  "path": "raw/2026-11-27/2135/stevens-pass/0.jpg",
+  "pass": "stevens-pass",
+  "cam": 0,
+  "when": "2026-11-27T21:35:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "069",
+  "path": "raw/2026-11-27/1020/tollgate/0.jpg",
+  "pass": "tollgate",
+  "cam": 0,
+  "when": "2026-11-27T10:20:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "070",
+  "path": "raw/2026-11-27/2303/sherman-pass/1.jpg",
+  "pass": "sherman-pass",
+  "cam": 1,
+  "when": "2026-11-27T23:03:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "071",
+  "path": "raw/2026-11-27/2135/tollgate/0.jpg",
+  "pass": "tollgate",
+  "cam": 0,
+  "when": "2026-11-27T21:35:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "072",
+  "path": "raw/2026-11-27/1912/fourth-of-july-pass/1.jpg",
+  "pass": "fourth-of-july-pass",
+  "cam": 1,
+  "when": "2026-11-27T19:12:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "073",
+  "path": "raw/2026-11-27/0827/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T08:27:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "074",
+  "path": "raw/2026-11-27/1607/lolo-pass/1.jpg",
+  "pass": "lolo-pass",
+  "cam": 1,
+  "when": "2026-11-27T16:07:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "075",
+  "path": "raw/2026-11-27/2318/loup-loup-pass/0.jpg",
+  "pass": "loup-loup-pass",
+  "cam": 0,
+  "when": "2026-11-27T23:18:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "076",
+  "path": "raw/2026-11-28/0002/loup-loup-pass/0.jpg",
+  "pass": "loup-loup-pass",
+  "cam": 0,
+  "when": "2026-11-28T00:02:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "077",
+  "path": "raw/2026-11-27/1454/teton-pass/1.jpg",
+  "pass": "teton-pass",
+  "cam": 1,
+  "when": "2026-11-27T14:54:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "078",
+  "path": "raw/2026-11-27/1733/tollgate/0.jpg",
+  "pass": "tollgate",
+  "cam": 0,
+  "when": "2026-11-27T17:33:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "079",
+  "path": "raw/2026-11-27/1858/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T18:58:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "080",
+  "path": "raw/2026-11-27/1117/lolo-pass/1.jpg",
+  "pass": "lolo-pass",
+  "cam": 1,
+  "when": "2026-11-27T11:17:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "081",
+  "path": "raw/2026-11-27/2303/deadman-pass/1.jpg",
+  "pass": "deadman-pass",
+  "cam": 1,
+  "when": "2026-11-27T23:03:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "082",
+  "path": "raw/2026-11-27/2023/lookout-pass/0.jpg",
+  "pass": "lookout-pass",
+  "cam": 0,
+  "when": "2026-11-27T20:23:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "083",
+  "path": "raw/2026-11-27/1312/fourth-of-july-pass/0.jpg",
+  "pass": "fourth-of-july-pass",
+  "cam": 0,
+  "when": "2026-11-27T13:12:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "084",
+  "path": "raw/2026-11-27/2150/donner-pass/2.jpg",
+  "pass": "donner-pass",
+  "cam": 2,
+  "when": "2026-11-27T21:50:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "085",
+  "path": "raw/2026-11-27/1815/teton-pass/0.jpg",
+  "pass": "teton-pass",
+  "cam": 0,
+  "when": "2026-11-27T18:15:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "086",
+  "path": "raw/2026-11-27/1941/donner-pass/1.jpg",
+  "pass": "donner-pass",
+  "cam": 1,
+  "when": "2026-11-27T19:41:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "087",
+  "path": "raw/2026-11-27/0827/lost-trail-pass/1.jpg",
+  "pass": "lost-trail-pass",
+  "cam": 1,
+  "when": "2026-11-27T08:27:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "088",
+  "path": "raw/2026-11-27/1035/monida-pass/0.jpg",
+  "pass": "monida-pass",
+  "cam": 0,
+  "when": "2026-11-27T10:35:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "089",
+  "path": "raw/2026-11-27/0454/donner-pass/4.jpg",
+  "pass": "donner-pass",
+  "cam": 4,
+  "when": "2026-11-27T04:54:00+00:00",
+  "light": "night"
+ },
+ {
+  "id": "090",
+  "path": "raw/2026-11-27/1552/teton-pass/1.jpg",
+  "pass": "teton-pass",
+  "cam": 1,
+  "when": "2026-11-27T15:52:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "091",
+  "path": "raw/2026-11-27/1733/donner-pass/4.jpg",
+  "pass": "donner-pass",
+  "cam": 4,
+  "when": "2026-11-27T17:33:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "092",
+  "path": "raw/2026-11-27/2234/white-pass/0.jpg",
+  "pass": "white-pass",
+  "cam": 0,
+  "when": "2026-11-27T22:34:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "093",
+  "path": "raw/2026-11-26/1820/white-pass/0.jpg",
+  "pass": "white-pass",
+  "cam": 0,
+  "when": "2026-11-26T18:20:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "094",
+  "path": "raw/2026-11-27/2205/stevens-pass/1.jpg",
+  "pass": "stevens-pass",
+  "cam": 1,
+  "when": "2026-11-27T22:05:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "095",
+  "path": "raw/2026-11-28/0002/tollgate/1.jpg",
+  "pass": "tollgate",
+  "cam": 1,
+  "when": "2026-11-28T00:02:00+00:00",
+  "light": "twilight"
+ },
+ {
+  "id": "096",
+  "path": "raw/2026-11-27/2303/sherman-pass/0.jpg",
+  "pass": "sherman-pass",
+  "cam": 0,
+  "when": "2026-11-27T23:03:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "097",
+  "path": "raw/2026-11-27/2234/loup-loup-pass/0.jpg",
+  "pass": "loup-loup-pass",
+  "cam": 0,
+  "when": "2026-11-27T22:34:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "098",
+  "path": "raw/2026-11-27/2348/siskiyou-summit/1.jpg",
+  "pass": "siskiyou-summit",
+  "cam": 1,
+  "when": "2026-11-27T23:48:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "099",
+  "path": "raw/2026-11-27/2037/lolo-pass/0.jpg",
+  "pass": "lolo-pass",
+  "cam": 0,
+  "when": "2026-11-27T20:37:00+00:00",
+  "light": "day"
+ },
+ {
+  "id": "100",
+  "path": "raw/2026-11-27/0412/lolo-pass/0.jpg",
+  "pass": "lolo-pass",
+  "cam": 0,
+  "when": "2026-11-27T04:12:00+00:00",
+  "light": "night"
+ }
+]
