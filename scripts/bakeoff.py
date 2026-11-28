@@ -270,6 +270,7 @@ TOOL_V2 = {
 }
 V2_VARIANTS = {  # name: (model, max side px). Dropped from the end when the projected cost passes the cap.
     "haiku640": ("haiku", 640), "sonnet640": ("sonnet", 640), "sonnet512": ("sonnet", 512), "sonnet448": ("sonnet", 448),
+    "opus640": ("opus", 640),
 }
 API = "https://api.anthropic.com/v1/messages"
 
@@ -348,8 +349,7 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
     ref = [json.loads(x) for x in open(hf_hub_download(REPO, src, repo_type="dataset",
                                                          token=os.environ["HF_TOKEN"])) if x.strip()]
     ref = [r for r in ref if "reading" in r["models"].get(REFERENCE, {})]
-    n = min(int(req.get("n", len(ref))), len(ref))
-    ref = ref[:n]
+    n = len(ref)
     raw = {}
     for r in ref:
         raw[r["path"]] = open(hf_hub_download(REPO, r["path"], repo_type="dataset", token=os.environ["HF_TOKEN"]), "rb").read()
@@ -357,12 +357,13 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
     state_path = os.path.join(ROOT, "docs", "bakeoff", f"{today}-v2test-batches.json")
     batches = req.get("batches") or {}
     probe_rows = []
+    want = [v for v in req.get("variants", list(V2_VARIANTS)[:4]) if v in V2_VARIANTS]
     if not batches:
-        # 1. sync probe: 2 day + 2 night images, Sonnet 640 and Haiku 640, to measure real output tokens
+        # 1. sync probe: 2 day + 2 night images per model, to measure real output tokens
         pick = [r for r in ref if r["light"] == "day"][:2] + [r for r in ref if r["light"] == "night"][:2]
         per_img = defaultdict(list)
         for r in pick:
-            for m in ("sonnet", "haiku"):
+            for m in sorted({V2_VARIANTS[v][0] for v in want}):
                 b64 = base64.b64encode(shrink(raw[r["path"]], 640)[0]).decode()
                 try:
                     res = parse_msg(http("POST", API, key, v2_params(m, b64)))
@@ -374,21 +375,29 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
                 probe_rows.append((m, r["light"], "reading" in res, u.get("input_tokens", 0),
                                    u.get("cache_read_input_tokens", 0), u.get("output_tokens", 0), c,
                                    res.get("error", "")[:200]))
-                if "reading" in res:
+                if "reading" in res and req.get("assume_cache"):  # batch caching held in the first v2 test
+                    per_img[m].append(cost(m, u, batch=True))
+                elif "reading" in res:
                     # conservative projection: charge cache reads as fresh input (batch caching is best effort)
                     uu = dict(u, input_tokens=u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0)
                               + u.get("cache_creation_input_tokens", 0), cache_read_input_tokens=0,
                               cache_creation_input_tokens=0)
                     per_img[m].append(cost(m, uu, batch=True))
-        if not per_img["sonnet"]:
-            lines += ["", "## v2 probe failed: no Sonnet reading; nothing submitted", ""] + [str(x) for x in probe_rows]
+        if any(not per_img[V2_VARIANTS[v][0]] for v in want):
+            lines += ["", "## v2 probe failed: a model gave no reading; nothing submitted", ""] + [str(x) for x in probe_rows]
             open(out_md, "w").write("\n".join(lines) + "\n")
             print("\n".join(lines))
             return
         est = {m: max(v) * 1.15 for m, v in per_img.items()}  # worst probe image + 15%
-        variants = dict(V2_VARIANTS)
-        while variants and spent + sum(est.get(m, est["sonnet"]) * n for m, _ in variants.values()) > max_usd:
+        variants = {v: V2_VARIANTS[v] for v in want}
+        while len(variants) > 1 and spent + sum(est[m] * n for m, _ in variants.values()) > max_usd:
             variants.popitem()
+        per = sum(est[m] for m, _ in variants.values())
+        if spent + per * n > max_usd and (max_usd - spent) / per >= 150:  # one variant left: sample fewer images
+            n = int((max_usd - spent) / per)
+            ref = random.Random(5).sample(ref, n)
+        elif spent + per * n > max_usd:
+            variants = {}
         if not variants:
             lines += ["", f"## v2: projected cost over cap ${max_usd}; nothing submitted", ""]
             open(out_md, "w").write("\n".join(lines) + "\n")
@@ -399,7 +408,14 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
             b = http("POST", API + "/batches", key, {"requests": reqs})
             batches[name] = b["id"]
             print(f"submitted {name}: {b['id']} ({len(reqs)} requests)", flush=True)
-        json.dump({"batches": batches, "n": n, "probe_usd": round(spent, 4), "submitted": today}, open(state_path, "w"))
+        json.dump({"batches": batches, "n": n, "paths": [r["path"] for r in ref], "probe_usd": round(spent, 4),
+                   "submitted": today}, open(state_path, "w"))
+    elif os.path.exists(state_path):  # collect run: same image subset as the submit run
+        keep = json.load(open(state_path)).get("paths")
+        if keep:
+            byp = {r["path"]: r for r in ref}
+            ref = [byp[p] for p in keep if p in byp]
+            n = len(ref)
     # 2. poll (up to ~140 min); if not done, leave the ids for a later collect run
     deadline = time.time() + float(req.get("poll_minutes", 140)) * 60
     status = {}
@@ -428,11 +444,21 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
             got[name][idx] = parse_msg(res["message"]) if res.get("type") == "succeeded" else \
                 {"error": json.dumps(res)[:300], "usage": {}}
     variants = list(batches)
+    if req.get("merge"):  # earlier v2 test labels for the same images (by path): compare against them too
+        idx = {r["path"]: i for i, r in enumerate(ref)}
+        for x in open(hf_hub_download(REPO, req["merge"], repo_type="dataset", token=os.environ["HF_TOKEN"])):
+            if x.strip():
+                rec = json.loads(x)
+                if rec["path"] in idx:
+                    for v, val in rec["v2"].items():
+                        if v not in batches:
+                            got[v][idx[rec["path"]]] = val
+        variants = list(batches) + sorted(v for v in got if v not in batches)
     out = []
     for i, r in enumerate(ref):
         out.append({"path": r["path"], "pass": r["pass"], "cam": r["cam"], "when": r["when"], "light": r["light"],
-                    "prompt": PROMPT_V2, "batch": True, "v2": {v: got[v].get(i, {"error": "missing"}) for v in variants}})
-    label_path = f"labels/bakeoff-{today}/{PROMPT_V2}-test.jsonl"
+                    "prompt": PROMPT_V2, "batch": True, "v2": {v: got[v].get(i, {"error": "missing"}) for v in batches}})
+    label_path = f"labels/bakeoff-{today}/{PROMPT_V2}-test{req.get('tag', '')}.jsonl"
     api.upload_file(path_or_fileobj=("\n".join(json.dumps(x) for x in out) + "\n").encode(), path_in_repo=label_path,
                     repo_id=REPO, repo_type="dataset", commit_message=f"v2 test labels {today} ({len(out)} images)")
 
@@ -443,7 +469,7 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
         return ref[i]["models"].get(m, {}).get("reading")
 
     batch_usd = {v: sum(cost(V2_VARIANTS[v][0], got[v][i].get("usage", {}), batch=True) for i in got[v]) for v in variants}
-    spent_total = spent + sum(batch_usd.values())
+    spent_total = spent + sum(batch_usd[v] for v in batches)
     if not probe_rows:  # collect run: the probe was paid by the submit run
         try:
             spent_total += json.load(open(state_path)).get("probe_usd", 0)
@@ -452,7 +478,8 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
     lines += ["", f"## Prompt v2 test ({PROMPT_V2}, Message Batches), {n} bake-off images", "",
               f"Reference: v1.1 Opus readings (`{src}`). Per-image v2 labels: `{label_path}` (private).",
               f"Batches: `{json.dumps(batches)}`. Spend this test: **${spent_total:.2f}** (cap ${max_usd:.2f}; "
-              f"probe ${spent:.3f}, batches ${sum(batch_usd.values()):.2f}).", ""]
+              f"probe ${spent:.3f}, batches ${sum(batch_usd[v] for v in batches):.2f}). Variants from earlier runs "
+              f"(costs shown but not counted here): {', '.join(v for v in variants if v not in batches) or 'none'}.", ""]
     if probe_rows:
         lines += ["Sync probe (prompt v2, 640 px):", "", "| model | light | ok | in tok | cache read | out tok | cost | error |",
                   "|---|---|---|---:|---:|---:|---:|---|"]
@@ -503,6 +530,24 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
         ms = sum(vals[i] == "bare" for i in os_)
         un = sum(1 for x in vals if x == "unknown") / max(sum(1 for x in vals if x is not None), 1)
         lines.append(f"| {name} | " + " | ".join(cells) + f" | {fs}/{len(ob)} | {ms}/{len(os_)} | {un:.0%} |")
+    if "opus640" in variants:
+        lines += ["", "#### Same table with **Opus v2** (opus640) as the reference", "",
+                  "| reader | all | day | twilight | night | snow on Opus-bare | missed snow | unknown rate |",
+                  "|---|---:|---:|---:|---:|---:|---:|---:|"]
+        o2 = [collapse_v2(rd("opus640", i)["s"]) if rd("opus640", i) else None for i in range(n)]
+        for name, vals in readers.items():
+            if name.startswith("opus640"):
+                continue
+            cells = []
+            for light in ("all", "day", "twilight", "night"):
+                idx = [i for i in range(n) if vals[i] and o2[i] and (light == "all" or ref[i]["light"] == light)]
+                cells.append(f"{sum(vals[i] == o2[i] for i in idx) / len(idx):.0%} ({len(idx)})" if idx else "-")
+            ob = [i for i in range(n) if vals[i] and o2[i] == "bare"]
+            os_ = [i for i in range(n) if vals[i] and o2[i] == "snow"]
+            un = sum(1 for x in vals if x == "unknown") / max(sum(1 for x in vals if x is not None), 1)
+            lines.append(f"| {name} | " + " | ".join(cells) + f" | {sum(vals[i] == 'snow' for i in ob)}/{len(ob)} | "
+                         f"{sum(vals[i] == 'bare' for i in os_)}/{len(os_)} | {un:.0%} |")
+        lines.append("Opus v2 collapsed: " + ", ".join(f"{k} {v}" for k, v in Counter(x for x in o2 if x).most_common()) + ".")
     lines += ["", f"Opus v1.1 collapsed: " + ", ".join(f"{k} {v}" for k, v in Counter(opus_c).most_common()) + ". "
               + lines_cascade, ""]
 
@@ -535,6 +580,130 @@ def v2test(req, key, api, hf_hub_download, lines, out_md, today):
                      f"{sum(rd(v, i)['f'] == 'u' for i in ud) / max(len(ud), 1):.0%} | "
                      f"{sum(rd(v, i)['f'] == pm[opus(i)['precip_falling']] for i in judged) / max(len(judged), 1):.0%} ({len(judged)}) |")
     lines += ["", "Opus v1.1 precip_falling was unknown on 67% of images (59% of daytime).", ""]
+    open(out_md, "w").write("\n".join(lines) + "\n")
+    print("\n".join(lines))
+
+
+def run_batches(key, batches, deadline):
+    """Poll until every batch ended or the deadline passes. Returns {name: status} or None on timeout."""
+    while True:
+        status = {k: http("GET", f"{API}/batches/{v}", key) for k, v in batches.items()}
+        if all(x.get("processing_status") == "ended" for x in status.values()):
+            return status
+        if time.time() > deadline:
+            return None
+        print("waiting:", {k: x.get("request_counts") for k, x in status.items()}, flush=True)
+        time.sleep(60)
+
+
+def batch_results(key, status):
+    got = defaultdict(dict)
+    for name, st in status.items():
+        for line in http("GET", st["results_url"], key, raw=True).decode().splitlines():
+            if line.strip():
+                x = json.loads(line)
+                res = x.get("result", {})
+                got[name][x["custom_id"]] = parse_msg(res["message"]) if res.get("type") == "succeeded" else \
+                    {"error": json.dumps(res)[:300], "usage": {}}
+    return got
+
+
+def label(req, key, api, rows, hf_hub_download, lines, out_md, today):
+    """D8 labeling job (Q6a): prompt v2 via Message Batches on day + twilight images not labeled before and not in
+    the bake-off set (kept as the eval set), spread round-robin over cameras; a random audit share also goes to
+    Opus. Per-image labels -> private HF labels/train/; spend -> docs/bakeoff/label-ledger.json (aggregate)."""
+    model, side = req.get("model", "sonnet"), int(req.get("side", 640))
+    audit, n, cap = float(req.get("audit", 0.1)), int(req.get("n", 1000)), float(req.get("max_usd", 10))
+    lights = set(req.get("lights", ["day", "twilight"]))
+    ledger_path = os.path.join(ROOT, "docs", "bakeoff", "label-ledger.json")
+    try:
+        ledger = json.load(open(ledger_path))
+    except (OSError, ValueError):
+        ledger = {"budget_usd": 40.0, "spent_usd": 0.0, "images": 0, "jobs": []}
+    room = ledger["budget_usd"] - ledger["spent_usd"]
+    cap = min(cap, room)
+    done = set()
+    for f in api.list_repo_files(REPO, repo_type="dataset"):
+        if f.startswith("labels/") and f.endswith(".jsonl"):
+            for x in open(hf_hub_download(REPO, f, repo_type="dataset", token=os.environ["HF_TOKEN"])):
+                if x.strip():
+                    done.add(json.loads(x).get("path"))
+    pool = [r for r in rows if r["light"] in lights and r["path"] not in done]
+    by = defaultdict(list)
+    for r in pool:
+        by[(r["pass"], r["cam"])].append(r)
+    rnd = random.Random(int(req.get("seed", 11)))
+    for g in by.values():
+        rnd.shuffle(g)
+    picked = []
+    while len(picked) < n and any(by.values()):
+        for k in sorted(by):
+            if by[k] and len(picked) < n:
+                picked.append(by[k].pop())
+    est_per = float(req.get("est_usd_per_image", 0.003))  # from the v2 test; Opus ~2x Sonnet
+    n_audit = int(len(picked) * audit)
+    projected = len(picked) * est_per + n_audit * est_per * 2
+    lines += ["", f"## Labeling job {today}: {model} {side}px, prompt {PROMPT_V2}, Message Batches", "",
+              f"Pool: {len(pool)} unlabeled {'/'.join(sorted(lights))} images over {len(by)} cameras; picked {len(picked)}; "
+              f"audit {n_audit} with Opus. Projected ${projected:.2f}; cap ${cap:.2f} (D8 ledger: ${ledger['spent_usd']:.2f} "
+              f"of ${ledger['budget_usd']:.0f} spent)."]
+    if not picked or projected > cap:
+        lines += ["", "Nothing submitted (empty pool or projected cost over cap).", ""]
+        open(out_md, "w").write("\n".join(lines) + "\n")
+        print("\n".join(lines))
+        return
+    audit_idx = set(rnd.sample(range(len(picked)), n_audit))
+    reqs = {model: [], "opus": []}
+    for i, r in enumerate(picked):
+        b64 = base64.b64encode(shrink(open(hf_hub_download(REPO, r["path"], repo_type="dataset",
+                                                           token=os.environ["HF_TOKEN"]), "rb").read(), side)[0]).decode()
+        reqs[model].append({"custom_id": f"m-{i}", "params": v2_params(model, b64)})
+        if i in audit_idx:
+            reqs["opus"].append({"custom_id": f"a-{i}", "params": v2_params("opus", b64)})
+    batches = {}
+    for name, rq in reqs.items():
+        for j in range(0, len(rq), 1000):  # keep each request body well under the 256 MB batch limit
+            batches[f"{name}-{j // 1000}"] = http("POST", API + "/batches", key, {"requests": rq[j:j + 1000]})["id"]
+    print("submitted", batches, flush=True)
+    status = run_batches(key, batches, time.time() + float(req.get("poll_minutes", 140)) * 60)
+    if status is None:
+        lines += ["", "Batches still processing (ids below); cost not yet recorded. Collect in a later run.", "",
+                  json.dumps(batches), ""]
+        ledger["jobs"].append({"date": today, "batches": batches, "pending": True, "projected_usd": round(projected, 2)})
+        json.dump(ledger, open(ledger_path, "w"), indent=1)
+        open(out_md, "w").write("\n".join(lines) + "\n")
+        return
+    got = batch_results(key, status)
+    res = {}
+    for name, d in got.items():
+        res.update(d)
+    usd = {"main": sum(cost(model, res[k].get("usage", {}), batch=True) for k in res if k.startswith("m-")),
+           "audit": sum(cost("opus", res[k].get("usage", {}), batch=True) for k in res if k.startswith("a-"))}
+    out = []
+    for i, r in enumerate(picked):
+        rec = dict(r, prompt=PROMPT_V2, model=model, side=side, batch=True, reading=res.get(f"m-{i}", {}).get("reading"),
+                   error=res.get(f"m-{i}", {}).get("error"))
+        if i in audit_idx:
+            rec["audit_opus"] = res.get(f"a-{i}", {}).get("reading")
+        out.append(rec)
+    ok = sum(1 for x in out if x["reading"])
+    label_path = f"labels/train/{today}-{model}{side}-{len(out)}.jsonl"
+    api.upload_file(path_or_fileobj=("\n".join(json.dumps(x) for x in out) + "\n").encode(), path_in_repo=label_path,
+                    repo_id=REPO, repo_type="dataset", commit_message=f"training labels {today} ({ok} images)")
+    total = usd["main"] + usd["audit"]
+    ledger["spent_usd"] = round(ledger["spent_usd"] + total, 4)
+    ledger["images"] += ok
+    ledger["jobs"].append({"date": today, "model": model, "side": side, "images_ok": ok, "audit": n_audit,
+                           "usd_main": round(usd["main"], 4), "usd_audit": round(usd["audit"], 4), "batches": batches})
+    json.dump(ledger, open(ledger_path, "w"), indent=1)
+    aud = [x for x in out if x.get("audit_opus") and x["reading"]]
+    agree = sum(collapse_v2(x["reading"]["s"]) == collapse_v2(x["audit_opus"]["s"]) for x in aud)
+    surf = Counter(collapse_v2(x["reading"]["s"]) for x in out if x["reading"])
+    lines += [f"Labelled **{ok}** of {len(out)} ({len(out) - ok} errors) -> `{label_path}` (private).",
+              f"Cost: {model} ${usd['main']:.2f} (${usd['main'] / max(ok, 1) * 1000:.2f} per 1,000), Opus audit "
+              f"${usd['audit']:.2f}; total **${total:.2f}**. D8 ledger now ${ledger['spent_usd']:.2f} of $40.",
+              f"Opus audit, road surface collapsed: {agree}/{len(aud)} agree" + (f" ({agree / len(aud):.0%})." if aud else "."),
+              "Road surface (collapsed): " + ", ".join(f"{k} {v}" for k, v in surf.most_common()) + ".", ""]
     open(out_md, "w").write("\n".join(lines) + "\n")
     print("\n".join(lines))
 
@@ -608,6 +777,8 @@ def main():
     extra = req.get("extra") or {}  # optional request fields, e.g. {"output_config": {"effort": "low"}}
     if mode == "probe":
         return probe(rows, key, lines, out_md, hf_hub_download)
+    if mode == "label":
+        return label(req, key, api, rows, hf_hub_download, lines, out_md, today)
     if mode == "v2test":
         return v2test(req, key, api, hf_hub_download, lines, out_md, today)
     picked = sample(rows, n)

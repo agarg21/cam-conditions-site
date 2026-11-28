@@ -7,7 +7,7 @@ on:
         description: "count = list collected images; run = label a sample with all three models"
         default: count
         type: choice
-        options: [count, probe, run, v2test]
+        options: [count, probe, run, v2test, label]
       n:
         description: "Images to sample in run mode"
         default: "300"
