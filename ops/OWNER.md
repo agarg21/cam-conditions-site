@@ -19,6 +19,11 @@
   Nebraska (NDOT.OperationsSOC@nebraska.gov), South Dakota (dot.communications@state.sd.us). Each said the site is free
   and may later show ads. IA/NE/SD stay off until a written yes arrives (owner forwards replies).
 
+- D9 (2026-11-28, owner "yes, lets do this") Claude readings live on the top 5 passes once the owner's 100-image check
+  (review/2026-11-28, done in the "Camera check" artifact) shows Sonnet agrees with him on lane snow ≥90% in daylight.
+  Sonnet, prompt pass-v2, daylight + twilight only, hourly, 2 cameras per pass; budget up to USD 15/month. Shown as
+  "Our reading" with confidence beside the official report, never replacing it.
+
 ## Not approved (ask first)
 - Any email or outreach (CDOT reply handling, B2B pitches), new sign-ups, Search Console changes, paid spend beyond D2.
 

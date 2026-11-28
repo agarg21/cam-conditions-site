@@ -7,6 +7,14 @@
    day (push ops/bakeoff-request.json mode "label", same settings, bump "requested") until ~5,000 images; next when the
    unlabeled day+twilight pool is ≥1,000 (~1,500/day collected). 1 dataset file was not a JPEG: check collect.py's image check.
 
+0b. **Q13 Claude readings on the top 5 passes (D9).** blocked until the owner's 100-image check is compared (Claude in chat
+   runs compare: review/2026-11-28/report.md). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
+   demand (likely Snoqualmie, Stevens, Donner, Lookout, Santiam; check docs/research), add an hourly reading job (Batch not
+   needed at this size), store readings in HF readings/, and show on pass pages: per camera "Our reading: snow on lanes /
+   bare / can't tell (too dark)" with time and confidence; a pass-level "Cameras show" line beside the official verdict;
+   a third row "Cameras" in the 24 h history; a flag when cameras disagree with an official report ≥2 h old. Label every
+   reading "our reading, not an official report". Spend ledger in docs/bakeoff/label-ledger.json, D9 ≤$15/month.
+
 1. **Q1 Labeling bake-off.** Done 2026-11-28 01:08Z: docs/bakeoff/decision.md (Sonnet labels; Haiku 18% false snow;
    collapsed road surface Sonnet 93% vs Opus). D2 spent $6.80 of $10. Follow-up lives in Q6.
 2. **Q3 Pass page answers.** Shipped 2026-11-27 (a1a832a): answers block (Open? / Chains? / Snow on the road?) from official
