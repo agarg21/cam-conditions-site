@@ -8,8 +8,10 @@
    unlabeled day+twilight pool is ≥1,000 (~1,500/day collected). Non-JPEG fix done 2026-11-28 04:25Z: the bad file was
    raw/2026-11-28/0002/blewett-pass/0.jpg; collect.py now saves only complete JPEGs (SOI + EOI), else `problem` in manifest.
 
-0b. **Q13 Claude readings on the top 5 passes (D9).** blocked until the owner's 100-image check is compared (Claude in chat
-   runs compare: review/2026-11-28/report.md). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
+0b. **Q13 Claude readings on the top 5 passes (D9).** Owner check compared 2026-11-28 08:00Z (review/2026-11-28/report.md):
+   Sonnet 88% day (52/59 sure), 86% twilight, 50% night; misses the 90% bar by ~1 image. Main error: snow beside the road
+   read as snow on the lanes (Sonnet 10/53, Opus 10/53, Haiku 38/53). Sample oversampled model-snowy images, so real rates
+   are lower. Next: owner to decide prompt v3 re-test (see OWNER.md D9). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
    demand (likely Snoqualmie, Stevens, Donner, Lookout, Santiam; check docs/research), add an hourly reading job (Batch not
    needed at this size), store readings in HF readings/, and show on pass pages: per camera "Our reading: snow on lanes /
    bare / can't tell (too dark)" with time and confidence; a pass-level "Cameras show" line beside the official verdict;
