@@ -22,7 +22,12 @@
    wording only, tonight/tomorrow/weekend NWS periods with snow totals, facts block, new titles. Live on all 18 pages
    12:30Z (OR/ID verified). (a) stale reports shipped 2026-11-27 14:35Z: reports ≥12 h old flagged on verdict and board.
    Left: (b) FAQ only where an official source answers; (c) "typical closures" fact only with a source per pass.
-2b. **Q11 SEO pass on pass pages (owner asked, 2026-11-28).** Gaps found on /passes/snoqualmie-pass/: (1) the word
+2b. **Q11 SEO pass on pass pages (owner asked, 2026-11-28).** Part 1 shipped 2026-11-28 ~06:45Z: (1) title "<Pass> Road
+   Conditions, Webcams & Chain Status", H2 "<Pass> webcams", camera alt "<Pass> webcam: …"; (2) h1 "<Pass> road conditions"
+   above the sign; (3) "Is <Pass> open right now?", "Do I need chains?", "<Pass> weather"; (4) WebPage+BreadcrumbList
+   (Home › Pass)+Place geo JSON-LD, og/twitter tags with the first camera's stable URL. Left: (5) state hubs + 3-level
+   breadcrumb, nearby/same-highway blocks; (6) sourced evergreen block; images still carry ?t= (decide: drop it, since
+   Pages serves max-age=600). Original notes: gaps found on /passes/snoqualmie-pass/: (1) the word
    "webcam" is nowhere, though "<pass> webcam" is the biggest search (~98K/mo across 12 passes): title "<Pass> Road
    Conditions, Webcams & Chain Status", H2 "<Pass> webcams"; (2) H1 is the bare name: make it "<Pass> road conditions"
    (the sign stays as the visual); (3) question headings that match searches: "Is <Pass> open right now?", "Do I need

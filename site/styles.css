@@ -70,10 +70,14 @@ p, li { max-width: var(--w-read); }
 .wordmark__b { font-weight: 800; color: var(--c-sign); }
 .site-header nav a { font: 600 var(--t-sm)/1 var(--f-display); text-decoration: none; padding: var(--s-2); }
 
+/* Pass page top: breadcrumb and the plain-text h1 ("<Pass> road conditions"); the summit sign below stays the visual */
+.crumbs { margin: var(--s-4) 0 0; font-size: var(--t-xs); color: var(--c-asphalt-muted); }
+.page-title { margin: var(--s-2) 0 0; font-size: var(--t-lg); font-weight: 700; }
+
 /* Summit sign: the one bold element on a pass page */
 .summit-sign {
   max-width: 40rem;
-  margin: var(--s-5) 0 var(--s-4);
+  margin: var(--s-3) 0 var(--s-4);
   background: var(--c-sign);
   color: #fff;
   border-radius: var(--r-sign);
@@ -86,8 +90,8 @@ p, li { max-width: var(--w-read); }
   padding: var(--s-4) var(--s-5) var(--s-5);
   text-align: center;
 }
-.summit-sign h1 {
-  font-size: var(--t-sign); font-weight: 800; letter-spacing: .02em; text-transform: uppercase;
+.summit-sign__name {
+  font: 800 var(--t-sign)/1.15 var(--f-display); letter-spacing: .02em; text-transform: uppercase; margin: 0; max-width: none;
 }
 .summit-sign__sub { font: 700 var(--t-lg)/1.2 var(--f-display); text-transform: uppercase; margin-top: var(--s-2); letter-spacing: .04em; }
 .summit-sign__sub span + span { margin-left: var(--s-4); }
@@ -103,6 +107,7 @@ p, li { max-width: var(--w-read); }
   background: var(--status-tint);
   padding: var(--s-4) var(--s-5);
 }
+.verdict__ask { margin: 0 0 var(--s-1); font-size: var(--t-base); font-weight: 700; }
 .verdict__label { font: 800 var(--t-status)/1.1 var(--f-display); margin: 0; }
 .verdict__official { margin: var(--s-2) 0 0; font-size: var(--t-lg); }
 .verdict__stale { margin: var(--s-2) 0 0; font-weight: 600; font-size: var(--t-sm); }

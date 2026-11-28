@@ -346,11 +346,28 @@ def shield(route):
             f'<text x="18" y="23" text-anchor="middle" font-family="Overpass,Arial" font-weight="800" font-size="13" fill="#1e2328">{e(num)}</text></svg>')
 
 
-def head(title, desc, path):
+def json_ld(obj):
+    """A JSON-LD script tag; '</' is escaped so feed text can never close the tag."""
+    return ('<script type="application/ld+json">'
+            + json.dumps(obj, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") + "</script>")
+
+
+def social(title, desc, path, image=None, image_alt=""):
+    """Open Graph and Twitter card tags. image: an absolute URL with no cache-busting query."""
+    tags = [("og:type", "website"), ("og:site_name", "Conditions Now"), ("og:title", title),
+            ("og:description", desc), ("og:url", f"{BASE}{path}")]
+    if image:
+        tags += [("og:image", image), ("og:image:alt", image_alt)]
+    out = "".join(f'<meta property="{k}" content="{e(v)}">' for k, v in tags)
+    return out + f'<meta name="twitter:card" content="{"summary_large_image" if image else "summary"}">'
+
+
+def head(title, desc, path, extra=None):
+    extra = social(title, desc, path) if extra is None else extra
     return f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc)}">
-<link rel="canonical" href="{BASE}{path}">
+<link rel="canonical" href="{BASE}{path}">{extra}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@700;800&family=Public+Sans:wght@400;600&display=swap">
 <link rel="stylesheet" href="/styles.css">
@@ -445,15 +462,19 @@ def answers(st, level, state):
     return rows, other
 
 
-def verdict(st, level, state, tz=TZ):
+SHOWN_Q = {"Chains?": "Do I need chains?"}  # display wording; history keys keep the short form
+
+
+def verdict(st, level, state, tz=TZ, name=""):
     cls, label = LEVELS[level]
     label = (st or {}).get("label") or label
     dot, link = DOT_NAMES[state]
     rows, other = answers(st, level, state)
-    qa = "".join(f'<dt>{q}</dt><dd><strong>{e(a)}</strong> <span class="verdict__quote">{e(d)}</span></dd>'
+    ask = f'<h2 class="verdict__ask">Is {e(name)} open right now?</h2>' if name else ""
+    qa = "".join(f'<dt>{SHOWN_Q.get(q, q)}</dt><dd><strong>{e(a)}</strong> <span class="verdict__quote">{e(d)}</span></dd>'
                  for q, a, d in rows)
     if not st:
-        return (f'<section class="verdict {cls}" aria-label="Current road status"><p class="verdict__label">{label}</p>'
+        return (f'<section class="verdict {cls}" aria-label="Current road status">{ask}<p class="verdict__label">{label}</p>'
                 f'<dl class="answers">{qa}</dl>'
                 f'<p class="verdict__meta">We have no current official road report for this spot. Check the cameras below '
                 f'and <a href="{link}">{dot}</a>.</p></section>')
@@ -470,7 +491,7 @@ def verdict(st, level, state, tz=TZ):
              if st.get("stale_h") else "")
     where = f" for {e(st['where'])}" if st.get("where") else ""
     return (f'<section class="verdict {cls}" aria-label="Current road status">'
-            f'<p class="verdict__label">{label}</p>{stale}'
+            f'{ask}<p class="verdict__label">{label}</p>{stale}'
             f'<dl class="answers">{qa}{"".join(extra)}</dl>'
             f'<p class="verdict__meta">From the latest official {dot} report{where}{when}. Answers repeat its wording; '
             f'anything it doesn\'t cover says \u201cnot reported\u201d.'
@@ -589,6 +610,29 @@ def changed_tag(ch, now, tz):
     return f'<span class="pass-row__changed">{head} {when}, was \u201c{e(was)}\u201d</span>'
 
 
+def pass_meta(p, name, title, desc, path, cams, fetched):
+    """Social tags plus JSON-LD (WebPage, BreadcrumbList, Place) for one pass page.
+
+    Every value comes from config/passes.json or the run itself; the image is the first camera we saved this run,
+    at its stable URL (no ?t=), so search engines and link previews see one URL per camera.
+    """
+    url = f"{BASE}{path}"
+    img = f'{BASE}/cams/{cams[0]["pass"]}/{cams[0]["cam"]}.jpg' if cams else None
+    alt = f'{name} webcam: {cams[0]["title"]}' if cams else ""
+    place = {"@type": "Place", "name": name,
+             "address": {"@type": "PostalAddress", "addressRegion": p["state"], "addressCountry": "US"},
+             "geo": {"@type": "GeoCoordinates", "latitude": p["lat"], "longitude": p["lon"]}}
+    page = {"@type": "WebPage", "@id": url, "url": url, "name": title, "description": desc, "inLanguage": "en-US",
+            "dateModified": fetched.isoformat(timespec="seconds"), "about": place,
+            "isPartOf": {"@type": "WebSite", "name": "Conditions Now", "url": f"{BASE}/"},
+            "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "All passes", "item": f"{BASE}/"},
+                {"@type": "ListItem", "position": 2, "name": name, "item": url}]}}
+    if img:
+        page["primaryImageOfPage"] = {"@type": "ImageObject", "contentUrl": img, "caption": alt}
+    return social(title, desc, path, img, alt) + json_ld({"@context": "https://schema.org", **page})
+
+
 LAZY = 'loading="lazy" '
 
 
@@ -657,12 +701,12 @@ def build():
         checked = fetched.astimezone(tz).strftime("%-I:%M %p %Z")
         fc = nws_forecast(p["lat"], p["lon"])
         name = p["name"].split(" (")[0]
-        title = f"{name} road conditions, cameras and weather | Conditions Now"
-        desc = (f"Is {name} open, are chains required, is there snow on the road? The official "
-                f"{DOT_NAMES[p['state']][0]} report, live cameras and the forecast for {p['route']} between "
+        title = f"{name} Road Conditions, Webcams & Chain Status | Conditions Now"
+        desc = (f"Is {name} open? Are chains required? Live webcams, the official "
+                f"{DOT_NAMES[p['state']][0]} report and the weather for {p['route']} between "
                 f"{p['between']}, checked every 15 minutes.")
         cam_html = "".join(
-            f'<figure class="cam"><img src="{c["site_url"]}" alt="Live camera: {e(c["title"])}" '
+            f'<figure class="cam"><img src="{c["site_url"]}" alt="{e(name)} webcam: {e(c["title"])}" '
             f'width="640" height="480" {LAZY if i else ""}decoding="async">'
             f'<figcaption><span>{e(c["title"])}</span><time datetime="{fetched.isoformat()}">checked {checked}</time></figcaption></figure>'
             for i, c in enumerate(cams)) or '<p class="note">These cameras are offline right now.</p>'
@@ -674,7 +718,10 @@ def build():
             f'{snow_note(x)}</div>'
             for x in pick_periods(fc, tz))
         summit = p.get("summit", True)
-        sign = (f'<div class="summit-sign"><div class="summit-sign__face"><h1>{e(name)}</h1>'
+        sign = (f'<nav class="crumbs" aria-label="Breadcrumb"><a href="/">All passes</a> <span aria-hidden="true">›</span> '
+                f'<span aria-current="page">{e(name)}</span></nav>'
+                f'<h1 class="page-title">{e(name)} road conditions</h1>'
+                f'<div class="summit-sign"><div class="summit-sign__face"><p class="summit-sign__name">{e(name)}</p>'
                 f'<p class="summit-sign__sub">{"<span>Summit</span>" if summit else ""}<span>Elev {p["elev_ft"]:,} ft</span></p></div></div>')
         disclaimer = ""
         if src == "odot-tripcheck":
@@ -684,12 +731,12 @@ def build():
         body = f"""
 {sign}
 <p class="route-line">{shield(p['route'])}<span>{e(p['route'])} between {e(p['between'])}</span></p>
-{verdict(st, level, p['state'], tz)}
-<h2>Live cameras</h2>
+{verdict(st, level, p['state'], tz, name)}
+<h2>{e(name)} webcams</h2>
 <div class="cams">{cam_html}</div>
 <p class="note">Camera images from {e(credit)}. Soon each camera will get its own reading: snow on the road, visibility and traffic.</p>
-<h2>{"Summit forecast" if summit else "Forecast"}</h2>
-{f'<div class="forecast">{fc_html}</div><p class="note">From the National Weather Service.</p>' if fc_html else '<p class="note">The forecast did not load. Try again in a few minutes.</p>'}
+<h2>{e(name)} weather</h2>
+{f'<div class="forecast">{fc_html}</div><p class="note">{"Summit forecast" if summit else "Forecast"} from the National Weather Service.</p>' if fc_html else '<p class="note">The forecast did not load. Try again in a few minutes.</p>'}
 {history_html(hist_rows, tz, DOT_NAMES[p['state']][0])}
 <h2>About {e(name)}</h2>
 <dl class="facts"><dt>{"Summit elevation" if summit else "Elevation"}</dt><dd>{p["elev_ft"]:,} ft</dd>
@@ -705,7 +752,7 @@ def build():
         path = f"/passes/{p['slug']}/"
         os.makedirs(os.path.join(SITE, "passes", p["slug"]), exist_ok=True)
         with open(os.path.join(SITE, "passes", p["slug"], "index.html"), "w") as f:
-            f.write(head(title, desc, path) + body + FOOT)
+            f.write(head(title, desc, path, pass_meta(p, name, title, desc, path, cams, fetched)) + body + FOOT)
         urls.append(path)
         summary.append((p, st, level))
         changes[p["slug"]] = changed_tag(last_change(hist_rows), fetched, tz)
