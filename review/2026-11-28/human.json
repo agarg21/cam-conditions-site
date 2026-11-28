@@ -1,0 +1,502 @@
+{
+"001": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"002": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"003": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"004": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"005": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"006": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"007": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"008": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "yes"
+},
+"009": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"010": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"011": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"012": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"013": {
+"road": "snow",
+"road_detail": "covered",
+"side": "yes"
+},
+"014": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"015": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"016": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"017": {
+"road": "bare",
+"road_detail": "bare",
+"side": "unknown"
+},
+"018": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"019": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"020": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"021": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"022": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"023": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "yes"
+},
+"024": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"025": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"026": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"027": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"028": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "yes"
+},
+"029": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"030": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"031": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"032": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"033": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"034": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"035": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"036": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"037": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"038": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"039": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"040": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "unknown"
+},
+"041": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"042": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"043": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"044": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "yes"
+},
+"045": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"046": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"047": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"048": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"049": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"050": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"051": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "unknown"
+},
+"052": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"053": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"054": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"055": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"056": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"057": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"058": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"059": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"060": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"061": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"062": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"063": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"064": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"065": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"066": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"067": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"068": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"069": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"070": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"071": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"072": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"073": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"074": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"075": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"076": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"077": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"078": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"079": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"080": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"081": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"082": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"083": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"084": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"085": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"086": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"087": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "unknown"
+},
+"088": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"089": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "yes"
+},
+"090": {
+"road": "snow",
+"road_detail": "partly",
+"side": "yes"
+},
+"091": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"092": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"093": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"094": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"095": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"096": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"097": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"098": {
+"road": "bare",
+"road_detail": "bare",
+"side": "no"
+},
+"099": {
+"road": "bare",
+"road_detail": "bare",
+"side": "yes"
+},
+"100": {
+"road": "unknown",
+"road_detail": "unknown",
+"side": "yes"
+}
+}

@@ -85,6 +85,23 @@ def compare(set_name):
             lines.append(f"| {m} | {agree}/{len(ids)} ({agree/len(ids):.0%}) | {fs} | {ms} | {unk} |")
         c = Counter(human[i]["road"] for i in ids)
         lines += ["", "Person: " + ", ".join(f"{k} {v}" for k, v in c.most_common()), ""]
+    def g(m, i):
+        return COLLAPSE.get(rows[items[i]["path"]]["models"][m]["reading"].get("road_surface"), "unknown")
+    for light in ("day", "twilight", "night"):
+        ids = [i for i in human if i in items and items[i]["light"] == light and human[i]["road"] != "unknown"]
+        if ids:
+            lines += [f"## {light}, only images the person was sure about ({len(ids)})", ""]
+            for m in ("opus", "sonnet", "haiku"):
+                a = sum(g(m, i) == human[i]["road"] for i in ids)
+                lines.append(f"- {m}: {a}/{len(ids)} ({a/len(ids):.0%})")
+            lines.append("")
+    trap = [i for i in human if i in items and human[i]["road"] == "bare" and human[i].get("side") == "yes"]
+    if trap:
+        lines += [f"## Snow beside the road, lanes bare (person), {len(trap)} images", "", "How often each model wrongly says snow on the lanes:", ""]
+        for m in ("opus", "sonnet", "haiku"):
+            w = sum(g(m, i) == "snow" for i in trap)
+            lines.append(f"- {m}: {w}/{len(trap)} ({w/len(trap):.0%})")
+        lines.append("")
     open(os.path.join(out, "report.md"), "w").write("\n".join(lines) + "\n")
     print("\n".join(lines))
 
