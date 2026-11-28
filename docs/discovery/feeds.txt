@@ -224,61 +224,61 @@
   1134 cameras; first: {'device-id': 277, 'device-name': 'AstoriaUS101MeglerBrNB', 'latitude': 46.18785, 'longitude': -123.85347, 'hwy-id': '009', 'route-id': 'US101', 'milepoint': 3.7, 'cctv-url': 'http://www.TripCheck.com/roadcams/cams/AstoriaUS101MeglerBrNB_pid392.jpg', 'cctv-other': 'US101 at Astoria - ODOT District Office', 'last-update-time': '2026-11-28T03:41:45.027-08:00'}
 
   -- near Sexton Summit I-5 (GNIS Sexton Mountain Pass)
-      0.3 km | 522 | SextonSummitN | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitN_pid2527.JPG | I-5 at Sexton Summit
-      0.3 km | 523 | SextonSummitS | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitS_pid2531.JPG | I-5 at Sexton Summit
-      7.3 km | 476 | I-5 at Hugo NB | I5 MP 64.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Hugo NB_pid2340.JPG | I-5 at Hugo
-      7.3 km | 477 | I-5 at Hugo SB | I5 MP 64.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Hugo SB_pid2344.JPG | I-5 at Hugo
+      0.3 km | 522 | SextonSummitN | 42.59884,-123.38441 | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitN_pid2527.JPG | I-5 at Sexton Summit
+      0.3 km | 523 | SextonSummitS | 42.59884,-123.38441 | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitS_pid2531.JPG | I-5 at Sexton Summit
+      7.3 km | 476 | I-5 at Hugo NB | 42.53673,-123.36976 | I5 MP 64.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Hugo NB_pid2340.JPG | I-5 at Hugo
+      7.3 km | 477 | I-5 at Hugo SB | 42.53673,-123.36976 | I5 MP 64.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Hugo SB_pid2344.JPG | I-5 at Hugo
 
   -- near Smith Hill Summit I-5
-      7.4 km | 522 | SextonSummitN | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitN_pid2527.JPG | I-5 at Sexton Summit
-      7.4 km | 523 | SextonSummitS | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitS_pid2531.JPG | I-5 at Sexton Summit
-      7.8 km | 1142 | I-5 at Stage Road Pass SB | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass SB_pid4664.jpg | I-5 at Stage Road Pass
-      7.8 km | 1143 | I-5 at Stage Road Pass NB | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass NB_pid4666.jpg | I-5 at Stage Road Pass
+      7.4 km | 522 | SextonSummitN | 42.59884,-123.38441 | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitN_pid2527.JPG | I-5 at Sexton Summit
+      7.4 km | 523 | SextonSummitS | 42.59884,-123.38441 | I5 MP 69.0 | http://www.TripCheck.com/roadcams/cams/SextonSummitS_pid2531.JPG | I-5 at Sexton Summit
+      7.8 km | 1142 | I-5 at Stage Road Pass SB | 42.73518,-123.37089 | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass SB_pid4664.jpg | I-5 at Stage Road Pass
+      7.8 km | 1143 | I-5 at Stage Road Pass NB | 42.73518,-123.37089 | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass NB_pid4666.jpg | I-5 at Stage Road Pass
 
   -- near Stage Road Pass I-5
-      0.5 km | 1142 | I-5 at Stage Road Pass SB | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass SB_pid4664.jpg | I-5 at Stage Road Pass
-      0.5 km | 1143 | I-5 at Stage Road Pass NB | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass NB_pid4666.jpg | I-5 at Stage Road Pass
-      5.1 km | 491 | I-5 at Barton Rd | I5 MP 83.5 | http://www.TripCheck.com/roadcams/cams/I-5 at Barton Rd_pid2392.JPG | I-5 at Barton Rd
+      0.5 km | 1142 | I-5 at Stage Road Pass SB | 42.73518,-123.37089 | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass SB_pid4664.jpg | I-5 at Stage Road Pass
+      0.5 km | 1143 | I-5 at Stage Road Pass NB | 42.73518,-123.37089 | I5 MP 80.0 | http://www.TripCheck.com/roadcams/cams/I-5 at Stage Road Pass NB_pid4666.jpg | I-5 at Stage Road Pass
+      5.1 km | 491 | I-5 at Barton Rd | 42.76678,-123.33100 | I5 MP 83.5 | http://www.TripCheck.com/roadcams/cams/I-5 at Barton Rd_pid2392.JPG | I-5 at Barton Rd
 
   -- near Canyon Creek Pass I-5
-      0.1 km | 588 | I-5 at Canyon Mt NB | I5 MP 90.1 | http://www.TripCheck.com/roadcams/cams/I-5 at Canyon Mt NB_pid2816.JPG | I-5 at Canyon Mt
-      0.1 km | 590 | I-5 at Canyon Mt SB | I5 MP 90.1 | http://www.TripCheck.com/roadcams/cams/I-5 at Canyon Mt SB_pid2824.JPG | I-5 at Canyon Mt
+      0.1 km | 588 | I-5 at Canyon Mt NB | 42.82689,-123.26019 | I5 MP 90.1 | http://www.TripCheck.com/roadcams/cams/I-5 at Canyon Mt NB_pid2816.JPG | I-5 at Canyon Mt
+      0.1 km | 590 | I-5 at Canyon Mt SB | 42.82689,-123.26019 | I5 MP 90.1 | http://www.TripCheck.com/roadcams/cams/I-5 at Canyon Mt SB_pid2824.JPG | I-5 at Canyon Mt
 
   -- near Bennett Pass OR 35
-      0.1 km | 850 | OR35 at Meadows Dr SB | OR35 MP 63.8 | http://www.TripCheck.com/roadcams/cams/ORE35 at Meadows Dr SB_pid3874.jpg | OR35 at Meadows Dr
-      6.3 km | 435 | US26 at Hwy35 | US26 MP 57.62 | http://www.TripCheck.com/roadcams/cams/US26 at Hwy35_pid1881.JPG | US26 at Hwy35
-      7.1 km | 437 | US26 at Trillium Lake EB | US26 MP 56.0 | http://www.TripCheck.com/roadcams/cams/US26 at Trillium Lake EB_pid1887.JPG | US26 at Trillium Lake
-      7.8 km | 203 | Government Camp | US26 MP 54.23 | http://www.TripCheck.com/roadcams/cams/GovernmentCamp_pid624.jpg | US26 at Government Camp
-      8.0 km | 440 | US26 at Govn Camp Maint | US26 MP 54.13 | http://www.TripCheck.com/roadcams/cams/US26 at Govn Camp Maint_pid1899.JPG | US26 at Government Camp Maint
+      0.1 km | 850 | OR35 at Meadows Dr SB | 45.31122,-121.64452 | OR35 MP 63.8 | http://www.TripCheck.com/roadcams/cams/ORE35 at Meadows Dr SB_pid3874.jpg | OR35 at Meadows Dr
+      6.3 km | 435 | US26 at Hwy35 | 45.28315,-121.71364 | US26 MP 57.62 | http://www.TripCheck.com/roadcams/cams/US26 at Hwy35_pid1881.JPG | US26 at Hwy35
+      7.1 km | 437 | US26 at Trillium Lake EB | 45.28413,-121.72479 | US26 MP 56.0 | http://www.TripCheck.com/roadcams/cams/US26 at Trillium Lake EB_pid1887.JPG | US26 at Trillium Lake
+      7.8 km | 203 | Government Camp | 45.30123,-121.74129 | US26 MP 54.23 | http://www.TripCheck.com/roadcams/cams/GovernmentCamp_pid624.jpg | US26 at Government Camp
+      8.0 km | 440 | US26 at Govn Camp Maint | 45.30184,-121.74400 | US26 MP 54.13 | http://www.TripCheck.com/roadcams/cams/US26 at Govn Camp Maint_pid1899.JPG | US26 at Government Camp Maint
 
   -- near Ochoco Pass US 26
-      0.2 km | 534 | US26 at Ochoco Summit | US26 MP 49.9 | http://www.TripCheck.com/roadcams/cams/US26 at Ochoco Summit_pid2588.JPG | US26 at Ochoco Summit
+      0.2 km | 534 | US26 at Ochoco Summit | 44.50025,-120.38832 | US26 MP 49.9 | http://www.TripCheck.com/roadcams/cams/US26 at Ochoco Summit_pid2588.JPG | US26 at Ochoco Summit
 
   -- near Dixie Summit US 26
 
   -- near Blue Mountain Summit US 26
 
   -- near Battle Mountain Summit US 395
-      0.2 km | 766 | US395 at Battle Mountain | US395 MP 39.7 | http://www.TripCheck.com/roadcams/cams/US395 at Battle Mountain_pid3536.JPG | US395 at Battle Mountain
-      3.9 km | 1389 | US395 at Cape Horn S | US395 MP 35.76 | http://www.TripCheck.com/roadcams/cams/US395 at Cape Horn S_pid5150.jpg | US395 at Cape Horn
-      3.9 km | 1390 | US395 at Cape Horn N | US395 MP 35.76 | http://www.TripCheck.com/roadcams/cams/US395 at Cape Horn S_pid5153.jpg | US395 at Cape Horn
+      0.2 km | 766 | US395 at Battle Mountain | 45.27005,-118.97776 | US395 MP 39.7 | http://www.TripCheck.com/roadcams/cams/US395 at Battle Mountain_pid3536.JPG | US395 at Battle Mountain
+      3.9 km | 1389 | US395 at Cape Horn S | 45.29958,-119.00458 | US395 MP 35.76 | http://www.TripCheck.com/roadcams/cams/US395 at Cape Horn S_pid5150.jpg | US395 at Cape Horn
+      3.9 km | 1390 | US395 at Cape Horn N | 45.29958,-119.00458 | US395 MP 35.76 | http://www.TripCheck.com/roadcams/cams/US395 at Cape Horn S_pid5153.jpg | US395 at Cape Horn
 
   -- near Ritter Butte Summit US 395
 
   -- near Beech Creek Summit US 395
 
   -- near Tombstone Pass US 20
-      0.0 km | 332 | US20 at Tombstone | US20 MP 63.64 | http://www.TripCheck.com/roadcams/cams/US20atTombstone_pid1354.jpg | US20 at Tombstone
+      0.0 km | 332 | US20 at Tombstone | 44.39548,-122.14151 | US20 MP 63.64 | http://www.TripCheck.com/roadcams/cams/US20atTombstone_pid1354.jpg | US20 at Tombstone
 
   -- near Stinkingwater Pass US 20
-      0.1 km | 1428 | US20 at Stinking Water Summit EB | US20 MP 160.9 | http://www.TripCheck.com/roadcams/cams/US20 at Stinking Water Summit EB_pid5227.jpg | US20 at Stinking Water Summit
-      0.1 km | 1429 | US20 at Stinking Water Summit WB | US20 MP 160.9 | http://www.TripCheck.com/roadcams/cams/US20 at Stinking Water Summit WB_pid5229.jpg | US20 at Stinking Water Summit
+      0.1 km | 1428 | US20 at Stinking Water Summit EB | 43.69175,-118.53866 | US20 MP 160.9 | http://www.TripCheck.com/roadcams/cams/US20 at Stinking Water Summit EB_pid5227.jpg | US20 at Stinking Water Summit
+      0.1 km | 1429 | US20 at Stinking Water Summit WB | 43.69175,-118.53866 | US20 MP 160.9 | http://www.TripCheck.com/roadcams/cams/US20 at Stinking Water Summit WB_pid5229.jpg | US20 at Stinking Water Summit
 
   -- near Drinkwater Pass US 20
-      4.7 km | 662 | US20 at Drinkwater Pass E | US20 MP 174.53 | http://www.TripCheck.com/roadcams/cams/US20 at Drinkwater Pass_pid3113.JPG | US20 at Drinkwater Pass
+      4.7 km | 662 | US20 at Drinkwater Pass E | 43.78388,-118.33723 | US20 MP 174.53 | http://www.TripCheck.com/roadcams/cams/US20 at Drinkwater Pass_pid3113.JPG | US20 at Drinkwater Pass
 
   -- near Hayes Hill Summit US 199
-      0.6 km | 521 | HayesHillSummit | US199 MP 16.0 | http://www.TripCheck.com/roadcams/cams/HayesHillSummit_pid2523.JPG | US199 at Hayes Hill
+      0.6 km | 521 | HayesHillSummit | 42.32996,-123.59136 | US199 MP 16.0 | http://www.TripCheck.com/roadcams/cams/HayesHillSummit_pid2523.JPG | US199 at Hayes Hill
 
 === ODOT RW/Reports nearest each pass above (build_site uses same route <= 10 km)
   Sexton Summit I-5 (GNIS Sexton Mountain Pass): 1.0 km | SEXTON PASS TO STAGE PASS SB | I5 MP 81.0-66.0 | road 1.0 | entry 2026-11-28T10:04:12.637-08:00
