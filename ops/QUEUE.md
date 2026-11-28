@@ -10,7 +10,7 @@
 
 0b. **Q13 Claude readings on the top 5 passes (D9).** SHIPPED 2026-11-28 ~11:40Z by Claude in chat (scripts/read_cams.py in collect.yml;
    pass page "What the cameras show" + per-camera caption line). "Cameras" row in the 24 h history shipped 2026-11-28 12:40Z (b6c4317;
-   shows once readings exist in the window). Left: verify readings accruing after first light (none yet at 12:20Z, dark);
+   shows once readings exist in the window). Readings accruing: Teton read 14:15Z (first light). Left:
    10% Opus audit of live readings (~$1/month); review owner's second-look answers when he finishes. Owner check compared 2026-11-28 08:00Z (review/2026-11-28/report.md):
    Sonnet 88% day (52/59 sure), 86% twilight, 50% night; misses the 90% bar by ~1 image. Main error: snow beside the road
    read as snow on the lanes (Sonnet 10/53, Opus 10/53, Haiku 38/53). Sample oversampled model-snowy images, so real rates
@@ -47,8 +47,8 @@
    check). Part 3 shipped 2026-11-28 (aff9b81, a0a2d5b): ODOT disclaimer on the home board; "<State> chain and traction tire
    rules" on WA/OR/CA/ID pass pages from config/chain-rules.json (official pages only, read 2026-11-28; WY none yet).
    ?t= decided: keep it on visible images (Pages max-age=600 would show an image up to 10 min older than its time label);
-   og:image and JSON-LD already use the stable URL. Left: typical closure causes and nearest towns only with a source per
-   pass; ski-area links; WY rules from a WYDOT page. Original notes: gaps found on /passes/snoqualmie-pass/: (1) the word
+   og:image and JSON-LD already use the stable URL. WY rules shipped 2026-11-28 14:25Z (75c8e3f, WYDOT chain law page: Level 1/2, fines). Left: typical closure causes and
+   nearest towns only with a source per pass; ski-area links. Original notes: gaps found on /passes/snoqualmie-pass/: (1) the word
    "webcam" is nowhere, though "<pass> webcam" is the biggest search (~98K/mo across 12 passes): title "<Pass> Road
    Conditions, Webcams & Chain Status", H2 "<Pass> webcams"; (2) H1 is the bare name: make it "<Pass> road conditions"
    (the sign stays as the visual); (3) question headings that match searches: "Is <Pass> open right now?", "Do I need
