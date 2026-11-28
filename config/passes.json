@@ -20,7 +20,8 @@
    "elev_ft": 3022,
    "route": "I-90",
    "wsdot_name": "Snoqualmie Pass I-90",
-   "between": "Seattle and Ellensburg"
+   "between": "Seattle and Ellensburg",
+   "read": true
   },
   {
    "slug": "stevens-pass",
@@ -42,7 +43,8 @@
    "elev_ft": 4061,
    "route": "US 2",
    "wsdot_name": "Stevens Pass US 2",
-   "between": "Everett and Leavenworth"
+   "between": "Everett and Leavenworth",
+   "read": true
   },
   {
    "slug": "white-pass",
@@ -182,7 +184,8 @@
    "elev_ft": 7221,
    "route": "I-80",
    "cc_route": "I-80",
-   "between": "Sacramento and Reno"
+   "between": "Sacramento and Reno",
+   "read": true
   },
   {
    "slug": "echo-summit",
@@ -226,7 +229,8 @@
      "title": "US 20 at Santiam Pass, westbound",
      "image": "https://www.tripcheck.com/roadcams/cams/Santiam%20Pass%20WB_pid5258.jpg"
     }
-   ]
+   ],
+   "read": true
   },
   {
    "slug": "willamette-pass",
@@ -470,7 +474,8 @@
      "title": "WY 22 at Teton Pass, second view",
      "image": "https://511.idaho.gov/map/Cctv/942"
     }
-   ]
+   ],
+   "read": true
   }
  ],
  "pending": [

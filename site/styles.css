@@ -145,6 +145,16 @@ p, li { max-width: var(--w-read); }
 .cam img { width: 100%; height: auto; background: #0c0f12; }
 .cam figcaption { padding: var(--s-2) var(--s-3); font-size: var(--t-sm); display: flex; justify-content: space-between; gap: var(--s-3); }
 .cam figcaption time { color: var(--c-asphalt-muted); white-space: nowrap; }
+/* Our camera reading (Q13): quieter than the official verdict: thin status rule on a white card */
+.camread { max-width: 40rem; margin: 0 0 var(--s-5); border: 1px solid var(--c-line); border-left: 4px solid var(--status);
+  background: var(--c-surface); padding: var(--s-3) var(--s-5) var(--s-4); }
+.camread__ask { margin: 0 0 var(--s-1); font-size: var(--t-base); font-weight: 700; }
+.camread__label { font: 800 var(--t-xl)/1.15 var(--f-display); margin: 0; }
+.camread__lines { margin: var(--s-2) 0 0; padding-left: var(--s-5); }
+.camread__lines li { margin: var(--s-1) 0; }
+.camread__meta { margin: var(--s-2) 0 0; font-size: var(--t-xs); color: var(--c-asphalt-muted); }
+.cam figcaption { flex-wrap: wrap; }
+.cam__reading { flex-basis: 100%; font-weight: 600; }
 .note { font-size: var(--t-sm); color: var(--c-asphalt-muted); }
 
 /* Forecast */

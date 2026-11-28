@@ -23,6 +23,9 @@
   (review/2026-11-28, done in the "Camera check" artifact) shows Sonnet agrees with him on lane snow ≥90% in daylight.
   Sonnet, prompt pass-v2, daylight + twilight only, hourly, 2 cameras per pass; budget up to USD 15/month. Shown as
   "Our reading" with confidence beside the official report, never replacing it.
+  Update 2026-11-28 16:55 IST, owner "lets build it": live with prompt pass-v4 (center line first) and the k>=0.7 gate
+  (owner check 39/40 right at k>=0.7); no carry-forward of old readings (searchers are hours away): "Can't tell from cameras
+  right now" + "Last clear look", plus snow-falling and 3 h trend lines. Passes: Snoqualmie, Stevens, Donner, Teton, Santiam.
 
 ## Not approved (ask first)
 - Any email or outreach (CDOT reply handling, B2B pitches), new sign-ups, Search Console changes, paid spend beyond D2.
