@@ -609,12 +609,14 @@ def batch_results(key, status):
 
 
 def label(req, key, api, rows, hf_hub_download, lines, out_md, today):
-    """D8 labeling job (Q6a): prompt v2 via Message Batches on day + twilight images not labeled before and not in
+    """D8 labeling job (Q6a): prompt v4 (default since 2026-11-28 owner check; "prompt": "v2" for the old one) via Message Batches on day + twilight images not labeled before and not in
     the bake-off set (kept as the eval set), spread round-robin over cameras; a random audit share also goes to
     Opus. Per-image labels -> private HF labels/train/; spend -> docs/bakeoff/label-ledger.json (aggregate)."""
     model, side = req.get("model", "sonnet"), int(req.get("side", 640))
     audit, n, cap = float(req.get("audit", 0.1)), int(req.get("n", 1000)), float(req.get("max_usd", 10))
     lights = set(req.get("lights", ["day", "twilight"]))
+    pkey = req.get("prompt", "v4")
+    params, pname = {"v2": (v2_params, PROMPT_V2), "v4": (v4_params, PROMPT_V4)}[pkey]
     ledger_path = os.path.join(ROOT, "docs", "bakeoff", "label-ledger.json")
     try:
         ledger = json.load(open(ledger_path))
@@ -643,7 +645,7 @@ def label(req, key, api, rows, hf_hub_download, lines, out_md, today):
     est_per = float(req.get("est_usd_per_image", 0.003))  # from the v2 test; Opus ~2x Sonnet
     n_audit = int(len(picked) * audit)
     projected = len(picked) * est_per + n_audit * est_per * 2
-    lines += ["", f"## Labeling job {today}: {model} {side}px, prompt {PROMPT_V2}, Message Batches", "",
+    lines += ["", f"## Labeling job {today}: {model} {side}px, prompt {pname}, Message Batches", "",
               f"Pool: {len(pool)} unlabeled {'/'.join(sorted(lights))} images over {len(by)} cameras; picked {len(picked)}; "
               f"audit {n_audit} with Opus. Projected ${projected:.2f}; cap ${cap:.2f} (D8 ledger: ${ledger['spent_usd']:.2f} "
               f"of ${ledger['budget_usd']:.0f} spent)."]
@@ -666,9 +668,9 @@ def label(req, key, api, rows, hf_hub_download, lines, out_md, today):
     audit_idx = set(rnd.sample(range(len(picked)), n_audit))
     reqs = {model: [], "opus": []}
     for i, (r, b64) in enumerate(imgs):
-        reqs[model].append({"custom_id": f"m-{i}", "params": v2_params(model, b64)})
+        reqs[model].append({"custom_id": f"m-{i}", "params": params(model, b64)})
         if i in audit_idx:
-            reqs["opus"].append({"custom_id": f"a-{i}", "params": v2_params("opus", b64)})
+            reqs["opus"].append({"custom_id": f"a-{i}", "params": params("opus", b64)})
     batches = {}
     for name, rq in reqs.items():
         for j in range(0, len(rq), 1000):  # keep each request body well under the 256 MB batch limit
@@ -690,7 +692,7 @@ def label(req, key, api, rows, hf_hub_download, lines, out_md, today):
            "audit": sum(cost("opus", res[k].get("usage", {}), batch=True) for k in res if k.startswith("a-"))}
     out = []
     for i, r in enumerate(picked):
-        rec = dict(r, prompt=PROMPT_V2, model=model, side=side, batch=True, reading=res.get(f"m-{i}", {}).get("reading"),
+        rec = dict(r, prompt=pname, model=model, side=side, batch=True, reading=res.get(f"m-{i}", {}).get("reading"),
                    error=res.get(f"m-{i}", {}).get("error"))
         if i in audit_idx:
             rec["audit_opus"] = res.get(f"a-{i}", {}).get("reading")
@@ -702,7 +704,7 @@ def label(req, key, api, rows, hf_hub_download, lines, out_md, today):
     total = usd["main"] + usd["audit"]
     ledger["spent_usd"] = round(ledger["spent_usd"] + total, 4)
     ledger["images"] += ok
-    ledger["jobs"].append({"date": today, "model": model, "side": side, "images_ok": ok, "audit": n_audit,
+    ledger["jobs"].append({"date": today, "model": model, "prompt": pname, "side": side, "images_ok": ok, "audit": n_audit,
                            "usd_main": round(usd["main"], 4), "usd_audit": round(usd["audit"], 4), "batches": batches})
     json.dump(ledger, open(ledger_path, "w"), indent=1)
     aud = [x for x in out if x.get("audit_opus") and x["reading"]]
