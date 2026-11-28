@@ -47,5 +47,16 @@
       ["ITD: What you need to know about the chain up law", "https://itd.idaho.gov/?p=31952"],
       ["ITD: Studded tires are legal in Idaho from Oct. 1 to April 30", "https://itd.idaho.gov/?p=13890"]
     ]
+  },
+  "WY": {
+    "checked": "2026-11-28",
+    "rules": [
+      "Level 1 chain law (hazardous conditions): travel can be restricted to vehicles with tire chains, vehicles with adequate snow tires, or all-wheel-drive vehicles.",
+      "Level 2 (extremely hazardous): only vehicles with tire chains, or all-wheel-drive vehicles with adequate mud-and-snow or all-weather-rated tires.",
+      "Fines: $250 for violating the restriction; $750 if the violation causes a highway closure."
+    ],
+    "sources": [
+      ["WYDOT: Wyoming’s chain law", "https://dot.state.wy.us/home/travel/winter/chain_law.html"]
+    ]
   }
 }
