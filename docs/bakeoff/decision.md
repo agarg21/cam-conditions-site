@@ -40,3 +40,18 @@ Haiku over-calls snow; Sonnet tracks Opus closely. Night: Opus says "unknown" fo
 3. Before any reading reaches the site: a human-checked set of ~100 images (owner or operator) to measure Sonnet and Opus
    against people, not against each other.
 4. Spend for ~5,000 Sonnet labels + 500 Opus audit (~$38) is beyond D2: asked as D8 in `ops/OWNER.md`.
+
+## Q6a update, 2026-11-28 02:45Z: prompt v2 and the Batch API
+Sources: `2026-11-28-v2test-a.md` (300 images: Haiku 640, Sonnet 640 and 512 px, prompt `pass-v2`, Message Batches) and
+`2026-11-28-v2test-b-opus.md` (Opus on v2 for a random 187 of them). Spend $1.21 + $0.96; **D2 total $8.97 of $10.**
+- **Cost:** Sonnet v2 batch **$1.89 per 1,000** (v1.1 sync $5.98, −68%). Output 311 tokens per image (v1.1 529; the ≤150
+  target was missed: the strict tool call itself costs ~280). Opus v2 batch $4.88, Haiku $0.18 per 1,000.
+- **Agreement:** against v1.1 Opus, Sonnet v2 fell to 90% by day (v1.1 Sonnet 95%) with more snow-on-bare (13/117).
+  Opus v2 moved the same way (94% day, 62% night vs Opus v1.1; it says "unknown" at night far less, 11% vs 26%).
+  Against **Opus v2**, Sonnet v2 agrees **95% day, 93% twilight**, 74% night, missed snow 1/31: same level as v1.1.
+  The drop was the v2 definitions, not Sonnet. Night under v2 is looser; keep night out of training labels for now.
+- **Image size:** 512 px gives identical agreement and saves nothing (input is ~15% of cost). Keep 640.
+- **Haiku cascade:** day 95% and half the Sonnet calls (~$1.14 per 1,000), but missed snow 2/31 vs Sonnet's 1/31. The
+  owner's condition was "only if it keeps snow recall": not shown, so no cascade. Saving would be under $4 on 5,000.
+- **Decision:** D8 labels = Sonnet 5.5, `pass-v2`, 640 px, Message Batches, day + twilight, 10% Opus audit. Before v3:
+  re-tighten night "unknown" and check the human set (item 3 above) for the v2 "partly" (wet vs slush) boundary.

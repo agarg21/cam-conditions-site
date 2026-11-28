@@ -652,11 +652,20 @@ def label(req, key, api, rows, hf_hub_download, lines, out_md, today):
         open(out_md, "w").write("\n".join(lines) + "\n")
         print("\n".join(lines))
         return
+    imgs, bad = [], 0
+    for r in picked:
+        try:
+            imgs.append((r, base64.b64encode(shrink(open(hf_hub_download(REPO, r["path"], repo_type="dataset",
+                         token=os.environ["HF_TOKEN"]), "rb").read(), side)[0]).decode()))
+        except Exception as e:  # truncated or non-image file in the dataset: skip it, count it
+            bad += 1
+            print("skip", r["path"], type(e).__name__, flush=True)
+    picked = [r for r, _ in imgs]
+    n_audit = int(len(picked) * audit)
+    lines.append(f"Skipped {bad} undecodable image files.")
     audit_idx = set(rnd.sample(range(len(picked)), n_audit))
     reqs = {model: [], "opus": []}
-    for i, r in enumerate(picked):
-        b64 = base64.b64encode(shrink(open(hf_hub_download(REPO, r["path"], repo_type="dataset",
-                                                           token=os.environ["HF_TOKEN"]), "rb").read(), side)[0]).decode()
+    for i, (r, b64) in enumerate(imgs):
         reqs[model].append({"custom_id": f"m-{i}", "params": v2_params(model, b64)})
         if i in audit_idx:
             reqs["opus"].append({"custom_id": f"a-{i}", "params": v2_params("opus", b64)})
