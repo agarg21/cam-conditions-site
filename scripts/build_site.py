@@ -14,7 +14,7 @@ import os
 import re
 import shutil
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 import history as hist
@@ -528,7 +528,7 @@ def snow_note(x):
 GAP = 50 * 60  # seconds between checks before we call it a gap in our history
 
 
-def history_html(rows, tz, dot):
+def history_html(rows, tz, dot, reads=None):
     """Last 24 hours of the official report for one pass: a colour strip plus the changes, newest first.
 
     rows: this pass's history rows, oldest first, ending with the current run. Each span is a run of checks
@@ -554,6 +554,7 @@ def history_html(rows, tz, dot):
         prev_end = end
     hm = lambda t: t.astimezone(tz).strftime("%-I:%M %p")
     day = lambda t: t.astimezone(tz).strftime("%a ")
+    cam_row, cam_note = ("", "") if reads is None else cam_strip_html(reads, t0, t1)
     items = []
     for i, (key, a, b) in enumerate(reversed(spans)):
         lv, lb, op, ch, sn = key
@@ -568,14 +569,18 @@ def history_html(rows, tz, dot):
     start_note = (f" Our history for this pass starts {day(t0)}{hm(t0)}." if (t1 - t0).total_seconds() < 23 * 3600 else "")
     changes = sum(spans[i][0] != spans[i - 1][0] for i in range(1, len(spans)))
     lead = "No change in the official report." if changes == 0 else f"{changes} change{'s' if changes > 1 else ''} in the official report."
-    return (f'<h2>Last 24 hours</h2><section class="history" aria-label="Official report, last 24 hours">'
+    strip = f'<div class="history__strip" aria-hidden="true">{"".join(segs)}</div>'
+    if cam_row:
+        strip = f'<p class="history__row-label" aria-hidden="true">Official report</p>{strip}{cam_row}'
+    label = "Official report and our camera readings, last 24 hours" if cam_row else "Official report, last 24 hours"
+    return (f'<h2>Last 24 hours</h2><section class="history" aria-label="{label}">'
             f'<p class="history__lead">{lead}</p>'
-            f'<div class="history__strip" aria-hidden="true">{"".join(segs)}</div>'
+            f'{strip}'
             f'<p class="history__axis" aria-hidden="true"><span>{day(t0)}{hm(t0)}</span><span>Now</span></p>'
             f'<ol class="history__list">{"".join(shown)}</ol>'
             + (f'<p class="note">{more} earlier change{"s" if more > 1 else ""} not shown.</p>' if more > 0 else "")
             + f'<p class="note">What {e(dot)}\'s report said at each of our checks (about every 15 minutes). '
-              f'Blank stretches are times we have no check.{start_note}</p></section>')
+              f'Blank stretches are times we have no check.{start_note}</p>{cam_note}</section>')
 
 
 def hist_key(r):
@@ -795,6 +800,45 @@ def camread_html(p, rows, cams, fetched, tz, credit):
     return block, caps
 
 
+def cam_strip_html(reads, t0, t1):
+    """The "Cameras" row of the 24 h history (Q13): our readings on the same time axis as the official strip.
+
+    Each reading run colours until the next one (at most CURRENT later): green = bare lanes, red = snow or ice on the
+    lanes (worst confident camera), grey = can't tell. Dark hours and missing readings stay blank. Returns
+    (strip html, note html); both empty when there is no reading in the window.
+    """
+    groups = {}
+    for r in reads:
+        if t0 <= r["_t"] <= t1:
+            groups.setdefault(r["t"], []).append(r)
+    order = sorted(groups.values(), key=lambda g: g[0]["_t"])
+    if not order:
+        return "", ""
+    total = max((t1 - t0).total_seconds(), 1)
+    segs, prev_end, n = [], t0, {"is-clear": 0, "is-snowice": 0, "is-unknown": 0}
+    for i, g in enumerate(order):
+        a = g[0]["_t"]
+        nxt = order[i + 1][0]["_t"] if i + 1 < len(order) else t1
+        end = min(nxt if (nxt - a).total_seconds() <= CURRENT else a + timedelta(seconds=CURRENT), t1)
+        sure = [r for r in g if confident(r)]
+        cls = ("is-snowice" if max(SEV[r["s"]] for r in sure) else "is-clear") if sure else "is-unknown"
+        n[cls] += 1
+        if (a - prev_end).total_seconds() > 0:
+            segs.append(f'<span class="history__gap" style="flex-grow:{(a - prev_end).total_seconds() / total:.4f}"></span>')
+        segs.append(f'<span class="{cls}" style="flex-grow:{max((end - a).total_seconds(), 60) / total:.4f}"></span>')
+        prev_end = end
+    if (t1 - prev_end).total_seconds() > 0:
+        segs.append(f'<span class="history__gap" style="flex-grow:{(t1 - prev_end).total_seconds() / total:.4f}"></span>')
+    row = (f'<p class="history__row-label" aria-hidden="true">Cameras (our reading)</p>'
+           f'<div class="history__strip" aria-hidden="true">{"".join(segs)}</div>')
+    counts = ", ".join(f"{w} {k}" for k, w in ((n["is-clear"], "bare lanes"), (n["is-snowice"], "snow or ice"),
+                                                (n["is-unknown"], "can\u2019t tell")) if k)
+    note = (f'<p class="note">Cameras row: our hourly daylight reading of the camera images, not an official report. '
+            f'Green is bare lanes, red is snow or ice on the lanes, grey is can\u2019t tell; blank is dark or no reading. '
+            f'Readings shown: {counts}.</p>')
+    return row, note
+
+
 def cap_line(caps, c):
     return f'<span class="cam__reading">{e(caps[c["cam"]])}</span>' if c["cam"] in caps else ""
 
@@ -909,7 +953,7 @@ def build():
 <p class="note">Camera images from {e(credit)}.{" The line under each image is our own reading, not " + e(credit) + "’s." if p.get("read") else " Soon each camera will get its own reading: snow on the road, visibility and traffic."}</p>
 <h2>{e(name)} weather</h2>
 {f'<div class="forecast">{fc_html}</div><p class="note">{"Summit forecast" if summit else "Forecast"} from the National Weather Service.</p>' if fc_html else '<p class="note">The forecast did not load. Try again in a few minutes.</p>'}
-{history_html(hist_rows, tz, DOT_NAMES[p['state']][0])}
+{history_html(hist_rows, tz, DOT_NAMES[p['state']][0], reads.get(p["slug"], []) if p.get("read") else None)}
 <h2>About {e(name)}</h2>
 <dl class="facts"><dt>{"Summit elevation" if summit else "Elevation"}</dt><dd>{p["elev_ft"]:,} ft</dd>
 <dt>Highway</dt><dd>{e(p["route"])}, {STATE_NAMES[p["state"]]}</dd>

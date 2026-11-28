@@ -236,3 +236,6 @@ p, li { max-width: var(--w-read); }
 .related__route { font-size: var(--t-sm); color: var(--c-asphalt-muted); }
 .related li > span:last-child { flex-basis: 100%; }
 .board h2 a { color: inherit; }
+
+/* Two-row history on passes with camera readings (Q13): "Official report" and "Cameras (our reading)" */
+.history__row-label { margin: var(--s-2) 0 var(--s-1); max-width: none; font-size: var(--t-xs); font-weight: 600; color: var(--c-asphalt-muted); }
