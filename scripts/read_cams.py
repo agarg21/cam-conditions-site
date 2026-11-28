@@ -7,7 +7,8 @@ Prompt pass-v4 (center line first). A reading is only shown as an answer when it
 one compact row per camera image:
   {"t": run time, "p": pass slug, "c": camera index, "s": lanes, "cl": center line, "b": beside road, "f": snow falling,
    "v": visibility, "u": image usable, "k": confidence, "m": model+prompt}
-Spend: readings/ledger-<YYYY-MM>.json in the same dataset; stops at MONTH_CAP_USD (D9: up to $15/month).
+Spend: readings/ledger-<YYYY-MM>.json in the same dataset; stops at MONTH_CAP_USD (D11: up to $40/month).
+Every ready pass is read unless it sets "read": false in config/passes.json (D11).
 
 Opus re-reads (Q13 audit, Q14 storm check) go to readings/audit-<UTC date>.jsonl, same row shape plus "why"
 ("storm" or "audit"); the site never shows them. Storm mode (Q14): while NWS has a winter storm / winter weather alert
@@ -34,9 +35,10 @@ DIR = os.path.join(ROOT, "readings")
 REPO = os.environ.get("HF_DATASET", "agarg20/conditionsnow-cams")
 PULLED, DIRTY = os.path.join(DIR, ".pulled"), os.path.join(DIR, ".dirty")
 MODEL, PROMPT = "sonnet", "pass-v4"
-MIN_GAP = timedelta(minutes=50)   # about hourly per camera
+MIN_GAP = timedelta(minutes=50)   # about hourly per camera when snow is forecast (storm mode) or seen
+CALM_GAP = timedelta(minutes=170) # about every 3 hours otherwise (D11)
 MIN_SUN = -6.0                    # read in day and civil twilight only
-MONTH_CAP_USD = 15.0
+MONTH_CAP_USD = 40.0             # D11 (was D9: 15)
 SHOW_K = 0.7                      # below this a reading is "can't tell" on the page
 READ_CAMS = [0, 1]                # D9: 2 cameras per pass; a pass can name its two with "read_cams" in passes.json
 AUDIT_MODEL = "opus"
@@ -194,7 +196,7 @@ def read():
         return 0
     now = datetime.fromisoformat(manifest["fetched_at"])
     with open(os.path.join(ROOT, "config", "passes.json")) as f:
-        passes = {p["slug"]: p for p in json.load(f)["ready"] if p.get("read")}
+        passes = {p["slug"]: p for p in json.load(f)["ready"] if p.get("read", True)}
     led_path = ledger_file(now)
     try:
         led = json.load(open(led_path))
@@ -203,24 +205,30 @@ def read():
     if led["spent_usd"] >= MONTH_CAP_USD:
         print(f"monthly cap reached (${led['spent_usd']:.2f}); not reading")
         return 0
-    last = {}
+    last, snowy = {}, set()
     for r in load(now, hours=3):
         last[(r["p"], r["c"])] = r["_t"]
-    due = []
+        if r.get("f") == "y" or (r.get("s") in ("partly", "covered", "ice") and float(r.get("k") or 0) >= SHOW_K):
+            snowy.add(r["p"])
+    cand = []
     for c in manifest.get("cams", []):
         p = passes.get(c["pass"])
         if not p or not c.get("saved") or c["cam"] not in p.get("read_cams", READ_CAMS):
             continue
         if b.sun_elevation(p["lat"], p["lon"], now) < MIN_SUN:
             continue
-        if now - last.get((c["pass"], c["cam"]), now - 2 * MIN_GAP) < MIN_GAP:
+        if now - last.get((c["pass"], c["cam"]), now - 2 * CALM_GAP) < MIN_GAP:
             continue
-        due.append(c)
-    if not due:
+        cand.append(c)
+    if not cand:
         print("no cameras due")
         return 0
-
-    storm = update_storms(passes, now)
+    storm = update_storms({c['pass']: passes[c['pass']] for c in cand}, now)
+    due = [c for c in cand if c["pass"] in storm or c["pass"] in snowy
+           or now - last.get((c["pass"], c["cam"]), now - 2 * CALM_GAP) >= CALM_GAP]
+    if not due:
+        print("no cameras due (calm: every 3 h)")
+        return 0
     month_days = ((now.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)).day
     pace = MONTH_CAP_USD * ((now.day - 1) + now.hour / 24) / month_days
     routine_ok = led["spent_usd"] < pace

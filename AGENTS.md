@@ -20,15 +20,17 @@ with "unknown" rather than a guess. Details: `docs/research/` and `docs/bakeoff/
 - `config/passes.json` (ready passes), `config/SOURCES.md`, `docs/design/design-system.md` (tokens; no raw colours or sizes).
 - Secrets: ANTHROPIC_API_KEY, WSDOT_ACCESS_CODE, HF_TOKEN, IDAHO511_KEY, ODOT_KEY. Never print, commit or move them.
 
-## Operator cycle (scheduled task, every 2 hours, from 2026-11-27)
-1. Lock: if `ops/STATE.md` `run:` started < 100 min ago, stop. Older = previous run died; take over its item and say so.
+## Operator cycle (scheduled task: every 2 hours from 2026-11-27; hourly 2026-11-28 to 2026-12-01 for the expansion sprint, D10)
+1. Lock: if `ops/STATE.md` `run:` is not `none` and started < 55 min ago, stop. Older = previous run died; take over its item and
+   say so. From 2026-12-01 00:00Z the task still fires hourly: on odd UTC hours, stop at once (back to every 2 hours).
 2. Claim: set `run:`, commit "ops: claim run", push fast-forward.
 3. Pick: continue `active:` or take the first unblocked item in `ops/QUEUE.md`. Live-site defect first. Never invent work.
-4. Do one bounded piece (about 60 min). Check the live site after any site change (`release` = the collect workflow
+4. Do one bounded piece (about 45 min). Expansion sprint (D10): adding passes from one already-approved feed counts as one
+   piece, up to 8 passes per run (verify every camera image and status source; same QA). Check the live site after any site change (`release` = the collect workflow
    deploys on push; confirm the change on https://conditionsnow.com). Run `python3 -m py_compile scripts/*.py`, a local
    `build_site.py` against a sample run, and Playwright at 390 and 1280 px (no horizontal overflow, no console errors)
    before pushing site changes.
-5. Record: update QUEUE (≤15 items), STATE (≤6 KB: active, holds, last run), append ≤6 lines to `ops/runs/YYYY-MM.md`,
+5. Record: update QUEUE (≤15 items), STATE (≤6 KB: active, holds, last run; set `run: none` when done), append ≤6 lines to `ops/runs/YYYY-MM.md`,
    real questions to `ops/OWNER.md` as yes/no with a recommendation. Commit, push fast-forward
    (if rejected: `git pull --no-rebase` once; bots also commit docs/discovery and docs/bakeoff).
 6. Final message (owner's phone): ≤4 short lines: what shipped (URL), what was learned (one number), any owner question.

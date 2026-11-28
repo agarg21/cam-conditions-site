@@ -27,6 +27,13 @@
   (owner check 39/40 right at k>=0.7); no carry-forward of old readings (searchers are hours away): "Can't tell from cameras
   right now" + "Last clear look", plus snow-falling and 3 h trend lines. Passes: Snoqualmie, Stevens, Donner, Teton, Santiam.
 
+- D10 (2026-11-28 16:18Z, owner) Expansion sprint: operator runs hourly until 2026-12-01 (then every 2 hours again), and may add
+  up to 8 passes per run from one already-approved feed (D3 sources and Montana under D7a). Goal: many more pass pages within
+  2 days so they start indexing before the storms; then debug readings live in storms.
+- D11 (2026-11-28 16:18Z, owner) Camera readings budget raised from USD 15 to USD 40/month (replaces D9's cap) until our own
+  model takes over: read every pass, every 3 h when calm, hourly when snow is forecast (NWS) or seen falling; Opus audit and
+  storm checks (Q14) count inside it.
+
 ## Not approved (ask first)
 - Any email or outreach (CDOT reply handling, B2B pitches), new sign-ups, Search Console changes, paid spend beyond D2.
 

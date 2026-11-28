@@ -718,6 +718,7 @@ LANE_WORDS = {"bare": "bare lanes", "partly": "some snow or slush on the lanes",
 CL_WORDS = {"vis": "Center line visible", "part": "Center line partly covered by snow",
             "hid": "Center line buried under snow"}
 CURRENT = 75 * 60  # a reading older than this (seconds) is not "now"
+CALM = 200 * 60    # calm passes are read about every 3 h (D11): show such a reading with its time, never as "now"
 
 
 def confident(r):
@@ -741,7 +742,7 @@ def camread_html(p, rows, cams, fetched, tz, credit):
     caps = {}
     for c in cams:
         r = latest.get(c["cam"])
-        if r and (fetched - r["_t"]).total_seconds() <= CURRENT:
+        if r and (fetched - r["_t"]).total_seconds() <= CALM:
             caps[c["cam"]] = (f"Our reading at {hm(r['_t'])}: " + (LANE_WORDS[r["s"]] if confident(r) else "can't tell"))
         elif dark:
             caps[c["cam"]] = "Too dark for our reading"
@@ -764,7 +765,14 @@ def camread_html(p, rows, cams, fetched, tz, credit):
         cls = "is-unknown"
         head = "Too dark for a camera reading" if dark else "Can’t tell from cameras right now"
         clear = [r for r in rows if confident(r)]
-        if clear:
+        recent = [r for r in latest.values() if confident(r) and (fetched - r["_t"]).total_seconds() <= CALM]
+        if recent and not dark:
+            w = max(recent, key=lambda r: SEV[r["s"]])
+            t = max(r["_t"] for r in recent)
+            cls = "is-snowice" if SEV[w["s"]] else "is-clear"
+            head = f"Cameras at {hm(t)}: {LANE_WORDS[w['s']]}"
+            lines.append("When it’s calm we read the cameras about every 3 hours; hourly when snow is forecast or seen.")
+        elif clear:
             r = clear[-1]
             lines.append(f"Last clear look: {hm(r['_t'])}{'' if r['_t'].date() == fetched.date() else ' yesterday'}, "
                          f"{LANE_WORDS[r['s']]}.")
@@ -800,7 +808,7 @@ def camread_html(p, rows, cams, fetched, tz, credit):
     ul = f'<ul class="camread__lines">{body}</ul>' if body else ""
     block = (f'<section class="camread {cls}" aria-label="What the cameras show"><h2 class="camread__ask">What the cameras show</h2>'
              f'<p class="camread__label">{e(head)}</p>{ul}'
-             f'<p class="camread__meta">{read_at}Our reading of the {e(credit)} camera images, checked about hourly in '
+             f'<p class="camread__meta">{read_at}Our reading of the {e(credit)} camera images, checked every 1 to 3 hours in '
              f'daylight. Not an official report. We only give an answer when the reading is clear.</p></section>')
     return block, caps
 
@@ -924,7 +932,7 @@ def build():
                 f"{DOT_NAMES[p['state']][0]} report and the weather for {p['route']} between "
                 f"{p['between']}, checked every 15 minutes.")
         short_credit = {"odot-tripcheck": "ODOT", "idaho-511": "Idaho 511"}.get(src, CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0]))
-        camread, caps = camread_html(p, reads.get(p["slug"], []), cams, fetched, tz, CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0])) if p.get("read") else ("", {})
+        camread, caps = camread_html(p, reads.get(p["slug"], []), cams, fetched, tz, CAM_CREDIT.get(src, DOT_NAMES[p["state"]][0])) if p.get("read", True) else ("", {})
         cam_html = "".join(
             f'<figure class="cam"><img src="{c["site_url"]}" alt="{e(name)} webcam: {e(c["title"])}" '
             f'width="640" height="480" {LAZY if i else ""}decoding="async">'
@@ -957,10 +965,10 @@ def build():
 {camread}
 <h2>{e(name)} webcams</h2>
 <div class="cams">{cam_html}</div>
-<p class="note">Camera images from {e(credit)}.{" The line under each image is our own reading, not " + e(credit) + "’s." if p.get("read") else " Soon each camera will get its own reading: snow on the road, visibility and traffic."}</p>
+<p class="note">Camera images from {e(credit)}.{" The line under each image is our own reading, not " + e(credit) + "’s." if p.get("read", True) else " Soon each camera will get its own reading: snow on the road, visibility and traffic."}</p>
 <h2>{e(name)} weather</h2>
 {f'<div class="forecast">{fc_html}</div><p class="note">{"Summit forecast" if summit else "Forecast"} from the National Weather Service.</p>' if fc_html else '<p class="note">The forecast did not load. Try again in a few minutes.</p>'}
-{history_html(hist_rows, tz, DOT_NAMES[p['state']][0], reads.get(p["slug"], []) if p.get("read") else None)}
+{history_html(hist_rows, tz, DOT_NAMES[p['state']][0], reads.get(p["slug"], []) if p.get("read", True) else None)}
 <h2>About {e(name)}</h2>
 <dl class="facts"><dt>{"Summit elevation" if summit else "Elevation"}</dt><dd>{p["elev_ft"]:,} ft</dd>
 <dt>Highway</dt><dd>{e(p["route"])}, {STATE_NAMES[p["state"]]}</dd>
