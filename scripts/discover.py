@@ -16,17 +16,23 @@ import sys
 
 UA = "ConditionsNow/0.1 (+https://conditionsnow.com; hello@conditionsnow.com)"
 
-# Oregon passes we want first: name, lat, lon
+# Oregon passes to check (Q16 batch 2026-11-28): name, lat, lon = USGS GNIS gap point
 OREGON = [
-    ("Santiam Pass US 20", 44.4246, -121.8556),
-    ("Willamette Pass OR 58", 43.5990, -122.0367),
-    ("Government Camp / Mt Hood US 26", 45.3029, -121.7535),
-    ("Bennett Pass OR 35", 45.3130, -121.6360),
-    ("Siskiyou Summit I-5", 42.0780, -122.5960),
-    ("Sexton Summit I-5", 42.6040, -123.3660),
-    ("Cabbage Hill / Deadman Pass I-84", 45.6030, -118.5050),
-    ("Tollgate OR 204", 45.7810, -118.0900),
-    ("Santiam Junction OR 22", 44.4350, -121.9460),
+    ("Sexton Summit I-5 (GNIS Sexton Mountain Pass)", 42.60123, -123.38313),
+    ("Smith Hill Summit I-5", 42.66512, -123.37897),
+    ("Stage Road Pass I-5", 42.73040, -123.36925),
+    ("Canyon Creek Pass I-5", 42.82790, -123.26008),
+    ("Bennett Pass OR 35", 45.31068, -121.64287),
+    ("Ochoco Pass US 26", 44.50153, -120.38670),
+    ("Dixie Summit US 26", 44.53683, -118.59774),
+    ("Blue Mountain Summit US 26", 44.54822, -118.35023),
+    ("Battle Mountain Summit US 395", 45.27097, -118.97584),
+    ("Ritter Butte Summit US 395", 44.83655, -119.06499),
+    ("Beech Creek Summit US 395", 44.57127, -119.12470),
+    ("Tombstone Pass US 20", 44.39568, -122.14119),
+    ("Stinkingwater Pass US 20", 43.69155, -118.53994),
+    ("Drinkwater Pass US 20", 43.78461, -118.27854),
+    ("Hayes Hill Summit US 199", 42.33262, -123.58536),
 ]
 
 
@@ -128,10 +134,30 @@ def oregon():
         near = sorted(((km(lat, lon, c["latitude"], c["longitude"]), c) for c in cams
                        if c.get("latitude") and c.get("longitude")), key=lambda x: x[0])
         print(f"\n  -- near {name}")
-        for d, c in [x for x in near if x[0] < 8][:6]:
+        for d, c in [x for x in near if x[0] < 8][:8]:
             print(f"     {d:4.1f} km | {c['device-id']} | {c['device-name']} | {c['route-id']}"
                   f" MP {c.get('milepoint')} | {c['cctv-url']} | {c.get('cctv-other')}")
-    for path in ["RW/Reports", "RW/Metadata", "Rwis/Status/v2", "Incd"]:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from build_site import seg_km
+    st, body = get("https://api.odot.state.or.us/tripcheck/RW/Reports", hdr)
+    reports = json.loads(body).get("road-weather-reports", []) if st == 200 else []
+    print(f"\n=== ODOT RW/Reports nearest each pass above (build_site uses same route <= 10 km)")
+    for name, lat, lon in OREGON:
+        near = []
+        for r in reports:
+            loc = r.get("location", {})
+            a = (loc.get("start-location", {}).get("start-lat"), loc.get("start-location", {}).get("start-long"))
+            b = (loc.get("end-location", {}).get("end-lat"), loc.get("end-location", {}).get("end-long"))
+            if None in a + b:
+                continue
+            near.append((seg_km(lat, lon, a, b), r))
+        near.sort(key=lambda x: x[0])
+        for d, r in near[:2]:
+            loc = r["location"]
+            print(f"  {name}: {d:.1f} km | {loc.get('location-name')} | {loc.get('route-id')} MP {loc['start-location'].get('start-milepost')}"
+                  f"-{loc['end-location'].get('end-milepost')} | road {r.get('road-conditions', {}).get('road-cond-id')}"
+                  f" | entry {r.get('entry-time')}")
+    for path in ["RW/Reports", "RW/Metadata"]:
         st, body = get("https://api.odot.state.or.us/tripcheck/" + path, hdr)
         print(f"\n=== ODOT {path}: HTTP {st}")
         if st == 200:
