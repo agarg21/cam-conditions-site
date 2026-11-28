@@ -90,6 +90,26 @@ def idaho():
               sorted({r.get("Overall Status") for r in rows if r.get("Overall Status")}))
         for r in rows[:3]:
             print("  ", {k: v for k, v in r.items() if k != "EncodedPolyline"})
+        # Which pass has an official winter-road segment on its own highway near the summit (build_site uses <= 3 km).
+        from build_site import decode_polyline, norm_route, seg_km
+        print("\n=== Idaho winterroads nearest each mountain pass (same route; build_site uses <= 3 km)")
+        for p in passes:
+            best = None
+            for r in rows:
+                if norm_route(r.get("RoadwayName")) != norm_route(p["Roadway"]):
+                    continue
+                for line in r.get("EncodedPolyline") or []:
+                    pts = decode_polyline(line)
+                    for a, b in zip(pts, pts[1:]):
+                        d = seg_km(p["Latitude"], p["Longitude"], a, b)
+                        if best is None or d < best[0]:
+                            best = (d, r)
+            if not best:
+                print(f"  {p['Name']} ({p['Roadway']}): no segment on this route")
+                continue
+            d, r = best
+            print(f"  {p['Name']} ({p['Roadway']}): {d:.1f} km | {r.get('RoadwayName')} | {r.get('LocationDescription')}"
+                  f" | {r.get('Overall Status')} | updated {r.get('LastUpdated')}")
 
 
 def oregon():
