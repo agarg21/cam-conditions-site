@@ -11,7 +11,10 @@
 0b. **Q13 Claude readings on the top 5 passes (D9).** Owner check compared 2026-11-28 08:00Z (review/2026-11-28/report.md):
    Sonnet 88% day (52/59 sure), 86% twilight, 50% night; misses the 90% bar by ~1 image. Main error: snow beside the road
    read as snow on the lanes (Sonnet 10/53, Opus 10/53, Haiku 38/53). Sample oversampled model-snowy images, so real rates
-   are lower. Next: owner to decide prompt v3 re-test (see OWNER.md D9). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
+   are lower. Re-test 08:30Z (docs/bakeoff/2026-11-28-humantest.md, $0.39): prompt v3 made it WORSE (day 78%, roadside trap
+   40%); v2 day 81%. But v2 with a confidence gate (show only k>=0.7, else "can't tell") was right 45/46 (98%) on day+
+   twilight, zero false snow, answering 63%. Gate chosen on the same 73 images: confirm on fresh images via a 10% Opus audit.
+   Training labels: use k>=0.7 or Opus-audited only. Waiting on owner: go live with v2 + gate (OWNER.md D9). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search
    demand (likely Snoqualmie, Stevens, Donner, Lookout, Santiam; check docs/research), add an hourly reading job (Batch not
    needed at this size), store readings in HF readings/, and show on pass pages: per camera "Our reading: snow on lanes /
    bare / can't tell (too dark)" with time and confidence; a pass-level "Cameras show" line beside the official verdict;
