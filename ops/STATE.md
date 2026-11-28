@@ -1,5 +1,5 @@
 # State
-run: none
+run: 2026-11-28T17:18Z operator (Q6 student v0 step)
 active: Q6a (daily label installments); Q14 storm report after the Teton window (~06:00Z 11-29)
 live: 21 passes (WA 7, OR 6, CA 2, ID 5, WY 1) + state hubs /states/{washington,oregon,california,idaho}/ + /sources/; collector ~every 15 min; images mirrored; wordmark ConditionsNow.
 data: 3,559 images by 2026-11-28 00:34Z (day 1,310, twilight 363, night 1,886); ~3,500/day (36 cams). Status history in HF status/ from 16:36Z.
