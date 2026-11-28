@@ -14,14 +14,15 @@
 - D6 (2026-11-27) B2B validation: draft a pitch with sample pass alerts for 5–10 ski shuttles / small fleets once camera
   readings work. Drafts only; the owner sends.
 
+- D7 (2026-11-28, owner "yes to all") (a) Montana: build with unmodified, credited MDT images under MDT terms §4.
+  (b) Permission requests sent 2026-11-28 01:30Z from apoorv20@gmail.com, cc hello@: Iowa (511feedback@iowadot.us),
+  Nebraska (NDOT.OperationsSOC@nebraska.gov), South Dakota (dot.communications@state.sd.us). Each said the site is free
+  and may later show ads. IA/NE/SD stay off until a written yes arrives (owner forwards replies).
+
 ## Not approved (ask first)
 - Any email or outreach (CDOT reply handling, B2B pitches), new sign-ups, Search Console changes, paid spend beyond D2.
 
 ## Open questions
-- D7 (2026-11-27) New-state terms (docs/research/state-terms-2026-11-27.md). (a) Montana: MDT terms allow copying for
-  "personal or informational use", unmodified; ads/affiliate not addressed. Build the Montana page with unmodified, credited
-  MDT images? Recommend **yes**. (b) Iowa (written consent), Nebraska (NDOT approval for cameras), South Dakota (no terms):
-  will you send the drafted permission request (in that doc) to each DOT? Recommend **yes**; until a reply, those stay off.
-- D8 (2026-11-28) Training labels for Q6 (docs/bakeoff/decision.md): Sonnet 5.5 labels ~5,000 images (~$30) and Opus 5.5
-  re-labels 500 as an audit (~$8): approve Anthropic API spend up to **USD 40** for this? Recommend **yes**. (D2 has $3.20 left.)
+- D8 (2026-11-28) on hold: owner asked to cut the labeling cost first (Batch API at 50%, shorter output, smaller images,
+  cheaper vision models). Q6a below; re-ask D8 with the new per-1,000 cost.
 
