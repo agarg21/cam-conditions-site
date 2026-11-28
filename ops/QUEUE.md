@@ -78,6 +78,9 @@
    `*.cdn.iteris-atis.com/geojson/icons/metadata/icons.<layer>.geojson`. Targets: IA 40.5K, MT 27.1K, SD 6.6K, NE ~6K/mo.
 5. **Q6 Student model plan.** Q1 done. Write prompt `pass-v2` (decision.md item 2) and the training plan in cam-conditions-engine (CLIP/SigLIP embeddings + heads vs
    small CNN; unseen-camera eval; 81.5% NYSDOT bar, target ≥90% daylight) and a labeling job for ~5,000 images.
+   Owner check 2026-11-28 changes the plan: Sonnet labels are ~83% right overall but 98% at k>=0.7, so train only on
+   labels with k>=0.7 or Opus agreement; switch remaining label installments to prompt pass-v4 (adds center line, same
+   accuracy); test every student model on the owner's 100 (review/2026-11-28) and report day/twilight agreement.
 6. **Q7 Montana.** Folded into Q10.
 7. **Q8 Colorado.** blocked (waiting for CDOT reply to the 2026-11-27 request; owner reads hello@ mail).
 8. **Q9 Search Console.** blocked (no API access from cloud; see OWNER open question once raised).
