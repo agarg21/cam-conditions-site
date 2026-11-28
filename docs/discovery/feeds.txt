@@ -181,13 +181,47 @@
       0.0 km | cam 321 RWIS 19.C1 | US-30 Border Summit | Unknown | view 393 Enabled https://511.idaho.gov/map/Cctv/393 | 
 
 === Idaho winterroads: HTTP 200
-  237 segments; statuses: ['Dry', 'Icy Patches', 'No Report', 'Snow Covered', 'Wet']
+  237 segments; statuses: ['Dry', 'Icy Patches', 'No Report', 'Packed Snow Patches', 'Slush', 'Snow Covered', 'Wet']
    {'Id': 755, 'LocationDescription': 'test', 'Overall Status': 'No Report', 'Weather Conditions': None, 'Special Conditions': None, 'AreaName': 'District 6 Foreman 672', 'RoadwayName': 'test', 'LastUpdated': 1795209742}
    {'Id': 752, 'LocationDescription': 'TEST ', 'Overall Status': 'No Report', 'Weather Conditions': None, 'Special Conditions': None, 'AreaName': 'Local', 'RoadwayName': 'TEST ', 'LastUpdated': 1795729695}
    {'Id': 694, 'LocationDescription': 'Banks/Alder Creek Rd. from MP 0 to MP 12', 'Overall Status': 'No Report', 'Weather Conditions': None, 'Special Conditions': None, 'AreaName': 'Local', 'RoadwayName': 'CO-17', 'LastUpdated': 1795729695}
 
+=== Idaho winterroads nearest each mountain pass (same route; build_site uses <= 3 km)
+  Fourth of July Pass (I-90): 0.0 km | I-90 | Wolf Lodge/Kingston from MP 22 to MP 43 | Icy Patches | updated 1795884039
+  White Bird Hill (US 95): 0.0 km | US-95 | White Bird/White Bird Hill from MP 223 to MP 234 | Wet | updated 1795872179
+  Geneva (US 89): 0.0 km | US-89 | Montpelier/Wyoming LIne from MP 25 to MP 44 | Wet | updated 1795884316
+  Georgetown (US 30): 0.0 km | US-30 | Soda Yard/Georgetown Summit from MP 399 to MP 419 | Wet | updated 1795874321
+  Lewiston Hill (US 95): 0.0 km | US-95 | Lewiston/Genesee from MP 312 to MP 330 | No Report | updated 1795879037
+  Fish Creek (US 30): 0.0 km | US-30 | Fish Creek Summit/Jct SH-34 from MP 376 to MP 387 | Wet | updated 1795874321
+  Beaver Creek (SH 21): 0.0 km | SH-21 | Beaver Creek Summit/Grandjean Road from MP 60 to MP 94 | Icy Patches | updated 1795872873
+  Lolo Pass (US 12): 0.0 km | US-12 | Bald Mountain/Montana Line (Lolo Pass) from MP 128 to MP 174 | Wet | updated 1795875657
+  Lookout Pass (I-90): 0.0 km | I-90 | Wallace/Montana Line (Lookout Pass) from MP 62 to MP 74 | Icy Patches | updated 1795879089
+  Lost Trail Pass (US 93): 0.3 km | US-93 | Salmon/Montana Line (Lost Trail Pass) from MP 304 to MP 351 | Icy Patches | updated 1795877876
+  Malad (I-15): 0.0 km | I-15 | Jct SH-36/Downey (Malad Summit) from MP 17 to MP 27 | Slush | updated 1795879330
+  Midvale Hill (US 95): 0.0 km | US-95 | Weiser/Cambridge from MP 84 to MP 113 | Wet | updated 1795870909
+  Monida Pass (I-15): 0.0 km | I-15 | Dubois/Montana Line (Monida Pass) from MP 167 to MP 196 | Packed Snow Patches | updated 1795875592
+  Nevada Line Pass (US 93): 0.0 km | US-93 | Nevada Line/Rogerson from MP 0 to MP 17 | Dry | updated 1795872157
+  Sweetzer (I-84): 0.0 km | I-84 | Sublett Rd IC/Utah line (Sweetzer Summit) from MP 245 to MP 276 | Wet | updated 1795871074
+  Willow Creek (US 93): 0.0 km | US-93 | Mackay/McGowan Creek (willow creek summit) | Wet | updated 1795888327
+  Cat Creek (US 20): 0.0 km | US-20 | Cat Creek Summit/Fairfield from MP 125 to MP 152 | Dry | updated 1795872108
+  Targee Pass (US 20): 0.0 km | US-20 | Chick Creek/Montana Line (Targee Pass) from MP 385 to MP 406 | Wet | updated 1795892275
+  Banner Creek (SH 21): 0.0 km | SH-21 | Grandjean Road/Banner Summit from MP 94 to MP 105 | Icy Patches | updated 1795872873
+  Bannock Pass (SH 29): 0.0 km | SH-29 | Leadore/Montana Line (Bannock Pass) | Snow Covered | updated 1795875578
+  Brownlee (SH 71): 0.0 km | SH-71 | Oregon Line/Cambridge from MP 0 to MP 29 | Dry | updated 1795872894
+  Emigration Pass (SH 36): 0.0 km | SH-36 | Snowmobile Pullout/Ovid from MP 20 to MP 34 | Wet | updated 1795884364
+  Galena (SH 75): 0.0 km | SH-75 | Ketchum/Sawtooth City from MP 128 to MP 165 | Icy Patches | updated 1795873623
+  Gilmore (SH 28): 0.4 km | SH-28 | Lone Pine/Leadore (Gilmore Summit) | Icy Patches | updated 1795890327
+  Highland Valley (SH 21): 0.0 km | SH-21 | Lucky Peak Dam/Robie Creek from MP 11 to MP 22 | Wet | updated 1795868137
+  Holbrook (SH 38): 0.0 km | SH-38 | Malad/Holbrook (Holbrook Summit) from MP 0 to MP 24 | Wet | updated 1795872071
+  Horseshoe Bend Hill (SH 55): 0.0 km | SH-55 | Spring Valley/Horseshoe Bend from MP 54 to MP 65 | Dry | updated 1795872320
+  Mores Creek (SH 21): 0.0 km | SH-21 | Idaho CityBeaver Creek Summit from MP 39 to MP 60 | Icy Patches | updated 1795876739
+  Pine Creek Pass (SH 31): 0.0 km | SH-31 | Swan Valley/Victor (Pine Cr. Pass) from MP 0 to MP 21 | Slush | updated 1795888853
+  Reynolds Pass (SH 87): 0.0 km | SH-87 | Henry’s Lake/Montana Line (Raynolds Pass) from MP 0 to MP 9 | Wet | updated 1795892275
+  Teton Pass (SH 33): 8.9 km | SH-33 | Driggs/Wyoming Line (Teton Pass) from MP 140 to MP 155 | Slush | updated 1795888853
+  Border (US 30): 0.0 km | US-30 | Montpelier/Wyoming Line (Border Summit) from MP 435 to MP 455 | Wet | updated 1795884298
+
 === ODOT Cctv/Inventory: HTTP 200
-  1134 cameras; first: {'device-id': 277, 'device-name': 'AstoriaUS101MeglerBrNB', 'latitude': 46.18785, 'longitude': -123.85347, 'hwy-id': '009', 'route-id': 'US101', 'milepoint': 3.7, 'cctv-url': 'http://www.TripCheck.com/roadcams/cams/AstoriaUS101MeglerBrNB_pid392.jpg', 'cctv-other': 'US101 at Astoria - ODOT District Office', 'last-update-time': '2026-11-26T03:41:03.437-08:00'}
+  1134 cameras; first: {'device-id': 277, 'device-name': 'AstoriaUS101MeglerBrNB', 'latitude': 46.18785, 'longitude': -123.85347, 'hwy-id': '009', 'route-id': 'US101', 'milepoint': 3.7, 'cctv-url': 'http://www.TripCheck.com/roadcams/cams/AstoriaUS101MeglerBrNB_pid392.jpg', 'cctv-other': 'US101 at Astoria - ODOT District Office', 'last-update-time': '2026-11-28T03:41:45.027-08:00'}
 
   -- near Santiam Pass US 20
       0.3 km | 1443 | Santiam Pass WB | US20 MP 80.14 | http://www.TripCheck.com/roadcams/cams/Santiam Pass WB_pid5258.jpg | US20 at Santiam Pass
@@ -246,10 +280,10 @@
       7.2 km | 1443 | Santiam Pass WB | US20 MP 80.14 | http://www.TripCheck.com/roadcams/cams/Santiam Pass WB_pid5258.jpg | US20 at Santiam Pass
 
 === ODOT RW/Reports: HTTP 200
-  shape: {"organization-information": {"organization-id": "str", "organization-name": "str", "last-update-time": "str"}, "road-weather-reports": [{"station-id": "int", "entry-time": "str", "expiry-time": "str", "location": {"location-name": "str", "route-id": "str", "hwy-id": "str", "start-location": "dict", "end-location": "dict"}, "snowfall-accum-rate": "float", "adjacent-snow-depth": "float", "weather-conditions": {"weather-id": "float"}, "road-conditions": {"road-cond-id": "float"}, "commercial-vehicle-restriction": {"restriction-id": "float", "restriction-type": "str"}, "driving-restriction": {"restriction-id": "str", "restriction-start-milepost": "float", "restriction-end-milepost": "float"}, "comments": "str"}]}
-  84 items
-   {"station-id": 170, "entry-time": "2026-11-26T15:05:14.763-08:00", "expiry-time": "2026-11-26T23:05:14.54-08:00", "location": {"location-name": "MT BACHELOR", "route-id": "HWY372", "hwy-id": "372", "start-location": {"start-lat": 43.99031, "start-long": -121.43015, "start-milepost": 9.0}, "end-location": {"end-lat": 44.00237, "end-long": -121.66622, "end-milepost": 21.98}}, "snowfall-accum-rate": 0.0, "adjacent-snow-depth": 6.0, "weather-conditions": {"weather-id": 0.0}, "road-conditions": {"road-cond-id": 0.0}, "commercial-vehicle-restriction": {"restriction-id": 0.0, "restriction-type": "No Restriction"}, "driving-restriction": {"restriction-id": "A", "restriction-start-milepost": 0.0, "restriction-end-milepost": 0.0}, "comments": ""}
-   {"station-id": 41, "entry-time": "2026-11-26T15:05:19.777-08:00", "expiry-time": "2026-11-26T23:04:00-08:00", "location": {"location-name": "N DOUGLAS COUNTY LINE", "route-id": "I5", "hwy-id": "1", "start-location": {"start-lat": 43.68094, "start-long": -123.19749, "start-milepost": 160.0}, "end-location": {"end-lat": 43.75373, "end-long": -123.13819, "end-milepost": 168.0}}, "air-temperature": 12.8, "snowfall-accum-rate": 0.0, "adjacent-snow-depth": 0.0, "weather-conditions": {"weather-id": 5.0}, "road-conditions": {"road-cond-id": 1.0}, "commercial-vehicle-restriction": {"restriction-id": 0.0, "restriction-type": "No Restriction"}, "driving-restriction": {"restriction-id": "A", "restriction-start-milepost": 0.0, "restriction-end-milepost": 0.0}, "comments": ""}
+  shape: {"organization-information": {"organization-id": "str", "organization-name": "str", "last-update-time": "str"}, "road-weather-reports": [{"station-id": "int", "entry-time": "str", "expiry-time": "str", "location": {"location-name": "str", "route-id": "str", "hwy-id": "str", "start-location": "dict", "end-location": "dict"}, "air-temperature": "float", "snowfall-accum-rate": "float", "adjacent-snow-depth": "float", "weather-conditions": {"weather-id": "float"}, "road-conditions": {"road-cond-id": "float"}, "commercial-vehicle-restriction": {"restriction-id": "float", "restriction-type": "str"}, "driving-restriction": {"restriction-id": "str", "restriction-start-milepost": "float", "restriction-end-milepost": "float"}, "comments": "str"}]}
+  100 items
+   {"station-id": 170, "entry-time": "2026-11-28T09:39:40.653-08:00", "expiry-time": "2026-11-28T17:39:40.457-08:00", "location": {"location-name": "MT BACHELOR", "route-id": "HWY372", "hwy-id": "372", "start-location": {"start-lat": 43.99031, "start-long": -121.43015, "start-milepost": 9.0}, "end-location": {"end-lat": 44.00237, "end-long": -121.66622, "end-milepost": 21.98}}, "air-temperature": -1.7, "snowfall-accum-rate": 0.0, "adjacent-snow-depth": 6.0, "weather-conditions": {"weather-id": 3.0}, "road-conditions": {"road-cond-id": 2.0}, "commercial-vehicle-restriction": {"restriction-id": 0.0, "restriction-type": "No Restriction"}, "driving-restriction": {"restriction-id": "A", "restriction-start-milepost": 0.0, "restriction-end-milepost": 0.0}, "comments": ""}
+   {"station-id": 41, "entry-time": "2026-11-28T10:02:50.45-08:00", "expiry-time": "2026-11-28T18:02:00-08:00", "location": {"location-name": "N DOUGLAS COUNTY LINE", "route-id": "I5", "hwy-id": "1", "start-location": {"start-lat": 43.68094, "start-long": -123.19749, "start-milepost": 160.0}, "end-location": {"end-lat": 43.75373, "end-long": -123.13819, "end-milepost": 168.0}}, "air-temperature": 7.8, "snowfall-accum-rate": 0.0, "adjacent-snow-depth": 0.0, "weather-conditions": {"weather-id": 3.0}, "road-conditions": {"road-cond-id": 1.0}, "commercial-vehicle-restriction": {"restriction-id": 0.0, "restriction-type": "No Restriction"}, "driving-restriction": {"restriction-id": "A", "restriction-start-milepost": 0.0, "restriction-end-milepost": 0.0}, "comments": ""}
 
 === ODOT RW/Metadata: HTTP 200
   shape: {"organization-information": {"organization-id": "str", "organization-name": "str", "last-update-time": "str"}, "road-weather-items": {"weather-condition-list": [{"weather-id": "int", "weather-desc": "str"}], "road-condition-list": [{"road-cond-id": "int", "road-cond-desc": "str"}], "commercial-vehicle-restriction-list": [{"restriction-id": "int", "restriction-desc": "str", "restriction-type": "str"}], "driving-restriction-list": [{"restriction-id": "str", "restriction-desc": "str"}]}}
