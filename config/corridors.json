@@ -1,0 +1,101 @@
+{
+ "_note": "Road corridors (not passes). Iowa: D13 consent (stills only, credit Iowa DOT, direct link https://511ia.org). Cameras picked 2026-11-28 from 511ia.org CARS normalCameras; each verified as a current JPEG; titles from Iowa DOT's camera names.",
+ "ready": [
+  {
+   "slug": "i-80-iowa",
+   "name": "I-80 in Iowa",
+   "short": "I-80",
+   "state": "IA",
+   "route": "I-80",
+   "source": "iowa-511",
+   "between": "Council Bluffs and Davenport",
+   "order": "lon",
+   "cams": [
+    {
+     "title": "I-80 at MM 10",
+     "image": "https://atmsqf.iowadot.gov/SNAPSHOTS/PUBLIC/Metro/80tv010hd.jpeg",
+     "lat": 41.30159,
+     "lon": -95.77093
+    },
+    {
+     "title": "I-80 at MM 49.5",
+     "image": "https://atmsqf.iowadot.gov/SNAPSHOTS/PUBLIC/Metro/80tv050hd.jpeg",
+     "lat": 41.49868,
+     "lon": -95.15563
+    },
+    {
+     "title": "I-80 at MM 97.9",
+     "image": "https://atmsqf.iowadot.gov/SNAPSHOTS/PUBLIC/Metro/80tv098hd.jpeg",
+     "lat": 41.49391,
+     "lon": -94.22363
+    },
+    {
+     "title": "I-80 at MM 155 (Colfax road-weather station)",
+     "image": "https://atmsqf.iowadot.gov/snapshots/Public/RWIS/RWIS_53-02.jpg",
+     "lat": 41.689,
+     "lon": -93.2597
+    },
+    {
+     "title": "I-80 at MM 205.8",
+     "image": "https://atmsqf.iowadot.gov/SNAPSHOTS/PUBLIC/Metro/80tv206hd.jpeg",
+     "lat": 41.69585,
+     "lon": -92.28009
+    },
+    {
+     "title": "I-80 at MM 287.1 (Walcott)",
+     "image": "https://atmsqf.iowadot.gov/SNAPSHOTS/PUBLIC/Metro/qctv14hd.jpeg",
+     "lat": 41.60433,
+     "lon": -90.72476
+    }
+   ]
+  },
+  {
+   "slug": "i-35-iowa",
+   "name": "I-35 in Iowa",
+   "short": "I-35",
+   "state": "IA",
+   "route": "I-35",
+   "source": "iowa-511",
+   "between": "the Missouri line and the Minnesota line",
+   "order": "lat",
+   "cams": [
+    {
+     "title": "I-35 at MM 7 (Lamoni rest area)",
+     "image": "https://atmsqf.iowadot.gov/snapshots/Public/RestAreas/RA35NB07-North.jpg",
+     "lat": 40.65261,
+     "lon": -93.85859
+    },
+    {
+     "title": "I-35 at US 34 (Osceola)",
+     "image": "https://atmsqf.iowadot.gov/snapshots/Public/WWD/WWD55.jpg",
+     "lat": 41.02605,
+     "lon": -93.79449
+    },
+    {
+     "title": "I-35 at MM 66.6 (Adams St, West Des Moines)",
+     "image": "https://atmsqf.iowadot.gov/SNAPSHOTS/PUBLIC/Metro/dmtv074hd.jpeg",
+     "lat": 41.5049,
+     "lon": -93.7809
+    },
+    {
+     "title": "I-35 at MM 109.8 (260th St)",
+     "image": "https://atmsqf.iowadot.gov/SNAPSHOTS/PUBLIC/Metro/amtv05hd.jpeg",
+     "lat": 41.97932,
+     "lon": -93.57102
+    },
+    {
+     "title": "I-35 at MM 140 (Williams road-weather station)",
+     "image": "https://atmsqf.iowadot.gov/snapshots/Public/RWIS/RWIS_84-01.jpg",
+     "lat": 42.4093,
+     "lon": -93.5711
+    },
+    {
+     "title": "I-35 at MM 160 (near Dows)",
+     "image": "https://atmsqf.iowadot.gov/snapshots/Public/Rural/D2TV08.jpg",
+     "lat": 42.67369,
+     "lon": -93.45523
+    }
+   ]
+  }
+ ]
+}

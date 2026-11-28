@@ -9,6 +9,7 @@ Writes to out/<UTC date>/<UTC time>/:
   odot_rw_reports.json          ODOT TripCheck road & weather reports (needs ODOT_KEY)
   odot_rw_metadata.json         ODOT code lists for those reports
   mdt_road_conditions.json      MDT (511MT) road-condition code per highway segment (public, no key)
+  iowa_winter_driving.json      Iowa DOT (511ia.org) winter driving segments for the corridors' routes (public, no key; D13)
 
 Standard library only, so it runs on a bare GitHub Actions runner.
 """
@@ -49,11 +50,25 @@ ODOT_API = "https://api.odot.state.or.us/tripcheck/{path}"
 MDT_ROADS = "https://mt.cdn.iteris-atis.com/mt3/road_conditions.json"  # what 511mt.net's map reads (D7a)
 
 
+IOWA_GRAPHQL = "https://511ia.org/api/graphql"  # what 511ia.org's map reads (CARS); D13 consent covers road-condition wording
+IOWA_QUERY = ("query MapFeatures($input: MapFeaturesArgs!) { mapFeaturesQuery(input: $input) { mapFeatures "
+              "{ bbox tooltip uri ... on Event { title description priority color } } error { message type } } }")
+
+
+def iowa_body():
+    """One POST for every winter-driving segment in Iowa (about 600; filtered by route at build time)."""
+    return json.dumps({"query": IOWA_QUERY, "variables": {"input": {
+        "north": 43.6, "south": 40.3, "east": -90.1, "west": -96.7, "zoom": 8,
+        "layerSlugs": ["winterDriving"], "nonClusterableUris": ["dashboard"]}}}).encode()
+
+
 def public_feeds(passes):
-    """Keyless official condition feeds, fetched only when a ready pass uses them."""
+    """Keyless official condition feeds, fetched only when a ready pass or corridor uses them."""
     feeds = {}
     if any(p.get("source") == "mdt-rwis" for p in passes):
         feeds["mdt_road_conditions.json"] = (MDT_ROADS, {})
+    if any(p.get("source") == "iowa-511" for p in passes):
+        feeds["iowa_winter_driving.json"] = (IOWA_GRAPHQL, {"Content-Type": "application/json"}, iowa_body())
     return feeds
 
 
@@ -69,8 +84,8 @@ def keyed_feeds():
     return feeds
 
 
-def fetch(url, timeout=20, headers=None):
-    req = urllib.request.Request(url, headers={"User-Agent": UA, **(headers or {})})
+def fetch(url, timeout=20, headers=None, data=None):
+    req = urllib.request.Request(url, data=data, headers={"User-Agent": UA, **(headers or {})})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.status, r.read(), r.headers.get("Content-Type", "")
 
@@ -93,6 +108,10 @@ def main():
     os.makedirs(out, exist_ok=True)
     with open(os.path.join(ROOT, "config", "passes.json")) as f:
         passes = json.load(f)["ready"]
+    corridors = os.path.join(ROOT, "config", "corridors.json")  # road corridors (Iowa I-80/I-35); same camera loop
+    if os.path.exists(corridors):
+        with open(corridors) as f:
+            passes = passes + json.load(f)["ready"]
 
     manifest = {"fetched_at": now.isoformat(), "cams": []}
     for p in passes:
@@ -123,9 +142,9 @@ def main():
         manifest["wsdot_reports_error"] = str(e)[:200]
 
     manifest["feeds"] = {}
-    for fname, (url, hdr) in {**public_feeds(passes), **keyed_feeds()}.items():
+    for fname, (url, hdr, *data) in {**public_feeds(passes), **keyed_feeds()}.items():
         try:
-            status, body, _ = fetch(url, timeout=40, headers=hdr)
+            status, body, _ = fetch(url, timeout=40, headers=hdr, data=data[0] if data else None)
             json.loads(body)  # only keep valid JSON
             with open(os.path.join(out, fname), "wb") as f:
                 f.write(body)

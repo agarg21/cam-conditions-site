@@ -26,14 +26,16 @@ BASE = "https://conditionsnow.com"
 UA = "ConditionsNow/0.1 (+https://conditionsnow.com; hello@conditionsnow.com)"
 TZ = ZoneInfo("America/Los_Angeles")
 CC_URL = "https://cwwp2.dot.ca.gov/data/d{d}/cc/ccStatusD{d:02d}.json"  # Caltrans chain controls, one file per district
-STATE_NAMES = {"WA": "Washington", "OR": "Oregon", "CA": "California", "ID": "Idaho", "MT": "Montana", "WY": "Wyoming"}
+STATE_NAMES = {"WA": "Washington", "OR": "Oregon", "CA": "California", "ID": "Idaho", "MT": "Montana", "WY": "Wyoming",
+               "IA": "Iowa"}
 STATE_ORDER = list(STATE_NAMES)
 DOT_NAMES = {"WA": ("WSDOT", "https://wsdot.com/travel/real-time/mountainpasses"),
              "CA": ("Caltrans QuickMap", "https://quickmap.dot.ca.gov/"),
              "OR": ("ODOT TripCheck", "https://www.tripcheck.com/"),
              "ID": ("Idaho 511", "https://511.idaho.gov/"),
              "MT": ("MDT", "https://www.511mt.net/"),
-             "WY": ("WYDOT", "https://www.wyoroad.info/")}
+             "WY": ("WYDOT", "https://www.wyoroad.info/"),
+             "IA": ("Iowa DOT", "https://511ia.org")}  # D13: credit "Iowa DOT", direct link to 511ia.org, no redirects
 # Who publishes the camera images, for the credit line under each camera grid.
 CAM_CREDIT = {"wsdot-arcgis": "WSDOT", "caltrans-cwwp2-d3": "Caltrans", "caltrans-cwwp2-d7": "Caltrans", "caltrans-cwwp2-d9": "Caltrans",
               "odot-tripcheck": "Oregon Department of Transportation (TripCheck)",
@@ -301,6 +303,48 @@ def mdt_status(run_dir, p):
     return st
 
 
+def strip_tags(h):
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", h or ""))).strip()
+
+
+def iowa_level(cond):
+    """Iowa DOT winter-driving wording -> status level. Only wording we can map with confidence; else unknown."""
+    t = cond.lower()
+    if re.search(r"impassable|\bclosed\b|closure", t):
+        return "closed"
+    if "generally clear" in t:
+        return "clear"
+    if re.search(r"travel not advised|covered|snow|\bice\b|icy|slush|frozen|slippery", t):
+        return "snowice"
+    if re.search(r"\bwet\b", t):
+        return "caution"
+    return "unknown"
+
+
+def iowa_segments(run_dir, c):
+    """Iowa DOT winter-driving segments on the corridor's route, in road order (west-east or south-north)."""
+    data = load_run_json(run_dir, "iowa_winter_driving.json")
+    feats = (((data or {}).get("data") or {}).get("mapFeaturesQuery") or {}).get("mapFeatures") or []
+    rows = []
+    for f in feats:
+        title = f.get("title") or f.get("tooltip") or ""
+        if not title.startswith(c["route"] + ":"):
+            continue
+        d = f.get("description") or ""
+        m = re.search(r"<span data-test-desc-phrase=[^>]*>(.*?)</span>", d, re.S)
+        cond = strip_tags(m.group(1)) if m else title.split(":", 1)[1].strip().rstrip(".")
+        first = re.search(r"<p>(.*?)<span", d, re.S)
+        where = strip_tags(first.group(1)).rstrip(". ") if first else ""
+        fc = re.search(r"<p data-test-desc-ndfd>(.*?)</p>", d, re.S)
+        fc = strip_tags(fc.group(1)) if fc else ""
+        fc = re.sub(r"^Forecast Weather \(next 6 hours\):\s*", "", fc)
+        bb = f.get("bbox") or [0, 0, 0, 0]
+        key = (bb[0] + bb[2]) / 2 if c.get("order") == "lon" else (bb[1] + bb[3]) / 2
+        rows.append({"key": key, "kind": title.split(":", 1)[1].strip().rstrip("."), "cond": cond.rstrip("."),
+                     "where": where, "fc": fc, "lv": iowa_level(cond + " " + title)})
+    return sorted(rows, key=lambda r: r["key"])
+
+
 def nws_forecast(lat, lon):
     try:
         pt = get_json(f"https://api.weather.gov/points/{lat:.4f},{lon:.4f}")
@@ -365,7 +409,7 @@ WORDMARK = ('<svg viewBox="0 0 26 20" aria-hidden="true"><path d="M1 19 9 5l4 6 
             '<path d="m9 5 2.2 3.8-1.5-.6-1 1.2-.9-1.4-1.4.6z" fill="#fff"/></svg>')
 
 
-STATE_ROUTE = {"OR": "Oregon", "WA": "Washington", "CA": "California", "ID": "Idaho", "MT": "Montana", "WY": "Wyoming"}
+STATE_ROUTE = {"OR": "Oregon", "WA": "Washington", "CA": "California", "ID": "Idaho", "MT": "Montana", "WY": "Wyoming", "IA": "Iowa"}
 
 
 def shield(route):
@@ -897,6 +941,120 @@ def cam_strip_html(reads, t0, t1):
 def cap_line(caps, c):
     return f'<span class="cam__reading">{e(caps[c["cam"]])}</span>' if c["cam"] in caps else ""
 
+CORRIDOR_TZ = ZoneInfo("America/Chicago")
+
+
+def build_corridors(run_dir, manifest, fetched, mirror, urls):
+    """Iowa road-corridor pages (/roads/<slug>/) and the /states/iowa/ hub, from Iowa DOT segments and cameras (D13).
+    Returns the home-board rows for the corridors ("" when there are none)."""
+    path_cfg = os.path.join(ROOT, "config", "corridors.json")
+    if not os.path.exists(path_cfg):
+        return ""
+    with open(path_cfg) as f:
+        corridors = json.load(f)["ready"]
+    tz, out, rows_html = CORRIDOR_TZ, [], ""
+    checked = fetched.astimezone(tz).strftime("%-I:%M %p %Z")
+    dot, link = DOT_NAMES["IA"]
+    order = ["closed", "snowice", "caution", "clear", "unknown"]
+    for c in corridors:
+        try:
+            segs = iowa_segments(run_dir, c) if run_dir else []
+        except Exception as ex:  # a feed changing shape must never stop the deploy
+            print(f"status failed for {c['slug']}: {type(ex).__name__}: {ex}")
+            segs = []
+        worst = min((s["lv"] for s in segs), key=order.index) if segs else "unknown"
+        kinds = list(dict.fromkeys(s["kind"] for s in segs if s["lv"] == worst))
+        label = kinds[0] if len(kinds) == 1 else LEVELS[worst][1]
+        cams = [m for m in manifest.get("cams", []) if m["pass"] == c["slug"] and m.get("saved")]
+        for m in cams:
+            m["site_url"] = mirror(m)
+        name, path = c["name"], f"/roads/{c['slug']}/"
+        title = f"{c['short']} Iowa Road Conditions & Webcams | Conditions Now"
+        desc = (f"{c['short']} road conditions across Iowa between {c['between']}: Iowa DOT's winter driving report "
+                f"for every segment and {len(c['cams'])} live cameras, checked every 15 minutes.")
+        seg_html = "".join(
+            f'<li class="{LEVELS[s["lv"]][0]}"><span class="status-mark">{e(s["cond"])}</span>'
+            f'<span class="segments__where">{e(s["where"])}</span>'
+            + (f'<span class="segments__fc">Iowa DOT forecast, next 6 hours: {e(s["fc"])}</span>' if s["fc"] else "")
+            + '</li>'
+            for s in segs) or f'<li class="is-unknown"><span class="status-mark">No current report</span></li>'
+        by_kind = {}
+        for s_ in segs:
+            by_kind.setdefault((s_["lv"], s_["kind"]), []).append(s_)
+        tally = "".join(f'<li class="{LEVELS[lv][0]}"><span class="status-mark">{len(v)} of {len(segs)} segments: '
+                        f'{e(kind.lower())}</span></li>'
+                        for (lv, kind), v in sorted(by_kind.items(), key=lambda x: order.index(x[0][0])))
+        cam_html = "".join(
+            f'<figure class="cam"><img src="{m["site_url"]}" alt="{e(c["short"])} Iowa webcam: {e(m["title"])}" '
+            f'width="640" height="360" {LAZY if i else ""}decoding="async">'
+            f'<figcaption><span>{e(m["title"])}</span><time datetime="{fetched.isoformat()}">checked {checked}</time>'
+            f'</figcaption></figure>' for i, m in enumerate(cams)) or '<p class="note">These cameras are offline right now.</p>'
+        trail = [("All passes", "/"), ("Iowa", "/states/iowa/"), (c["short"], None)]
+        verdict_html = (f'<section class="verdict {LEVELS[worst][0]}" aria-label="Current road status">'
+                        f'<p class="verdict__source">Right now, worst segment on {e(c["short"])} in Iowa, from {dot}</p>'
+                        f'<h2 class="verdict__label">{e(label)}</h2>'
+                        f'<ul class="tally">{tally}</ul>'
+                        f'<p class="verdict__meta">Wording as published by {dot}. Closures, crashes and construction are not '
+                        f'included here: see <a href="{link}">511ia.org</a> right before you drive.</p></section>')
+        body = f"""
+{crumbs_html(trail)}
+<h1 class="page-title">{e(c['short'])} Iowa road conditions</h1>
+<p class="route-line">{shield(c['route'])}<span>{e(c['route'])} across Iowa, between {e(c['between'])}</span></p>
+{verdict_html}
+<h2>{e(c['short'])} road conditions by segment</h2>
+<ul class="segments">{seg_html}</ul>
+<p class="note">{"West to east" if c.get("order") == "lon" else "South to north"}. Segments and wording from <a href="{link}">{dot}</a>, checked {checked}.</p>
+<h2>{e(c['short'])} Iowa webcams</h2>
+<div class="cams">{cam_html}</div>
+<p class="note">Camera images from {dot} (<a href="{link}">511ia.org</a>), {"west to east" if c.get("order") == "lon" else "south to north"}.</p>
+<h2>Before you go</h2>
+<ul class="checklist"><li>Check closures and crashes on <a href="{link}">511ia.org</a> right before you leave.</li>
+<li>Conditions on open interstate can change within the hour in snow and wind.</li></ul>
+"""
+        first = cams[0] if cams else None
+        img = f'{BASE}/cams/{first["pass"]}/{first["cam"]}.jpg' if first else None
+        ld = {"@context": "https://schema.org", "@type": "WebPage", "@id": f"{BASE}{path}", "url": f"{BASE}{path}",
+              "name": title, "description": desc, "inLanguage": "en-US",
+              "dateModified": fetched.isoformat(timespec="seconds"),
+              "isPartOf": {"@type": "WebSite", "name": "Conditions Now", "url": f"{BASE}/"},
+              "breadcrumb": crumbs_ld([(n, f"{BASE}{u or path}") for n, u in trail])}
+        os.makedirs(os.path.join(SITE, "roads", c["slug"]), exist_ok=True)
+        with open(os.path.join(SITE, "roads", c["slug"], "index.html"), "w") as f:
+            f.write(head(title, desc, path, social(title, desc, path, img, f'{c["short"]} Iowa webcam') + json_ld(ld)) + body + FOOT)
+        urls.append(path)
+        thumb = (f'<img class="pass-row__thumb" src="{first["site_url"]}" alt="" width="112" height="84" loading="lazy" '
+                 f'decoding="async">') if first else ""
+        rows_html += (f'<li><a class="pass-row" href="{path}">{shield(c["route"])}'
+                      f'<span class="pass-row__name">{e(c["short"])} in Iowa</span>'
+                      f'<span class="pass-row__status {LEVELS[worst][0]}"><span class="status-mark">{e(label)}</span>'
+                      f'<span class="pass-row__road">worst of {len(segs)} segments</span></span>{thumb}</a></li>')
+        out.append((c, path, worst, label))
+    hub = "/states/iowa/"
+    title = "Iowa Road Conditions: I-80 & I-35 Webcams | Conditions Now"
+    desc = ("Iowa road conditions on I-80 and I-35: Iowa DOT's winter driving report and live cameras along each "
+            "interstate, checked every 15 minutes.")
+    ld = {"@context": "https://schema.org", "@type": "CollectionPage", "@id": f"{BASE}{hub}", "url": f"{BASE}{hub}",
+          "name": title, "description": desc, "inLanguage": "en-US", "dateModified": fetched.isoformat(timespec="seconds"),
+          "isPartOf": {"@type": "WebSite", "name": "Conditions Now", "url": f"{BASE}/"},
+          "breadcrumb": crumbs_ld([("All passes", f"{BASE}/"), ("Iowa", f"{BASE}{hub}")]),
+          "mainEntity": {"@type": "ItemList", "itemListElement": [
+              {"@type": "ListItem", "position": i, "name": f"{c['short']} in Iowa", "url": f"{BASE}{p}"}
+              for i, (c, p, *_) in enumerate(out, 1)]}}
+    body = f"""
+{crumbs_html([("All passes", "/"), ("Iowa", None)])}
+<div class="board-intro"><h1>Iowa road conditions</h1>
+<p>{dot}'s winter driving report and live cameras for I-80 and I-35, checked every 15 minutes. Last check {checked}.</p></div>
+<section class="board" id="passes"><ul>{rows_html}</ul></section>
+<h2>Where this comes from</h2>
+<p>Road-condition wording and camera images from the Iowa Department of Transportation via <a href="{link}">511ia.org</a>,
+shown with Iowa DOT's permission. Closures, crashes and construction: check <a href="{link}">511ia.org</a> before you drive.</p>
+"""
+    os.makedirs(os.path.join(SITE, "states", "iowa"), exist_ok=True)
+    with open(os.path.join(SITE, "states", "iowa", "index.html"), "w") as f:
+        f.write(head(title, desc, hub, social(title, desc, hub) + json_ld(ld)) + body + FOOT)
+    urls.append(hub)
+    return rows_html
+
 
 def build():
     with open(os.path.join(ROOT, "config", "passes.json")) as f:
@@ -1078,6 +1236,9 @@ def build():
     for state in sorted(dict.fromkeys(p["state"] for p, *_ in summary), key=STATE_ORDER.index):
         h = (f'<a href="/states/{hub_slug(state)}/">{STATE_NAMES[state]}</a>' if state in hubs else STATE_NAMES[state])
         groups += f"<h2>{h}</h2><ul>{board_rows(state)}</ul>"
+    corridor_rows = build_corridors(run_dir, manifest, fetched, mirror, urls)
+    if corridor_rows:
+        groups += f'<h2><a href="/states/iowa/">Iowa</a></h2><ul>{corridor_rows}</ul>'
     home = f"""
 <div class="board-intro"><h1>Mountain passes right now</h1>
 <p>Live DOT cameras and official road reports, checked every 15 minutes. Last check {checked}.</p>
@@ -1138,6 +1299,7 @@ We download camera images every 15 minutes and serve our own copies, credited to
 <li><strong>California:</strong> cameras and chain controls from <a href="https://quickmap.dot.ca.gov/">Caltrans</a>.</li>
 <li><strong>Idaho, and Teton Pass in Wyoming:</strong> cameras and road conditions from the Idaho Transportation Department, via <a href="https://511.idaho.gov/">Idaho 511</a>. The Teton Pass camera is operated by <a href="https://www.wyoroad.info/">WYDOT</a>.</li>
 <li><strong>Montana:</strong> camera images (unmodified) and road conditions from the Montana Department of Transportation, via <a href="https://www.511mt.net/">511MT</a>, used under MDT's <a href="https://www.mdt.mt.gov/mdt/terms-of-use.aspx">terms of use</a>.</li>
+<li><strong>Iowa:</strong> camera stills and winter road-condition wording, as published, from the Iowa Department of Transportation, via <a href="https://511ia.org">511ia.org</a>, shown with Iowa DOT's written permission.</li>
 <li><strong>Forecasts:</strong> the <a href="https://www.weather.gov/">National Weather Service</a>.</li>
 </ul>
 <p>Conditions change fast. Always check official closures and chain rules before you drive.</p>
