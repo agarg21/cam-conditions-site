@@ -13,6 +13,9 @@
    rather than guess. New passes get camera readings automatically (D11).
 00b. **Q6 student v0 now, not at 5,000 labels (owner 2026-11-28: "do this sooner").** Train a first student on the labels we
    have (k>=0.7 or Opus-agreed), test on the owner's 100, report; retrain as installments land. See Q6 below for the plan.
+   Code shipped 2026-11-28 17:25Z in cam-conditions-engine (6ed3432: train/student_v0.py, .github/workflows/student.yml,
+   trigger = push requests/student.json; report -> engine reports/student-v0-<date>.md; CPU, no API spend). BLOCKED: engine
+   Actions has no HF_TOKEN secret (OWNER D12). When it exists: bump "requested" in requests/student.json, push, read the report.
 0. **Q6a Cheaper labels, then the labeling job (D8).** Test done 2026-11-28 (docs/bakeoff/decision.md "Q6a update"): prompt
    pass-v2 via Message Batches, Sonnet $1.89 per 1,000 (was $5.98); vs Opus v2 95% day / 93% twilight; 512 px saves nothing;
    no Haiku cascade (missed snow 2/31 vs 1/31). D2 closed at $8.97 of $10. Installment 1 done 03:04Z: 1,513 day+twilight

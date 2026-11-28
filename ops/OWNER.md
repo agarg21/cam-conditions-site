@@ -41,4 +41,8 @@
 - D8 (2026-11-28, owner) Training labels APPROVED with the Q6a optimizations, no second vendor: Batch API, prompt v2
   with short output, Haiku pre-screen only if the test shows it keeps snow recall. Up to USD 40 total (expect ~$8);
   Sonnet labels ~5,000 images, Opus audits ~500. No re-ask needed unless the measured cost would pass $40.
-
+- D12 (2026-11-28 17:40Z, operator) Student v0 is written and tested but cannot read the dataset: cam-conditions-engine has no
+  HF_TOKEN Actions secret. Add it (Settings > Secrets and variables > Actions > New secret HF_TOKEN; the same fine-grained token
+  as cam-conditions-site, with write access to agarg20/conditionsnow-cams for the student/ cache)? Recommend yes. Cost: private-repo
+  Actions minutes, ~10-15 min per training run (free tier 2,000 min/month). Alternative: allow training in the public site repo
+  (code public; labels, embeddings and weights stay private on HF).
