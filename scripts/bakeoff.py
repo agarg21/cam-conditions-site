@@ -21,6 +21,7 @@ import os
 import random
 import re
 import sys
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -29,13 +30,14 @@ from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = "agarg20/conditionsnow-cams"
-PROMPT_VERSION = "pass-v1"
+PROMPT_VERSION = "pass-v1.1"  # v1.1: tool_choice auto + strict tool (5.5 models reject forced tool use)
 MODELS = {  # USD per million tokens: input, output, cache read, cache write (5 min); platform.claude.com pricing, 2026-11-27
     "haiku": ("claude-haiku-5-5", 0.10, 0.50, 0.01, 0.125),
     "sonnet": ("claude-sonnet-5-5", 2.00, 10.00, 0.10, 2.50),
     "opus": ("claude-opus-5-5", 4.00, 20.00, 0.20, 5.00),
 }
 REFERENCE = "opus"
+MAX_TOKENS = 2000  # room for any default thinking plus the tool call; stop_reason is recorded
 MAX_SIDE = 640  # downscale so every camera costs about the same and matches what a small model sees
 
 # What drivers ask, from the 2026-11-27 search-intent pass: is there snow on the road, is it snowing,
@@ -74,12 +76,13 @@ TOOL = {
         "type": "object",
         "properties": {
             **{k: {"type": "string", "enum": v} for k, v in FIELDS.items()},
-            "road_surface_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "road_surface_confidence": {"type": "number", "description": "0 to 1"},  # strict tools: no min/max
             "overlay_timestamp": {"type": ["string", "null"], "description": "Timestamp text shown on the image, as written"},
             "overlay_temp_f": {"type": ["number", "null"], "description": "Temperature shown on the image, in F"},
             "note": {"type": "string"},
         },
         "required": list(FIELDS) + ["road_surface_confidence", "overlay_timestamp", "overlay_temp_f", "note"],
+        "additionalProperties": False,
     },
 }
 
@@ -165,27 +168,29 @@ def shrink(jpeg_bytes):
     return buf.getvalue(), im.size
 
 
-def call(model_id, img_b64, key, retries=4):
+def call(model_id, img_b64, key, retries=4, extra=None):
+    """One reading. Claude 5.5 models reject forced tool_choice ("tool"/"any") with HTTP 400, so we use
+    tool_choice auto + a strict tool and tell the model to call it. A reply without a tool call, or one cut
+    off at max_tokens, is an error (not retried: it would cost the same again)."""
     body = {
-        "model": model_id, "max_tokens": 400,
+        "model": model_id, "max_tokens": MAX_TOKENS,
         "system": [{"type": "text", "text": SYSTEM, "cache_control": {"type": "ephemeral"}}],
-        "tools": [TOOL], "tool_choice": {"type": "tool", "name": "record_reading"},
+        "tools": [dict(TOOL, strict=True)], "tool_choice": {"type": "auto"},
         "messages": [{"role": "user", "content": [
             {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": img_b64}},
-            {"type": "text", "text": "Read this camera image."}]}],
+            {"type": "text", "text": "Read this camera image and call record_reading."}]}],
     }
+    body.update(extra or {})
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=json.dumps(body).encode(),
                                  headers={"x-api-key": key, "anthropic-version": "2023-06-01",
                                           "content-type": "application/json"})
     for attempt in range(retries):
         t0 = time.time()
         try:
-            with urllib.request.urlopen(req, timeout=120) as r:
+            with urllib.request.urlopen(req, timeout=180) as r:
                 out = json.loads(r.read())
-            reading = next(c["input"] for c in out["content"] if c["type"] == "tool_use")
-            return {"reading": reading, "usage": out.get("usage", {}), "secs": round(time.time() - t0, 2)}
         except urllib.error.HTTPError as e:
-            msg = e.read()[:300].decode("utf-8", "replace")
+            msg = e.read()[:600].decode("utf-8", "replace")
             if e.code in (429, 500, 502, 503, 529) and attempt < retries - 1:
                 time.sleep(5 * (attempt + 1))
                 continue
@@ -195,6 +200,17 @@ def call(model_id, img_b64, key, retries=4):
                 time.sleep(3)
                 continue
             return {"error": f"{type(e).__name__}: {e}"}
+        usage, stop = out.get("usage", {}), out.get("stop_reason")
+        kinds = [c.get("type") for c in out.get("content", [])]
+        base = {"usage": usage, "stop_reason": stop, "blocks": kinds, "secs": round(time.time() - t0, 2)}
+        reading = next((c.get("input") for c in out.get("content", []) if c.get("type") == "tool_use"), None)
+        if reading is None:
+            return dict(base, error=f"no tool call (stop_reason {stop}, blocks {kinds})")
+        missing = [k for k in TOOL["input_schema"]["required"] if k not in reading]
+        if stop == "max_tokens" or missing:
+            return dict(base, error=f"incomplete reading (stop_reason {stop}, missing {missing[:4]})")
+        return dict(base, reading=reading)
+    return {"error": "retries exhausted"}
 
 
 def cost(model, u):
@@ -204,6 +220,38 @@ def cost(model, u):
 
 
 # ------------------------------------------------------------------ main
+
+def probe(rows, key, lines, out_md, hf_hub_download):
+    """Tiny API check before a full run: 1 day + 1 night image x every model x two request variants.
+    Writes only call metadata (stop reason, block types, tokens, cost, error text), never label values."""
+    variants = {"default": {}, "effort-low": {"output_config": {"effort": "low"}}}
+    pick = []
+    for light in ("day", "night"):
+        cand = [r for r in rows if r["light"] == light]
+        if cand:
+            pick.append(random.Random(3).choice(cand))
+    lines += ["", f"## Probe ({len(pick)} images: " + ", ".join(r["light"] for r in pick) + ")", "",
+              "| variant | model | light | ok | stop | blocks | in tok | cache read | out tok | cost | secs | error |",
+              "|---|---|---|---|---|---|---:|---:|---:|---:|---:|---|"]
+    total = 0.0
+    for r in pick:
+        local = hf_hub_download(REPO, r["path"], repo_type="dataset", token=os.environ["HF_TOKEN"])
+        b64 = base64.b64encode(shrink(open(local, "rb").read())[0]).decode()
+        for vname, extra in variants.items():
+            for m, spec in MODELS.items():
+                res = call(spec[0], b64, key, retries=2, extra=extra)
+                u = res.get("usage", {})
+                c = cost(m, u)
+                total += c
+                err = res.get("error", "").replace("|", "/").replace("\n", " ")[:400]
+                lines.append(f"| {vname} | {m} | {r['light']} | {'yes' if 'reading' in res else 'no'} | "
+                             f"{res.get('stop_reason', '-')} | {','.join(res.get('blocks', [])) or '-'} | "
+                             f"{u.get('input_tokens', 0):,} | {u.get('cache_read_input_tokens', 0):,} | "
+                             f"{u.get('output_tokens', 0):,} | ${c:.4f} | {res.get('secs', '-')} | {err} |")
+    lines += ["", f"Probe API spend: **${total:.3f}**", ""]
+    open(out_md, "w").write("\n".join(lines) + "\n")
+    print("\n".join(lines))
+
 
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "count"
@@ -232,6 +280,14 @@ def main():
         return
 
     key = os.environ["ANTHROPIC_API_KEY"]
+    try:
+        req = json.load(open(os.path.join(ROOT, "ops", "bakeoff-request.json")))
+    except (OSError, ValueError):
+        req = {}
+    max_usd = float(req.get("max_usd", 9.0))  # hard stop on API spend for this run (owner budget D2)
+    extra = req.get("extra") or {}  # optional request fields, e.g. {"output_config": {"effort": "low"}}
+    if mode == "probe":
+        return probe(rows, key, lines, out_md, hf_hub_download)
     picked = sample(rows, n)
     print(f"sampled {len(picked)}: {Counter(r['light'] for r in picked)}")
     work = []
@@ -243,18 +299,28 @@ def main():
 
     results = []
 
+    spent = [0.0]
+    lock = threading.Lock()
+
     def job(item):
         r, b64 = item
-        rec = dict(r, prompt=PROMPT_VERSION, models={})
+        with lock:
+            if spent[0] >= max_usd:
+                return None  # budget reached: skip the rest
+        rec = dict(r, prompt=PROMPT_VERSION, extra=extra, models={})
         for m, spec in MODELS.items():
-            rec["models"][m] = call(spec[0], b64, key)
+            rec["models"][m] = call(spec[0], b64, key, extra=extra)
+            with lock:
+                spent[0] += cost(m, rec["models"][m].get("usage", {}))
         return rec
 
     with cf.ThreadPoolExecutor(max_workers=4) as ex:
         for i, rec in enumerate(ex.map(job, work)):
-            results.append(rec)
+            if rec is not None:
+                results.append(rec)
             if i % 25 == 0:
-                print(f"  {i + 1}/{len(work)}", flush=True)
+                print(f"  {i + 1}/{len(work)} spent ${spent[0]:.2f}", flush=True)
+    print(f"total API spend ${spent[0]:.2f} (cap ${max_usd:.2f}); labelled {len(results)}/{len(work)}")
 
     # per-image labels -> private dataset
     jsonl = "\n".join(json.dumps(x) for x in results) + "\n"
@@ -266,7 +332,10 @@ def main():
     lines += ["", f"Sampled **{len(results)}** images: " + ", ".join(
         f"{k} {v}" for k, v in Counter(r["light"] for r in results).items()),
         f"Prompt `{PROMPT_VERSION}`, images downscaled to max {MAX_SIDE}px. Reference model: **{REFERENCE}**.",
-        f"Per-image labels: HF dataset `{REPO}` → `{label_path}` (private).", "", "## Cost and speed (from API usage)", "",
+        f"Per-image labels: HF dataset `{REPO}` → `{label_path}` (private).",
+        f"Extra request fields: `{json.dumps(extra)}`. Total API spend this run (all calls, incl. errors): "
+        f"**${spent[0]:.2f}** (cap ${max_usd:.2f}); labelled {len(results)} of {len(work)} sampled.",
+        "", "## Cost and speed (from API usage)", "",
         "| model | ok calls | errors | input tok | cache read | output tok | cost | per 1,000 images | median secs |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for m in MODELS:
