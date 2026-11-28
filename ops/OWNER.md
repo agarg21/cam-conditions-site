@@ -39,6 +39,11 @@
   each new public URL on the `to_index:` line in ops/STATE.md; Claude in chat requests them and clears the line.
   Done 2026-11-28 17:45Z: /passes/tejon-pass/, /passes/deadman-summit/, /passes/conway-summit/.
 
+- D13 (2026-11-28 18:03Z, Iowa DOT written consent, S. Sinclair Stolle, Traffic Management Systems Engineer, reply to the
+  2026-11-28 01:25Z request) Iowa is approved: Iowa DOT camera stills (unmodified, no video streams) and road-condition
+  wording quoted as published, credited "Iowa DOT" with a DIRECT link to https://511ia.org (their one request: no
+  redirect or tracking links). They added hello@conditionsnow.com to their integrator list (notices concern video streams).
+
 ## Not approved (ask first)
 - Any email or outreach (CDOT reply handling, B2B pitches), new sign-ups, Search Console changes, paid spend beyond D2.
 
