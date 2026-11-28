@@ -44,7 +44,15 @@
    a third row "Cameras" in the 24 h history; a flag when cameras disagree with an official report ≥2 h old. Label every
    reading "our reading, not an official report". Spend ledger in docs/bakeoff/label-ledger.json, D9 ≤$15/month.
 
-0c. **Q14 Storm check (owner 2026-11-28: "check the quality during / after a storm").** Event-triggered: when NWS has a Winter
+0c. **Q14 Storm check (owner 2026-11-28: "check the quality during / after a storm").** Part (1) SHIPPED 2026-11-28 16:21Z
+   (1a34153): read_cams.py storm mode (NWS Winter Storm Warning / Winter Weather Advisory / Blizzard / Ice Storm alert at the
+   pass point, or gridpoint snowfall >= 2 in in 24 h; on for 12 h after the last trigger) gives every reading an Opus v4
+   re-read in HF readings/audit-<date>.jsonl ("why": "storm"); windows in readings/storms.json; routine ~10% audit ("why":
+   "audit", Q13) only while month spend is under pace (D11 $40 cap). Live: run 46167545830 6 Opus re-reads $0.069. FIRST STORM: Teton Pass, Winter Storm Warning until 11:00 MST
+   2026-11-28 -> storm mode to ~06:00Z 11-29 (only daylight readings, so ~00:30Z). NEXT: scripts/storm_report.py +
+   workflow triggered by pushing ops/storm-request.json (pull storms.json, readings, audit, status/ from HF; write
+   docs/bakeoff/storm-<date>.md aggregates) and the 100-image export; run it after the Teton window closes. Original spec:
+   Event-triggered: when NWS has a Winter
    Storm Warning/Advisory, or forecasts >= 2 in of snow, for a pass with readings, then during the storm and the 12 h after:
    (1) every reading also gets an Opus re-read (counts in D9 <= $15/month); (2) report per pass: Sonnet vs Opus agreement,
    share answered at k >= 0.7, and lead time = when cameras first showed snow/bare vs when the official report changed (from
