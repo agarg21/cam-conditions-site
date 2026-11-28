@@ -5,7 +5,8 @@
    no Haiku cascade (missed snow 2/31 vs 1/31). D2 closed at $8.97 of $10. Installment 1 done 03:04Z: 1,513 day+twilight
    labels, $3.55, Opus audit 95% (143/151); D8 ledger docs/bakeoff/label-ledger.json $3.55 of $40. Left: one installment per
    day (push ops/bakeoff-request.json mode "label", same settings, bump "requested") until ~5,000 images; next when the
-   unlabeled day+twilight pool is ≥1,000 (~1,500/day collected). 1 dataset file was not a JPEG: check collect.py's image check.
+   unlabeled day+twilight pool is ≥1,000 (~1,500/day collected). Non-JPEG fix done 2026-11-28 04:25Z: the bad file was
+   raw/2026-11-28/0002/blewett-pass/0.jpg; collect.py now saves only complete JPEGs (SOI + EOI), else `problem` in manifest.
 
 0b. **Q13 Claude readings on the top 5 passes (D9).** blocked until the owner's 100-image check is compared (Claude in chat
    runs compare: review/2026-11-28/report.md). If Sonnet agrees ≥90% on lane snow in daylight: pick the 5 passes by search

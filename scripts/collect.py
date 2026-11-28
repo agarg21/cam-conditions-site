@@ -63,6 +63,18 @@ def fetch(url, timeout=20, headers=None):
         return r.status, r.read(), r.headers.get("Content-Type", "")
 
 
+def image_problem(body):
+    """Why this body is not a complete JPEG (None if it is). DOTs sometimes send an HTML/placeholder body
+    or a cut-off file with an image Content-Type; the 2026-11-28 label job hit one (Blewett 00:02Z)."""
+    if len(body) <= 2000:
+        return "too_small"
+    if not body.startswith(b"\xff\xd8\xff"):
+        return "not_jpeg"
+    if b"\xff\xd9" not in body[-64:]:  # end-of-image marker; a few cameras pad a few bytes after it
+        return "truncated"
+    return None
+
+
 def main():
     now = datetime.now(timezone.utc)
     out = os.path.join(ROOT, "out", now.strftime("%Y-%m-%d"), now.strftime("%H%M"))
@@ -78,12 +90,13 @@ def main():
             try:
                 status, body, ctype = fetch(cam["image"])
                 rec.update(status=status, bytes=len(body), sha1=hashlib.sha1(body).hexdigest())
-                if status == 200 and ctype.startswith("image") and len(body) > 2000:
+                problem = image_problem(body) if status == 200 and ctype.startswith("image") else "not_image"
+                if problem is None:
                     with open(os.path.join(out, p["slug"], f"{i}.jpg"), "wb") as f:
                         f.write(body)
                     rec["saved"] = True
                 else:
-                    rec["saved"] = False
+                    rec.update(saved=False, problem=problem)
             except Exception as e:  # camera offline, timeout, DNS
                 rec.update(saved=False, error=str(e)[:200])
             manifest["cams"].append(rec)
