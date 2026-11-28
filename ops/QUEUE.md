@@ -1,5 +1,18 @@
 # Queue (top = next). Keep ≤15 items. Status: open | blocked (why) | NOT NOW.
 
+00. **Q16 Expansion sprint (D10, owner 2026-11-28): ~60 pass pages by 2026-11-30.** 24 live after the CA batch (b8cd2e2).
+   Alternate runs: a batch of up to 8 passes (one feed per run), then a Q6 student-v0 step, then a batch again. Order by
+   weak official pages and demand: (1) Montana under D7a (Bozeman, Homestake, MacDonald, Rogers, Marias, Kings Hill, Evaro
+   Hill, plus MT side of Lookout/Lost Trail/Monida if not shared) with a /states/montana/ hub; (2) Idaho 511 (Galena,
+   Banner, Malad, Pine Creek, Sweetzer, Johnson Creek or others with a camera within 3 km and a winter-road segment);
+   (3) Oregon TripCheck (Sexton, Bennett Pass OR 35, Ochoco, Battle Mountain, Dixie, Tombstone, Blue Mountain summit);
+   (4) Caltrans (Cajon/I-15 once the summit elevation has one consistent source, Kingvale/Emigrant Gap, Spooner-side SR 28,
+   US 395 Sherwin once elevation is settled, Big Bear SR 18/330 as a road page, Mount Shasta I-5 Black Butte Summit);
+   (5) WSDOT (Mt. Baker Hwy, Wauconda, Disautel). Per pass: elevation and coordinates from one consistent source (skip and
+   note when sources disagree), 2 cameras that fetch, status source checked, page built and Playwright-checked. Skip a pass
+   rather than guess. New passes get camera readings automatically (D11).
+00b. **Q6 student v0 now, not at 5,000 labels (owner 2026-11-28: "do this sooner").** Train a first student on the labels we
+   have (k>=0.7 or Opus-agreed), test on the owner's 100, report; retrain as installments land. See Q6 below for the plan.
 0. **Q6a Cheaper labels, then the labeling job (D8).** Test done 2026-11-28 (docs/bakeoff/decision.md "Q6a update"): prompt
    pass-v2 via Message Batches, Sonnet $1.89 per 1,000 (was $5.98); vs Opus v2 95% day / 93% twilight; 512 px saves nothing;
    no Haiku cascade (missed snow 2/31 vs 1/31). D2 closed at $8.97 of $10. Installment 1 done 03:04Z: 1,513 day+twilight
