@@ -856,6 +856,7 @@ def build():
 <p>Live DOT cameras and official road reports, checked every 15 minutes. Last check {checked}.</p>
 <ul class="tally">{tally}</ul>{changed_line}</div>
 <section class="board" id="passes">{groups}</section>
+{odot_disclaimer() if any(q.get("source") == "odot-tripcheck" for q, *_ in summary) else ""}
 """
     with open(os.path.join(SITE, "index.html"), "w") as f:
         f.write(head("Mountain pass conditions and live cameras | Conditions Now",
