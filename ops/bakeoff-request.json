@@ -1,1 +1,1 @@
-{"mode": "probe", "n": 2, "requested": "2026-11-28T00:55Z", "note": "probe: 2 images x 3 models x 2 variants, metadata only, before the full run. 00:30Z run: Sonnet/Opus 300/300 HTTP 400 (forced tool_choice unsupported), spend $0.08. Push this file to trigger the bake-off."}
+{"mode": "run", "n": 300, "max_usd": 8.5, "requested": "2026-11-28T00:48Z", "note": "D2 budget USD 10: spent $0.08 (00:30Z run, Sonnet/Opus 400s) + $0.08 probe; probe default ~$0.026/image -> ~$7.7 for 300; hard cap $8.50. Push this file to trigger the bake-off."}
