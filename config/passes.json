@@ -186,7 +186,10 @@
    "cc_route": "I-80",
    "between": "Sacramento and Reno",
    "read": true,
-   "read_cams": [2, 0]
+   "read_cams": [
+    2,
+    0
+   ]
   },
   {
    "slug": "echo-summit",
@@ -209,6 +212,75 @@
    "route": "US 50",
    "cc_route": "US-50",
    "between": "Placerville and South Lake Tahoe"
+  },
+  {
+   "slug": "tejon-pass",
+   "name": "Tejon Pass (I-5 Grapevine)",
+   "state": "CA",
+   "source": "caltrans-cwwp2-d7",
+   "cams": [
+    {
+     "title": "I-5 at Gorman School Dr",
+     "image": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5971gormanschooldr/i5971gormanschooldr.jpg"
+    },
+    {
+     "title": "I-5 at Smokey Bear Rd",
+     "image": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5970smokeybearrd/i5970smokeybearrd.jpg"
+    }
+   ],
+   "lat": 34.80302,
+   "lon": -118.87707,
+   "elev_ft": 4144,
+   "route": "I-5",
+   "cc_route": "I-5",
+   "cc_km": 25,
+   "between": "Santa Clarita and Bakersfield"
+  },
+  {
+   "slug": "deadman-summit",
+   "name": "Deadman Summit (US 395)",
+   "state": "CA",
+   "source": "caltrans-cwwp2-d9",
+   "cams": [
+    {
+     "title": "US 395 at Obsidian Dome",
+     "image": "https://cwwp2.dot.ca.gov/data/d9/cctv/image/us395obsidiandome/us395obsidiandome.jpg"
+    },
+    {
+     "title": "US 395 at Crestview",
+     "image": "https://cwwp2.dot.ca.gov/data/d9/cctv/image/us395crestview/us395crestview.jpg"
+    }
+   ],
+   "lat": 37.77083,
+   "lon": -119.00833,
+   "elev_ft": 8047,
+   "route": "US 395",
+   "cc_route": "US-395",
+   "cc_km": 15,
+   "between": "Mammoth Lakes and Lee Vining"
+  },
+  {
+   "slug": "conway-summit",
+   "name": "Conway Summit (US 395)",
+   "state": "CA",
+   "source": "caltrans-cwwp2-d9",
+   "cams": [
+    {
+     "title": "US 395 at Conway Summit",
+     "image": "https://cwwp2.dot.ca.gov/data/d9/cctv/image/us395conwaysummit/us395conwaysummit.jpg"
+    },
+    {
+     "title": "US 395 at Bridgeport",
+     "image": "https://cwwp2.dot.ca.gov/data/d9/cctv/image/us395bridgeport/us395bridgeport.jpg"
+    }
+   ],
+   "lat": 38.08806,
+   "lon": -119.18194,
+   "elev_ft": 8143,
+   "route": "US 395",
+   "cc_route": "US-395",
+   "cc_km": 12,
+   "between": "Lee Vining and Bridgeport"
   },
   {
    "slug": "santiam-pass",
@@ -480,11 +552,6 @@
   }
  ],
  "pending": [
-  {
-   "slug": "highway-395-mammoth",
-   "state": "CA",
-   "source": "caltrans-cwwp2-d9"
-  },
   {
    "slug": "big-bear",
    "state": "CA",

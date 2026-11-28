@@ -25,7 +25,7 @@ SITE = os.path.join(ROOT, "_site")
 BASE = "https://conditionsnow.com"
 UA = "ConditionsNow/0.1 (+https://conditionsnow.com; hello@conditionsnow.com)"
 TZ = ZoneInfo("America/Los_Angeles")
-CC_URL = "https://cwwp2.dot.ca.gov/data/d3/cc/ccStatusD03.json"
+CC_URL = "https://cwwp2.dot.ca.gov/data/d{d}/cc/ccStatusD{d:02d}.json"  # Caltrans chain controls, one file per district
 STATE_NAMES = {"WA": "Washington", "OR": "Oregon", "CA": "California", "ID": "Idaho", "WY": "Wyoming"}
 STATE_ORDER = list(STATE_NAMES)
 DOT_NAMES = {"WA": ("WSDOT", "https://wsdot.com/travel/real-time/mountainpasses"),
@@ -34,7 +34,7 @@ DOT_NAMES = {"WA": ("WSDOT", "https://wsdot.com/travel/real-time/mountainpasses"
              "ID": ("Idaho 511", "https://511.idaho.gov/"),
              "WY": ("WYDOT", "https://www.wyoroad.info/")}
 # Who publishes the camera images, for the credit line under each camera grid.
-CAM_CREDIT = {"wsdot-arcgis": "WSDOT", "caltrans-cwwp2-d3": "Caltrans",
+CAM_CREDIT = {"wsdot-arcgis": "WSDOT", "caltrans-cwwp2-d3": "Caltrans", "caltrans-cwwp2-d7": "Caltrans", "caltrans-cwwp2-d9": "Caltrans",
               "odot-tripcheck": "Oregon Department of Transportation (TripCheck)",
               "idaho-511": "Idaho Transportation Department (Idaho 511)"}
 # ODOT's terms require republishers to repeat this disclaimer (Disclaimer of Warranty; Limitation of Liability).
@@ -159,8 +159,18 @@ def wsdot_status(run_dir, name):
     return None
 
 
-def caltrans_status(route, cc_rows):
-    pts = [c["cc"] for c in cc_rows if c["cc"]["location"]["route"] == route and c["cc"]["inService"] == "true"]
+def caltrans_status(route, cc_rows, near=None):
+    """near = (lat, lon, km): only chain-control points within km of the summit (passes on long routes like I-5)."""
+    def close(c):
+        if not near:
+            return True
+        try:
+            la, lo = float(c["location"]["latitude"]), float(c["location"]["longitude"])
+        except (KeyError, ValueError):
+            return False
+        return km(near[0], near[1], la, lo) <= near[2]
+    pts = [c["cc"] for c in cc_rows if c["cc"]["location"]["route"] == route and c["cc"]["inService"] == "true"
+           and close(c["cc"])]
     if not pts:
         return None
     active = [p for p in pts if p["statusData"]["status"] not in ("R-0", "")]
@@ -864,10 +874,12 @@ def build():
     run_dir, manifest = latest_run()
     fetched = datetime.fromisoformat(manifest["fetched_at"]) if manifest else datetime.now(timezone.utc)
     checked = fetched.astimezone(TZ).strftime("%-I:%M %p %Z")
-    try:
-        cc_rows = get_json(CC_URL, timeout=30)["data"]
-    except Exception:
-        cc_rows = []
+    cc_rows = []
+    for d in sorted({int(p["source"].rsplit("-d", 1)[1]) for p in passes if p.get("source", "").startswith("caltrans-cwwp2-d")}):
+        try:
+            cc_rows += get_json(CC_URL.format(d=d), timeout=30)["data"]
+        except Exception:
+            pass
 
     os.makedirs(SITE, exist_ok=True)
     shutil.copy(os.path.join(ROOT, "site", "styles.css"), os.path.join(SITE, "styles.css"))
@@ -899,7 +911,7 @@ def build():
             elif p["state"] == "WA":
                 st = wsdot_status(run_dir, p["wsdot_name"])
             elif p["state"] == "CA":
-                st = caltrans_status(p["cc_route"], cc_rows)
+                st = caltrans_status(p["cc_route"], cc_rows, (p["lat"], p["lon"], p["cc_km"]) if p.get("cc_km") else None)
             elif src == "odot-tripcheck":
                 st = odot_status(run_dir, p)
             elif src == "idaho-511" and p["state"] == "ID":
