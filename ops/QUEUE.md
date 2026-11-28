@@ -31,6 +31,17 @@
    a third row "Cameras" in the 24 h history; a flag when cameras disagree with an official report ≥2 h old. Label every
    reading "our reading, not an official report". Spend ledger in docs/bakeoff/label-ledger.json, D9 ≤$15/month.
 
+0c. **Q14 Storm check (owner 2026-11-28: "check the quality during / after a storm").** Event-triggered: when NWS has a Winter
+   Storm Warning/Advisory, or forecasts >= 2 in of snow, for a pass with readings, then during the storm and the 12 h after:
+   (1) every reading also gets an Opus re-read (counts in D9 <= $15/month); (2) report per pass: Sonnet vs Opus agreement,
+   share answered at k >= 0.7, and lead time = when cameras first showed snow/bare vs when the official report changed (from
+   status/ history); (3) export a 100-image storm review set (review_export.py, light-balanced) and tell the owner it is ready;
+   Claude in chat builds the owner check page. Write docs/bakeoff/storm-<date>.md (aggregates only).
+0d. **Q15 Driver outlook from the forecast (owner 2026-11-28: "incorporate weather predictions").** Pages show the NWS text
+   forecast but don't use it. Add a "Next 12 hours" line in the camera block and the verdict area, from NWS gridpoint data
+   (snowfallAmount, snowLevel vs pass elevation, temperature crossing 32F, probabilityOfPrecipitation) and active NWS alerts for
+   the point: e.g. "Forecast: 3-5 in of snow after 4 PM; below freezing tonight, wet roads may ice." Labeled "NWS forecast", with
+   time; never changes the official answer or the camera reading; no invented numbers (show NWS ranges as given). Also feeds Q14.
 1. **Q1 Labeling bake-off.** Done 2026-11-28 01:08Z: docs/bakeoff/decision.md (Sonnet labels; Haiku 18% false snow;
    collapsed road surface Sonnet 93% vs Opus). D2 spent $6.80 of $10. Follow-up lives in Q6.
 2. **Q3 Pass page answers.** Shipped 2026-11-27 (a1a832a): answers block (Open? / Chains? / Snow on the road?) from official
@@ -71,7 +82,8 @@
    Disautel have reports too). Left: Oregon (Sexton Summit, OR 35 near Bennett Pass), Idaho (Malad, Sweetzer, Galena if a camera appears),
    California (US 395 Conway Summit, Big Bear via CWWP2 D8, Mount Rose via NDOT if keyless). Use `discover.yml` and
    CWWP2 JSON; 2 cameras per pass; verify images fetch.
-4b. **Q10 New states (D5): Iowa, Montana, South Dakota, Nebraska.** blocked (D7 in OWNER.md). Terms read 2026-11-27
+4b. **Q10 New states (D5): Iowa, Montana, South Dakota, Nebraska.** MONTANA UNBLOCKED (D7a: build with unmodified, credited MDT
+   images under MDT terms §4); do it before Q5. IA/NE/SD stay blocked until a written yes (D7b). Terms read 2026-11-27
    (docs/research/state-terms-2026-11-27.md, config/SOURCES.md): IA needs written consent; NE cameras need NDOT approval; SD has no
    terms; MT grants copying for "personal or informational use", unmodified, commercial use not addressed. When D7 answers: one state
    per run, `/states/<state>/` page (official condition layer summary, key corridors with 2–4 cameras, credits) linked from home;
@@ -82,6 +94,11 @@
    Owner check 2026-11-28 changes the plan: Sonnet labels are ~83% right overall but 98% at k>=0.7, so train only on
    labels with k>=0.7 or Opus agreement; switch remaining label installments to prompt pass-v4 (adds center line, same
    accuracy); test every student model on the owner's 100 (review/2026-11-28) and report day/twilight agreement.
+   Timeline (owner asked 2026-11-28): labels reach ~5,000 about Dec 1; first student Dec 1-3 in cam-conditions-engine on
+   GitHub Actions CPU (frozen SigLIP-base embeddings + logistic heads for lanes / center line / snow falling; no GPU needed
+   at this size); then 7 days shadow mode on the 5 reading passes (student and Sonnet both read, page still shows Sonnet).
+   Switch when the student matches Sonnet on the owner's 100 and the Opus audit; then turn readings on for every pass
+   (Sonnet for all 21+ passes would be ~$55/month, over D9; the student is ~free).
 6. **Q7 Montana.** Folded into Q10.
 7. **Q8 Colorado.** blocked (waiting for CDOT reply to the 2026-11-27 request; owner reads hello@ mail).
 8. **Q9 Search Console.** blocked (no API access from cloud; see OWNER open question once raised).
